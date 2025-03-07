@@ -1,0 +1,69 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "forge-std/Test.sol";
+
+contract AgentTest is Test {
+    struct AgentData {
+        uint256 level;
+    }
+
+    struct AgentStorage {
+        mapping(address => AgentData) agents;
+        uint256[] agentPercent;
+    }
+
+    using AgentLib for AgentStorage;
+
+    AgentStorage agentStorage;
+    address user1 = address(0x123);
+    address user2 = address(0x456);
+
+    function setUp() public {
+        // Khởi tạo danh sách phần trăm hoa hồng
+        agentStorage.initializeAgent();
+    }
+
+    function testInitializeAgent() public {
+        assertEq(agentStorage.agentPercent.length, 5, "Should initialize 5 agent levels");
+        assertEq(agentStorage.agentPercent[0], 0, "Level 0 should be 0%");
+        assertEq(agentStorage.agentPercent[1], 40, "Level 1 should be 40%");
+        assertEq(agentStorage.agentPercent[2], 35, "Level 2 should be 35%");
+        assertEq(agentStorage.agentPercent[3], 30, "Level 3 should be 30%");
+        assertEq(agentStorage.agentPercent[4], 25, "Level 4 should be 25%");
+    }
+
+    function testSetAgentLevel() public {
+        agentStorage.setAgentLevel(user1, 2);
+        assertEq(agentStorage.getAgentLevel(user1), 2, "User1 should be at level 2");
+
+        agentStorage.setAgentLevel(user1, 4);
+        assertEq(agentStorage.getAgentLevel(user1), 4, "User1 should be at level 4");
+    }
+
+    function testFailSetAgentLevelInvalid() public {
+        agentStorage.setAgentLevel(user1, 10); // Invalid level, should revert
+    }
+
+    function testGetAgentLevel() public {
+        agentStorage.setAgentLevel(user1, 3);
+        assertEq(agentStorage.getAgentLevel(user1), 3, "User1 should be level 3");
+
+        agentStorage.setAgentLevel(user2, 1);
+        assertEq(agentStorage.getAgentLevel(user2), 1, "User2 should be level 1");
+    }
+
+    function testGetAgentCommission() public {
+        uint256 defaultPercent = 20;
+
+        // Khi user chưa phải agent
+        assertEq(agentStorage.getAgentCommission(user1, defaultPercent), 20, "Default commission should be used");
+
+        // Khi user có cấp độ agent
+        agentStorage.setAgentLevel(user1, 1);
+        assertEq(agentStorage.getAgentCommission(user1, defaultPercent), 40, "Level 1 commission should be 40%");
+
+        agentStorage.setAgentLevel(user1, 3);
+        assertEq(agentStorage.getAgentCommission(user1, defaultPercent), 30, "Level 3 commission should be 30%");
+    }
+}

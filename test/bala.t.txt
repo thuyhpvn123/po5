@@ -1,0 +1,70 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "forge-std/Test.sol";
+import "../src/BalancesManager.sol";
+
+contract BalancesManagerTest is Test {
+    BalancesManager balancesManager;
+    address owner = address(1);
+    address user1 = address(2);
+    address user2 = address(3);
+    address treeCommission = address(4);
+    bytes32 utxoID = keccak256("test_utxo");
+
+    function setUp() public {
+        vm.prank(owner);
+        balancesManager = new BalancesManager();
+        vm.prank(owner);
+        balancesManager.setTreeCommissionAddress(treeCommission);
+    }
+
+    function testCreateUltraUTXO() public {
+        vm.prank(treeCommission);
+        balancesManager.updateBalance(user1, utxoID, 100, true);
+
+        (uint256 BP,,,) = balancesManager.getUltraBPInfo(user1, utxoID);
+        assertEq(BP, 100);
+    }
+
+    function testCancelUltraUTXO() public {
+        vm.prank(treeCommission);
+        balancesManager.updateBalance(user1, utxoID, 100, true);
+
+        vm.prank(owner);
+        balancesManager.cancelUltraUTXO(utxoID);
+
+        (, , , , bool isDeny) = balancesManager.getUltraBPInfo(user1, utxoID);
+        assertTrue(isDeny);
+    }
+
+    function testWithdrawUltraBP() public {
+        vm.prank(treeCommission);
+        balancesManager.updateBalance(user1, utxoID, 100, true);
+
+        vm.warp(block.timestamp + 61 days);
+        vm.prank(owner);
+        balancesManager.withdrawUltraBP(user1, utxoID);
+
+        (uint256 BP,,,) = balancesManager.getUltraBPInfo(user1, utxoID);
+        assertEq(BP, 0);
+    }
+
+    function testUpdateBalance() public {
+        vm.prank(treeCommission);
+        balancesManager.updateBalance(user1, utxoID, 200, true);
+
+        uint256 balance = balancesManager.getBalance(user1);
+        assertEq(balance, 200);
+    }
+
+    function testWithdrawBP() public {
+        vm.prank(treeCommission);
+        balancesManager.updateBalance(user1, utxoID, 500, true);
+
+        vm.prank(treeCommission);
+        bool success = balancesManager.withdrawBP(user1, 300);
+        assertTrue(success);
+        assertEq(balancesManager.getBalance(user1), 200);
+    }
+}

@@ -1,0 +1,303 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"ropsten:3": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"rinkeby:4": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"kovan:42": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"goerli:5": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "60b86032600b8282823980515f1a607314602657634e487b7160e01b5f525f60045260245ffd5b305f52607381538281f3fe73000000000000000000000000000000000000000030146080604052600436106050575f3560e01c8063172c0d7f146054578063d906e5c214606d578063f2e1de84146074578063fc9f00fb14607b575b5f80fd5b605b600381565b60405190815260200160405180910390f35b605b600a81565b605b600581565b605b60028156fea2646970667358221220bb0975abb816545019f7d19f82b2ca09957a0e7489d89cc765cddae6e87124d764736f6c634300081a0033",
+			"opcodes": "PUSH1 0xB8 PUSH1 0x32 PUSH1 0xB DUP3 DUP3 DUP3 CODECOPY DUP1 MLOAD PUSH0 BYTE PUSH1 0x73 EQ PUSH1 0x26 JUMPI PUSH4 0x4E487B71 PUSH1 0xE0 SHL PUSH0 MSTORE PUSH0 PUSH1 0x4 MSTORE PUSH1 0x24 PUSH0 REVERT JUMPDEST ADDRESS PUSH0 MSTORE PUSH1 0x73 DUP2 MSTORE8 DUP3 DUP2 RETURN INVALID PUSH20 0x0 ADDRESS EQ PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x4 CALLDATASIZE LT PUSH1 0x50 JUMPI PUSH0 CALLDATALOAD PUSH1 0xE0 SHR DUP1 PUSH4 0x172C0D7F EQ PUSH1 0x54 JUMPI DUP1 PUSH4 0xD906E5C2 EQ PUSH1 0x6D JUMPI DUP1 PUSH4 0xF2E1DE84 EQ PUSH1 0x74 JUMPI DUP1 PUSH4 0xFC9F00FB EQ PUSH1 0x7B JUMPI JUMPDEST PUSH0 DUP1 REVERT JUMPDEST PUSH1 0x5B PUSH1 0x3 DUP2 JUMP JUMPDEST PUSH1 0x40 MLOAD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH1 0x5B PUSH1 0xA DUP2 JUMP JUMPDEST PUSH1 0x5B PUSH1 0x5 DUP2 JUMP JUMPDEST PUSH1 0x5B PUSH1 0x2 DUP2 JUMP INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 0xBB MULMOD PUSH22 0xABB816545019F7D19F82B2CA09957A0E7489D89CC765 0xCD 0xDA 0xE6 0xE8 PUSH18 0x24D764736F6C634300081A00330000000000 ",
+			"sourceMap": "58556:29105:12:-:0;;;;;;;;;;;;;;;-1:-1:-1;;;58556:29105:12;;;;;;;;;;;;;;;;;"
+		},
+		"deployedBytecode": {
+			"functionDebugData": {
+				"@GeB_PERCENT_17763": {
+					"entryPoint": null,
+					"id": 17763,
+					"parameterSlots": 0,
+					"returnSlots": 0
+				},
+				"@PGrB_PERCENT_17760": {
+					"entryPoint": null,
+					"id": 17760,
+					"parameterSlots": 0,
+					"returnSlots": 0
+				},
+				"@UNILEVEL_PERCENT_1_17754": {
+					"entryPoint": null,
+					"id": 17754,
+					"parameterSlots": 0,
+					"returnSlots": 0
+				},
+				"@UNILEVEL_PERCENT_2_TO_5_17757": {
+					"entryPoint": null,
+					"id": 17757,
+					"parameterSlots": 0,
+					"returnSlots": 0
+				},
+				"abi_encode_tuple_t_uint256__to_t_uint256__fromStack_library_reversed": {
+					"entryPoint": null,
+					"id": null,
+					"parameterSlots": 2,
+					"returnSlots": 1
+				}
+			},
+			"generatedSources": [
+				{
+					"ast": {
+						"nativeSrc": "0:201:13",
+						"nodeType": "YulBlock",
+						"src": "0:201:13",
+						"statements": [
+							{
+								"nativeSrc": "6:3:13",
+								"nodeType": "YulBlock",
+								"src": "6:3:13",
+								"statements": []
+							},
+							{
+								"body": {
+									"nativeSrc": "123:76:13",
+									"nodeType": "YulBlock",
+									"src": "123:76:13",
+									"statements": [
+										{
+											"nativeSrc": "133:26:13",
+											"nodeType": "YulAssignment",
+											"src": "133:26:13",
+											"value": {
+												"arguments": [
+													{
+														"name": "headStart",
+														"nativeSrc": "145:9:13",
+														"nodeType": "YulIdentifier",
+														"src": "145:9:13"
+													},
+													{
+														"kind": "number",
+														"nativeSrc": "156:2:13",
+														"nodeType": "YulLiteral",
+														"src": "156:2:13",
+														"type": "",
+														"value": "32"
+													}
+												],
+												"functionName": {
+													"name": "add",
+													"nativeSrc": "141:3:13",
+													"nodeType": "YulIdentifier",
+													"src": "141:3:13"
+												},
+												"nativeSrc": "141:18:13",
+												"nodeType": "YulFunctionCall",
+												"src": "141:18:13"
+											},
+											"variableNames": [
+												{
+													"name": "tail",
+													"nativeSrc": "133:4:13",
+													"nodeType": "YulIdentifier",
+													"src": "133:4:13"
+												}
+											]
+										},
+										{
+											"expression": {
+												"arguments": [
+													{
+														"name": "headStart",
+														"nativeSrc": "175:9:13",
+														"nodeType": "YulIdentifier",
+														"src": "175:9:13"
+													},
+													{
+														"name": "value0",
+														"nativeSrc": "186:6:13",
+														"nodeType": "YulIdentifier",
+														"src": "186:6:13"
+													}
+												],
+												"functionName": {
+													"name": "mstore",
+													"nativeSrc": "168:6:13",
+													"nodeType": "YulIdentifier",
+													"src": "168:6:13"
+												},
+												"nativeSrc": "168:25:13",
+												"nodeType": "YulFunctionCall",
+												"src": "168:25:13"
+											},
+											"nativeSrc": "168:25:13",
+											"nodeType": "YulExpressionStatement",
+											"src": "168:25:13"
+										}
+									]
+								},
+								"name": "abi_encode_tuple_t_uint256__to_t_uint256__fromStack_library_reversed",
+								"nativeSrc": "14:185:13",
+								"nodeType": "YulFunctionDefinition",
+								"parameters": [
+									{
+										"name": "headStart",
+										"nativeSrc": "92:9:13",
+										"nodeType": "YulTypedName",
+										"src": "92:9:13",
+										"type": ""
+									},
+									{
+										"name": "value0",
+										"nativeSrc": "103:6:13",
+										"nodeType": "YulTypedName",
+										"src": "103:6:13",
+										"type": ""
+									}
+								],
+								"returnVariables": [
+									{
+										"name": "tail",
+										"nativeSrc": "114:4:13",
+										"nodeType": "YulTypedName",
+										"src": "114:4:13",
+										"type": ""
+									}
+								],
+								"src": "14:185:13"
+							}
+						]
+					},
+					"contents": "{\n    { }\n    function abi_encode_tuple_t_uint256__to_t_uint256__fromStack_library_reversed(headStart, value0) -> tail\n    {\n        tail := add(headStart, 32)\n        mstore(headStart, value0)\n    }\n}",
+					"id": 13,
+					"language": "Yul",
+					"name": "#utility.yul"
+				}
+			],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "73000000000000000000000000000000000000000030146080604052600436106050575f3560e01c8063172c0d7f146054578063d906e5c214606d578063f2e1de84146074578063fc9f00fb14607b575b5f80fd5b605b600381565b60405190815260200160405180910390f35b605b600a81565b605b600581565b605b60028156fea2646970667358221220bb0975abb816545019f7d19f82b2ca09957a0e7489d89cc765cddae6e87124d764736f6c634300081a0033",
+			"opcodes": "PUSH20 0x0 ADDRESS EQ PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x4 CALLDATASIZE LT PUSH1 0x50 JUMPI PUSH0 CALLDATALOAD PUSH1 0xE0 SHR DUP1 PUSH4 0x172C0D7F EQ PUSH1 0x54 JUMPI DUP1 PUSH4 0xD906E5C2 EQ PUSH1 0x6D JUMPI DUP1 PUSH4 0xF2E1DE84 EQ PUSH1 0x74 JUMPI DUP1 PUSH4 0xFC9F00FB EQ PUSH1 0x7B JUMPI JUMPDEST PUSH0 DUP1 REVERT JUMPDEST PUSH1 0x5B PUSH1 0x3 DUP2 JUMP JUMPDEST PUSH1 0x40 MLOAD SWAP1 DUP2 MSTORE PUSH1 0x20 ADD PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH1 0x5B PUSH1 0xA DUP2 JUMP JUMPDEST PUSH1 0x5B PUSH1 0x5 DUP2 JUMP JUMPDEST PUSH1 0x5B PUSH1 0x2 DUP2 JUMP INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 0xBB MULMOD PUSH22 0xABB816545019F7D19F82B2CA09957A0E7489D89CC765 0xCD 0xDA 0xE6 0xE8 PUSH18 0x24D764736F6C634300081A00330000000000 ",
+			"sourceMap": "58556:29105:12:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;58808:39;;58846:1;58808:39;;;;;168:25:13;;;156:2;141:18;58808:39:12;;;;;;;58579:47;;58624:2;58579:47;;58651:51;;58701:1;58651:51;;58729:40;;58768:1;58729:40;"
+		},
+		"gasEstimates": {
+			"creation": {
+				"codeDepositCost": "36800",
+				"executionCost": "117",
+				"totalCost": "36917"
+			},
+			"external": {
+				"GeB_PERCENT()": "144",
+				"PGrB_PERCENT()": "210",
+				"UNILEVEL_PERCENT_1()": "166",
+				"UNILEVEL_PERCENT_2_TO_5()": "188"
+			},
+			"internal": {
+				"checkActiveCondition(mapping(address => struct TreeLib.NodeData storage ref),address)": "infinite",
+				"checkTransferUSDT(contract IERC20,bytes32,uint256)": "infinite",
+				"countActiveLegs(mapping(address => struct TreeLib.NodeInfo storage ref),address)": "infinite",
+				"distributeGenerationBonus(mapping(address => struct TreeLib.NodeInfo storage ref),mapping(address => mapping(uint8 => struct TreeLib.GenerationInfo storage ref)),mapping(address => address),contract BalancesManager,address,uint256,bytes32)": "infinite",
+				"distributeGenerationBonus_batchUpdate(contract BalancesManager,bytes32,uint256,address,address,address,address)": "infinite",
+				"distributeNationalBonus(contract BalancesManager,address[] storage pointer)": "infinite",
+				"distributeUnilevelBonus(mapping(address => struct TreeLib.NodeInfo storage ref),mapping(address => address),contract BalancesManager,address,uint256,bytes32)": "infinite",
+				"findActiveParent(mapping(address => struct TreeLib.NodeInfo storage ref),mapping(address => address),address)": "infinite",
+				"getGroupRank(mapping(address => struct TreeLib.NodeInfo storage ref),address)": "infinite",
+				"isDescendant(mapping(address => struct TreeLib.NodeInfo storage ref),address,address,uint8,mapping(bytes32 => bool),bytes32[] storage pointer)": "infinite",
+				"isValidUTXO(bytes32)": "infinite",
+				"setGenerationRank(mapping(address => mapping(uint8 => struct TreeLib.GenerationInfo storage ref)),address,uint8,address,address,address)": "infinite",
+				"setInheritGenerationRank(mapping(address => mapping(uint8 => struct TreeLib.GenerationInfo storage ref)),address,address,uint8)": "infinite",
+				"updateActiveParentMapping(mapping(address => struct TreeLib.NodeInfo storage ref),mapping(address => address),address)": "infinite",
+				"updateActiveStatus(mapping(address => struct TreeLib.NodeInfo storage ref),mapping(address => struct TreeLib.NodeData storage ref),mapping(address => uint256),mapping(address => uint256),mapping(address => uint256),address)": "infinite",
+				"updateGenerationRank(mapping(address => struct TreeLib.NodeInfo storage ref),mapping(address => mapping(uint8 => struct TreeLib.GenerationInfo storage ref)),mapping(address => address),address,address)": "infinite",
+				"updateRanks(mapping(address => struct TreeLib.NodeInfo storage ref),mapping(address => struct TreeLib.NodeData storage ref),address[] storage pointer,address)": "infinite",
+				"updateTeamBP(mapping(address => struct TreeLib.NodeData storage ref),mapping(address => struct TreeLib.NodeInfo storage ref),address[] storage pointer,address)": "infinite"
+			}
+		},
+		"methodIdentifiers": {
+			"GeB_PERCENT()": "172c0d7f",
+			"PGrB_PERCENT()": "fc9f00fb",
+			"UNILEVEL_PERCENT_1()": "d906e5c2",
+			"UNILEVEL_PERCENT_2_TO_5()": "f2e1de84"
+		}
+	},
+	"abi": [
+		{
+			"inputs": [],
+			"name": "GeB_PERCENT",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "PGrB_PERCENT",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "UNILEVEL_PERCENT_1",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "UNILEVEL_PERCENT_2_TO_5",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		}
+	]
+}

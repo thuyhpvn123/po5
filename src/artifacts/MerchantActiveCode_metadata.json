@@ -1,0 +1,466 @@
+{
+	"compiler": {
+		"version": "0.8.26+commit.8a97fa7a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "activeCode",
+						"type": "uint256"
+					}
+				],
+				"name": "ActiveCodeUsed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "device",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "activeCode",
+						"type": "uint256"
+					}
+				],
+				"name": "DeviceRegistered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "merchant",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "domain",
+						"type": "string"
+					}
+				],
+				"name": "MerchantRegistered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "merchant",
+						"type": "address"
+					}
+				],
+				"name": "MerchantRemoved",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "merchant",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "domain",
+						"type": "string"
+					}
+				],
+				"name": "MerchantUpdated",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "activeCodeToDevice",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_merchant",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "_domain",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_installUrl",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_bundleId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_platform",
+						"type": "string"
+					}
+				],
+				"name": "addMerchant",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "devices",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "screenSize",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "os",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "versionOs",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "refCode",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "activeCode",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_activeCode",
+						"type": "uint256"
+					}
+				],
+				"name": "getActiveCodeInfo",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "domain",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "installUrl",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "bundleId",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "platform",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "createTime",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct MerchantActiveCode.Merchant",
+						"name": "",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "screenSize",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "os",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "versionOs",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "refCode",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "activeCode",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "timestamp",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct MerchantActiveCode.Device",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "merchants",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "domain",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "installUrl",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "bundleId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "platform",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "createTime",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_screenSize",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_os",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_versionOs",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_refCode",
+						"type": "string"
+					}
+				],
+				"name": "registerDevice",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "removeExpiredData",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_merchant",
+						"type": "address"
+					}
+				],
+				"name": "removeMerchant",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_domain",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_installUrl",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_bundleId",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_platform",
+						"type": "string"
+					}
+				],
+				"name": "updateMerchant",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_activeCode",
+						"type": "uint256"
+					}
+				],
+				"name": "useActiveCodeInfo",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"src/activeCode.sol": "MerchantActiveCode"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 0
+		},
+		"remappings": []
+	},
+	"sources": {
+		"src/activeCode.sol": {
+			"keccak256": "0xd12ec95a2cb5cba8f057a1b9eeed250aaea5420a8f472c8704ba152a75293dc4",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://06204e48180162b2e23870eae73c1a5b09cbe98e7983d4076b4f2ed3332817cf",
+				"dweb:/ipfs/QmQ391E1nw6JAPVppoUVCzcKHaSgpoLKBpvn6Gb1utwcG9"
+			]
+		}
+	},
+	"version": 1
+}

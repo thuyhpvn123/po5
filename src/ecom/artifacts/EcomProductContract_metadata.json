@@ -1,0 +1,5074 @@
+{
+	"compiler": {
+		"version": "0.8.26+commit.8a97fa7a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "payable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					}
+				],
+				"name": "eCreateCategory",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "categoryID",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "retailPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "vipPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "memberPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "reward",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "capacity",
+								"type": "uint256[]"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "size",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "quantity",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "shippingFee",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "color",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "address",
+								"name": "retailer",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "brandName",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "warranty",
+								"type": "string"
+							},
+							{
+								"internalType": "bool",
+								"name": "isFlashSale",
+								"type": "bool"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "images",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "string",
+								"name": "videoUrl",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "boostTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "expiryTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "activateTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "isMultipleDiscount",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isApprove",
+								"type": "bool"
+							},
+							{
+								"internalType": "uint256",
+								"name": "sold",
+								"type": "uint256"
+							}
+						],
+						"indexed": false,
+						"internalType": "struct createProductParams",
+						"name": "params",
+						"type": "tuple"
+					}
+				],
+				"name": "eCreateProduct",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					}
+				],
+				"name": "eDeleteCategory",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "productID",
+						"type": "uint256"
+					}
+				],
+				"name": "eDeleteProduct",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					}
+				],
+				"name": "eEditCategory",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "username",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "phoneNumber",
+						"type": "string"
+					}
+				],
+				"name": "eRegisterRetailer",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "retailer",
+						"type": "address"
+					}
+				],
+				"name": "eSetRetailer",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "categoryID",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "retailPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "vipPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "memberPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "reward",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "capacity",
+								"type": "uint256[]"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "size",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "quantity",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "shippingFee",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "color",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "address",
+								"name": "retailer",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "brandName",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "warranty",
+								"type": "string"
+							},
+							{
+								"internalType": "bool",
+								"name": "isFlashSale",
+								"type": "bool"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "images",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "string",
+								"name": "videoUrl",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "boostTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "expiryTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "activateTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "isMultipleDiscount",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isApprove",
+								"type": "bool"
+							},
+							{
+								"internalType": "uint256",
+								"name": "sold",
+								"type": "uint256"
+							}
+						],
+						"indexed": false,
+						"internalType": "struct createProductParams",
+						"name": "params",
+						"type": "tuple"
+					}
+				],
+				"name": "eUpdateProduct",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "EcomInfo",
+				"outputs": [
+					{
+						"internalType": "contract IEcomInfo",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "EcomOrder",
+				"outputs": [
+					{
+						"internalType": "contract IEcomOrder",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "EcomUser",
+				"outputs": [
+					{
+						"internalType": "contract IEcomUser",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_controller",
+						"type": "address"
+					}
+				],
+				"name": "SetController",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_ecomInfo",
+						"type": "address"
+					}
+				],
+				"name": "SetEcomInfo",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_ecomOrder",
+						"type": "address"
+					}
+				],
+				"name": "SetEcomOrder",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_ecomUser",
+						"type": "address"
+					}
+				],
+				"name": "SetEcomUser",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					}
+				],
+				"name": "adminAcceptProduct",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					}
+				],
+				"name": "adminRejectProduct",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "admins",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "brands",
+				"outputs": [
+					{
+						"internalType": "bytes",
+						"name": "",
+						"type": "bytes"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "categories",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "categoryID",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "commentID",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_description",
+						"type": "string"
+					}
+				],
+				"name": "createCategory",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum CommentType",
+						"name": "commentType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "string",
+						"name": "content",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					}
+				],
+				"name": "createComment",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "enum CommentType",
+								"name": "commentType",
+								"type": "uint8"
+							},
+							{
+								"internalType": "string",
+								"name": "content",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "rate",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct createCommentParams[]",
+						"name": "params",
+						"type": "tuple[]"
+					}
+				],
+				"name": "createComments",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "title",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "content",
+						"type": "string"
+					}
+				],
+				"name": "createFAQPO5",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "title",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "content",
+								"type": "string"
+							}
+						],
+						"internalType": "struct createFaqParams[]",
+						"name": "params",
+						"type": "tuple[]"
+					}
+				],
+				"name": "createFAQsPO5",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "title",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "content",
+								"type": "string"
+							}
+						],
+						"internalType": "struct createFaqParams[]",
+						"name": "params",
+						"type": "tuple[]"
+					}
+				],
+				"name": "createFAQsProduct",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					}
+				],
+				"name": "createFavorite",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_productIds",
+						"type": "uint256[]"
+					}
+				],
+				"name": "createFavorites",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "categoryID",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "retailPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "vipPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "memberPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "reward",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "capacity",
+								"type": "uint256[]"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "size",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "quantity",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "shippingFee",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "color",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "address",
+								"name": "retailer",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "brandName",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "warranty",
+								"type": "string"
+							},
+							{
+								"internalType": "bool",
+								"name": "isFlashSale",
+								"type": "bool"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "images",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "string",
+								"name": "videoUrl",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "boostTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "expiryTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "activateTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "isMultipleDiscount",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isApprove",
+								"type": "bool"
+							},
+							{
+								"internalType": "uint256",
+								"name": "sold",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct createProductParams",
+						"name": "params",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "variantID",
+								"type": "bytes32"
+							},
+							{
+								"components": [
+									{
+										"internalType": "bytes32",
+										"name": "id",
+										"type": "bytes32"
+									},
+									{
+										"internalType": "string",
+										"name": "key",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "value",
+										"type": "string"
+									}
+								],
+								"internalType": "struct Attribute[]",
+								"name": "attrs",
+								"type": "tuple[]"
+							},
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "retailPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "vipPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "memberPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "reward",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "quantity",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct Pricing",
+								"name": "priceOptions",
+								"type": "tuple"
+							}
+						],
+						"internalType": "struct VariantParams[]",
+						"name": "_variants",
+						"type": "tuple[]"
+					}
+				],
+				"name": "createProduct",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "rateValue",
+						"type": "uint256"
+					}
+				],
+				"name": "createRating",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_commentID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_rate",
+						"type": "uint256"
+					}
+				],
+				"name": "createRatingForRetailer",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "deleteAdmin",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					}
+				],
+				"name": "deleteCategory",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_commentID",
+						"type": "uint256"
+					}
+				],
+				"name": "deleteComment",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					}
+				],
+				"name": "deleteFAQPO5",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_faqID",
+						"type": "uint256"
+					}
+				],
+				"name": "deleteFAQProduct",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					}
+				],
+				"name": "deleteFavorite",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_productIds",
+						"type": "uint256[]"
+					}
+				],
+				"name": "deleteFavorites",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					}
+				],
+				"name": "deleteProduct",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_ratingID",
+						"type": "uint256"
+					}
+				],
+				"name": "deleteRating",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_description",
+						"type": "string"
+					}
+				],
+				"name": "editCategory",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_commentID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "content",
+						"type": "string"
+					}
+				],
+				"name": "editComment",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "commentID",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "content",
+								"type": "string"
+							}
+						],
+						"internalType": "struct editCommentsParam[]",
+						"name": "params",
+						"type": "tuple[]"
+					}
+				],
+				"name": "editComments",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_title",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_content",
+						"type": "string"
+					}
+				],
+				"name": "editFAQPO5",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "faqID",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "title",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "content",
+								"type": "string"
+							}
+						],
+						"internalType": "struct editFAQsProductParam[]",
+						"name": "params",
+						"type": "tuple[]"
+					}
+				],
+				"name": "editFAQProducts",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_ratingID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "rateValue",
+						"type": "uint256"
+					}
+				],
+				"name": "editRating",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "faqID",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "faqs",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					}
+				],
+				"name": "getAllComments",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "user",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "message",
+								"type": "string"
+							},
+							{
+								"internalType": "uint8",
+								"name": "commentType",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256",
+								"name": "createdAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "updatedAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "productID",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Comment[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getAllProductInfo",
+				"outputs": [
+					{
+						"components": [
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "id",
+										"type": "uint256"
+									},
+									{
+										"components": [
+											{
+												"internalType": "string",
+												"name": "name",
+												"type": "string"
+											},
+											{
+												"internalType": "uint256",
+												"name": "categoryID",
+												"type": "uint256"
+											},
+											{
+												"internalType": "string",
+												"name": "description",
+												"type": "string"
+											},
+											{
+												"internalType": "uint256",
+												"name": "retailPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "vipPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "memberPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "reward",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256[]",
+												"name": "capacity",
+												"type": "uint256[]"
+											},
+											{
+												"internalType": "bytes[]",
+												"name": "size",
+												"type": "bytes[]"
+											},
+											{
+												"internalType": "uint256",
+												"name": "quantity",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "shippingFee",
+												"type": "uint256"
+											},
+											{
+												"internalType": "bytes[]",
+												"name": "color",
+												"type": "bytes[]"
+											},
+											{
+												"internalType": "address",
+												"name": "retailer",
+												"type": "address"
+											},
+											{
+												"internalType": "string",
+												"name": "brandName",
+												"type": "string"
+											},
+											{
+												"internalType": "string",
+												"name": "warranty",
+												"type": "string"
+											},
+											{
+												"internalType": "bool",
+												"name": "isFlashSale",
+												"type": "bool"
+											},
+											{
+												"internalType": "bytes[]",
+												"name": "images",
+												"type": "bytes[]"
+											},
+											{
+												"internalType": "string",
+												"name": "videoUrl",
+												"type": "string"
+											},
+											{
+												"internalType": "uint256",
+												"name": "boostTime",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "expiryTime",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "activateTime",
+												"type": "uint256"
+											},
+											{
+												"internalType": "bool",
+												"name": "isMultipleDiscount",
+												"type": "bool"
+											},
+											{
+												"internalType": "bool",
+												"name": "isApprove",
+												"type": "bool"
+											},
+											{
+												"internalType": "uint256",
+												"name": "sold",
+												"type": "uint256"
+											}
+										],
+										"internalType": "struct createProductParams",
+										"name": "params",
+										"type": "tuple"
+									},
+									{
+										"internalType": "uint256",
+										"name": "createdAt",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "updatedAt",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct Product",
+								"name": "product",
+								"type": "tuple"
+							},
+							{
+								"components": [
+									{
+										"internalType": "bytes32",
+										"name": "variantID",
+										"type": "bytes32"
+									},
+									{
+										"components": [
+											{
+												"internalType": "uint256",
+												"name": "retailPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "vipPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "memberPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "reward",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "quantity",
+												"type": "uint256"
+											}
+										],
+										"internalType": "struct Pricing",
+										"name": "priceOptions",
+										"type": "tuple"
+									}
+								],
+								"internalType": "struct Variant[]",
+								"name": "variants",
+								"type": "tuple[]"
+							},
+							{
+								"components": [
+									{
+										"internalType": "bytes32",
+										"name": "id",
+										"type": "bytes32"
+									},
+									{
+										"internalType": "string",
+										"name": "key",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "value",
+										"type": "string"
+									}
+								],
+								"internalType": "struct Attribute[][]",
+								"name": "attributes",
+								"type": "tuple[][]"
+							}
+						],
+						"internalType": "struct ProductInfo[]",
+						"name": "productsInfo",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "enum EProductType",
+								"name": "_productType",
+								"type": "uint8"
+							},
+							{
+								"internalType": "enum EPrice",
+								"name": "_price",
+								"type": "uint8"
+							},
+							{
+								"internalType": "enum EDatePost",
+								"name": "_datePost",
+								"type": "uint8"
+							},
+							{
+								"internalType": "enum EStatus",
+								"name": "_status",
+								"type": "uint8"
+							},
+							{
+								"internalType": "address",
+								"name": "_retailer",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "_term",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "_from",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "_to",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "page",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "perPage",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct getProductManagementParams",
+						"name": "params",
+						"type": "tuple"
+					}
+				],
+				"name": "getAllProductInfoPagination",
+				"outputs": [
+					{
+						"components": [
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "id",
+										"type": "uint256"
+									},
+									{
+										"components": [
+											{
+												"internalType": "string",
+												"name": "name",
+												"type": "string"
+											},
+											{
+												"internalType": "uint256",
+												"name": "categoryID",
+												"type": "uint256"
+											},
+											{
+												"internalType": "string",
+												"name": "description",
+												"type": "string"
+											},
+											{
+												"internalType": "uint256",
+												"name": "retailPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "vipPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "memberPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "reward",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256[]",
+												"name": "capacity",
+												"type": "uint256[]"
+											},
+											{
+												"internalType": "bytes[]",
+												"name": "size",
+												"type": "bytes[]"
+											},
+											{
+												"internalType": "uint256",
+												"name": "quantity",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "shippingFee",
+												"type": "uint256"
+											},
+											{
+												"internalType": "bytes[]",
+												"name": "color",
+												"type": "bytes[]"
+											},
+											{
+												"internalType": "address",
+												"name": "retailer",
+												"type": "address"
+											},
+											{
+												"internalType": "string",
+												"name": "brandName",
+												"type": "string"
+											},
+											{
+												"internalType": "string",
+												"name": "warranty",
+												"type": "string"
+											},
+											{
+												"internalType": "bool",
+												"name": "isFlashSale",
+												"type": "bool"
+											},
+											{
+												"internalType": "bytes[]",
+												"name": "images",
+												"type": "bytes[]"
+											},
+											{
+												"internalType": "string",
+												"name": "videoUrl",
+												"type": "string"
+											},
+											{
+												"internalType": "uint256",
+												"name": "boostTime",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "expiryTime",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "activateTime",
+												"type": "uint256"
+											},
+											{
+												"internalType": "bool",
+												"name": "isMultipleDiscount",
+												"type": "bool"
+											},
+											{
+												"internalType": "bool",
+												"name": "isApprove",
+												"type": "bool"
+											},
+											{
+												"internalType": "uint256",
+												"name": "sold",
+												"type": "uint256"
+											}
+										],
+										"internalType": "struct createProductParams",
+										"name": "params",
+										"type": "tuple"
+									},
+									{
+										"internalType": "uint256",
+										"name": "createdAt",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "updatedAt",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct Product",
+								"name": "product",
+								"type": "tuple"
+							},
+							{
+								"components": [
+									{
+										"internalType": "bytes32",
+										"name": "variantID",
+										"type": "bytes32"
+									},
+									{
+										"components": [
+											{
+												"internalType": "uint256",
+												"name": "retailPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "vipPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "memberPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "reward",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "quantity",
+												"type": "uint256"
+											}
+										],
+										"internalType": "struct Pricing",
+										"name": "priceOptions",
+										"type": "tuple"
+									}
+								],
+								"internalType": "struct Variant[]",
+								"name": "variants",
+								"type": "tuple[]"
+							},
+							{
+								"components": [
+									{
+										"internalType": "bytes32",
+										"name": "id",
+										"type": "bytes32"
+									},
+									{
+										"internalType": "string",
+										"name": "key",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "value",
+										"type": "string"
+									}
+								],
+								"internalType": "struct Attribute[][]",
+								"name": "attributes",
+								"type": "tuple[][]"
+							}
+						],
+						"internalType": "struct ProductInfo[]",
+						"name": "productsInfo",
+						"type": "tuple[]"
+					},
+					{
+						"internalType": "bool",
+						"name": "isMore",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_retailer",
+						"type": "address"
+					}
+				],
+				"name": "getAllRetailerProductInfo",
+				"outputs": [
+					{
+						"components": [
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "id",
+										"type": "uint256"
+									},
+									{
+										"components": [
+											{
+												"internalType": "string",
+												"name": "name",
+												"type": "string"
+											},
+											{
+												"internalType": "uint256",
+												"name": "categoryID",
+												"type": "uint256"
+											},
+											{
+												"internalType": "string",
+												"name": "description",
+												"type": "string"
+											},
+											{
+												"internalType": "uint256",
+												"name": "retailPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "vipPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "memberPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "reward",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256[]",
+												"name": "capacity",
+												"type": "uint256[]"
+											},
+											{
+												"internalType": "bytes[]",
+												"name": "size",
+												"type": "bytes[]"
+											},
+											{
+												"internalType": "uint256",
+												"name": "quantity",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "shippingFee",
+												"type": "uint256"
+											},
+											{
+												"internalType": "bytes[]",
+												"name": "color",
+												"type": "bytes[]"
+											},
+											{
+												"internalType": "address",
+												"name": "retailer",
+												"type": "address"
+											},
+											{
+												"internalType": "string",
+												"name": "brandName",
+												"type": "string"
+											},
+											{
+												"internalType": "string",
+												"name": "warranty",
+												"type": "string"
+											},
+											{
+												"internalType": "bool",
+												"name": "isFlashSale",
+												"type": "bool"
+											},
+											{
+												"internalType": "bytes[]",
+												"name": "images",
+												"type": "bytes[]"
+											},
+											{
+												"internalType": "string",
+												"name": "videoUrl",
+												"type": "string"
+											},
+											{
+												"internalType": "uint256",
+												"name": "boostTime",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "expiryTime",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "activateTime",
+												"type": "uint256"
+											},
+											{
+												"internalType": "bool",
+												"name": "isMultipleDiscount",
+												"type": "bool"
+											},
+											{
+												"internalType": "bool",
+												"name": "isApprove",
+												"type": "bool"
+											},
+											{
+												"internalType": "uint256",
+												"name": "sold",
+												"type": "uint256"
+											}
+										],
+										"internalType": "struct createProductParams",
+										"name": "params",
+										"type": "tuple"
+									},
+									{
+										"internalType": "uint256",
+										"name": "createdAt",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "updatedAt",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct Product",
+								"name": "product",
+								"type": "tuple"
+							},
+							{
+								"components": [
+									{
+										"internalType": "bytes32",
+										"name": "variantID",
+										"type": "bytes32"
+									},
+									{
+										"components": [
+											{
+												"internalType": "uint256",
+												"name": "retailPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "vipPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "memberPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "reward",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "quantity",
+												"type": "uint256"
+											}
+										],
+										"internalType": "struct Pricing",
+										"name": "priceOptions",
+										"type": "tuple"
+									}
+								],
+								"internalType": "struct Variant[]",
+								"name": "variants",
+								"type": "tuple[]"
+							},
+							{
+								"components": [
+									{
+										"internalType": "bytes32",
+										"name": "id",
+										"type": "bytes32"
+									},
+									{
+										"internalType": "string",
+										"name": "key",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "value",
+										"type": "string"
+									}
+								],
+								"internalType": "struct Attribute[][]",
+								"name": "attributes",
+								"type": "tuple[][]"
+							}
+						],
+						"internalType": "struct ProductInfo[]",
+						"name": "productsInfo",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_categoryID",
+						"type": "uint256"
+					}
+				],
+				"name": "getAttributesByCategory",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "id",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "string",
+								"name": "key",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "value",
+								"type": "string"
+							}
+						],
+						"internalType": "struct Attribute[]",
+						"name": "attrs",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getBrands",
+				"outputs": [
+					{
+						"internalType": "bytes[]",
+						"name": "",
+						"type": "bytes[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getCategories",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							}
+						],
+						"internalType": "struct Category[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_categoryID",
+						"type": "uint256"
+					}
+				],
+				"name": "getCategory",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							}
+						],
+						"internalType": "struct Category",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_id",
+						"type": "uint256"
+					}
+				],
+				"name": "getComment",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "user",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "message",
+								"type": "string"
+							},
+							{
+								"internalType": "uint8",
+								"name": "commentType",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256",
+								"name": "createdAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "updatedAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "productID",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Comment",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "code",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "message",
+						"type": "string"
+					}
+				],
+				"name": "getErrorMessage",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					}
+				],
+				"name": "getFavorite",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getFavorites",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "productID",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "createdAt",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Favorite[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getFlashSaleProduct",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"components": [
+									{
+										"internalType": "string",
+										"name": "name",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "categoryID",
+										"type": "uint256"
+									},
+									{
+										"internalType": "string",
+										"name": "description",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "retailPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "vipPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "memberPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "reward",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256[]",
+										"name": "capacity",
+										"type": "uint256[]"
+									},
+									{
+										"internalType": "bytes[]",
+										"name": "size",
+										"type": "bytes[]"
+									},
+									{
+										"internalType": "uint256",
+										"name": "quantity",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "shippingFee",
+										"type": "uint256"
+									},
+									{
+										"internalType": "bytes[]",
+										"name": "color",
+										"type": "bytes[]"
+									},
+									{
+										"internalType": "address",
+										"name": "retailer",
+										"type": "address"
+									},
+									{
+										"internalType": "string",
+										"name": "brandName",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "warranty",
+										"type": "string"
+									},
+									{
+										"internalType": "bool",
+										"name": "isFlashSale",
+										"type": "bool"
+									},
+									{
+										"internalType": "bytes[]",
+										"name": "images",
+										"type": "bytes[]"
+									},
+									{
+										"internalType": "string",
+										"name": "videoUrl",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "boostTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "expiryTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "activateTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "bool",
+										"name": "isMultipleDiscount",
+										"type": "bool"
+									},
+									{
+										"internalType": "bool",
+										"name": "isApprove",
+										"type": "bool"
+									},
+									{
+										"internalType": "uint256",
+										"name": "sold",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct createProductParams",
+								"name": "params",
+								"type": "tuple"
+							},
+							{
+								"internalType": "uint256",
+								"name": "createdAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "updatedAt",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Product[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getPO5FAQ",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "title",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "content",
+								"type": "string"
+							}
+						],
+						"internalType": "struct FAQ[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					}
+				],
+				"name": "getProduct",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"components": [
+									{
+										"internalType": "string",
+										"name": "name",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "categoryID",
+										"type": "uint256"
+									},
+									{
+										"internalType": "string",
+										"name": "description",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "retailPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "vipPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "memberPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "reward",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256[]",
+										"name": "capacity",
+										"type": "uint256[]"
+									},
+									{
+										"internalType": "bytes[]",
+										"name": "size",
+										"type": "bytes[]"
+									},
+									{
+										"internalType": "uint256",
+										"name": "quantity",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "shippingFee",
+										"type": "uint256"
+									},
+									{
+										"internalType": "bytes[]",
+										"name": "color",
+										"type": "bytes[]"
+									},
+									{
+										"internalType": "address",
+										"name": "retailer",
+										"type": "address"
+									},
+									{
+										"internalType": "string",
+										"name": "brandName",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "warranty",
+										"type": "string"
+									},
+									{
+										"internalType": "bool",
+										"name": "isFlashSale",
+										"type": "bool"
+									},
+									{
+										"internalType": "bytes[]",
+										"name": "images",
+										"type": "bytes[]"
+									},
+									{
+										"internalType": "string",
+										"name": "videoUrl",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "boostTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "expiryTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "activateTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "bool",
+										"name": "isMultipleDiscount",
+										"type": "bool"
+									},
+									{
+										"internalType": "bool",
+										"name": "isApprove",
+										"type": "bool"
+									},
+									{
+										"internalType": "uint256",
+										"name": "sold",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct createProductParams",
+								"name": "params",
+								"type": "tuple"
+							},
+							{
+								"internalType": "uint256",
+								"name": "createdAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "updatedAt",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Product",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					}
+				],
+				"name": "getProductDetails",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "user",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "message",
+								"type": "string"
+							},
+							{
+								"internalType": "uint8",
+								"name": "commentType",
+								"type": "uint8"
+							},
+							{
+								"internalType": "uint256",
+								"name": "createdAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "updatedAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "productID",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Comment[]",
+						"name": "_comments",
+						"type": "tuple[]"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "user",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "rateValue",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "createdAt",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Rating[]",
+						"name": "_rating",
+						"type": "tuple[]"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "title",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "content",
+								"type": "string"
+							}
+						],
+						"internalType": "struct FAQ[]",
+						"name": "_faqs",
+						"type": "tuple[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "_productPurchaseTrend",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "_productTrend",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "_rates",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					}
+				],
+				"name": "getProductFAQ",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "title",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "content",
+								"type": "string"
+							}
+						],
+						"internalType": "struct FAQ[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productId",
+						"type": "uint256"
+					}
+				],
+				"name": "getProductInfo",
+				"outputs": [
+					{
+						"components": [
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "id",
+										"type": "uint256"
+									},
+									{
+										"components": [
+											{
+												"internalType": "string",
+												"name": "name",
+												"type": "string"
+											},
+											{
+												"internalType": "uint256",
+												"name": "categoryID",
+												"type": "uint256"
+											},
+											{
+												"internalType": "string",
+												"name": "description",
+												"type": "string"
+											},
+											{
+												"internalType": "uint256",
+												"name": "retailPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "vipPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "memberPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "reward",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256[]",
+												"name": "capacity",
+												"type": "uint256[]"
+											},
+											{
+												"internalType": "bytes[]",
+												"name": "size",
+												"type": "bytes[]"
+											},
+											{
+												"internalType": "uint256",
+												"name": "quantity",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "shippingFee",
+												"type": "uint256"
+											},
+											{
+												"internalType": "bytes[]",
+												"name": "color",
+												"type": "bytes[]"
+											},
+											{
+												"internalType": "address",
+												"name": "retailer",
+												"type": "address"
+											},
+											{
+												"internalType": "string",
+												"name": "brandName",
+												"type": "string"
+											},
+											{
+												"internalType": "string",
+												"name": "warranty",
+												"type": "string"
+											},
+											{
+												"internalType": "bool",
+												"name": "isFlashSale",
+												"type": "bool"
+											},
+											{
+												"internalType": "bytes[]",
+												"name": "images",
+												"type": "bytes[]"
+											},
+											{
+												"internalType": "string",
+												"name": "videoUrl",
+												"type": "string"
+											},
+											{
+												"internalType": "uint256",
+												"name": "boostTime",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "expiryTime",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "activateTime",
+												"type": "uint256"
+											},
+											{
+												"internalType": "bool",
+												"name": "isMultipleDiscount",
+												"type": "bool"
+											},
+											{
+												"internalType": "bool",
+												"name": "isApprove",
+												"type": "bool"
+											},
+											{
+												"internalType": "uint256",
+												"name": "sold",
+												"type": "uint256"
+											}
+										],
+										"internalType": "struct createProductParams",
+										"name": "params",
+										"type": "tuple"
+									},
+									{
+										"internalType": "uint256",
+										"name": "createdAt",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "updatedAt",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct Product",
+								"name": "product",
+								"type": "tuple"
+							},
+							{
+								"components": [
+									{
+										"internalType": "bytes32",
+										"name": "variantID",
+										"type": "bytes32"
+									},
+									{
+										"components": [
+											{
+												"internalType": "uint256",
+												"name": "retailPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "vipPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "memberPrice",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "reward",
+												"type": "uint256"
+											},
+											{
+												"internalType": "uint256",
+												"name": "quantity",
+												"type": "uint256"
+											}
+										],
+										"internalType": "struct Pricing",
+										"name": "priceOptions",
+										"type": "tuple"
+									}
+								],
+								"internalType": "struct Variant[]",
+								"name": "variants",
+								"type": "tuple[]"
+							},
+							{
+								"components": [
+									{
+										"internalType": "bytes32",
+										"name": "id",
+										"type": "bytes32"
+									},
+									{
+										"internalType": "string",
+										"name": "key",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "value",
+										"type": "string"
+									}
+								],
+								"internalType": "struct Attribute[][]",
+								"name": "attributes",
+								"type": "tuple[][]"
+							}
+						],
+						"internalType": "struct ProductInfo",
+						"name": "productInfo",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					}
+				],
+				"name": "getProductRate",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "user",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "rateValue",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "createdAt",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Rating[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "commentIds",
+						"type": "uint256[]"
+					}
+				],
+				"name": "getProductReviewRate",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "rates",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getProducts",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"components": [
+									{
+										"internalType": "string",
+										"name": "name",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "categoryID",
+										"type": "uint256"
+									},
+									{
+										"internalType": "string",
+										"name": "description",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "retailPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "vipPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "memberPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "reward",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256[]",
+										"name": "capacity",
+										"type": "uint256[]"
+									},
+									{
+										"internalType": "bytes[]",
+										"name": "size",
+										"type": "bytes[]"
+									},
+									{
+										"internalType": "uint256",
+										"name": "quantity",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "shippingFee",
+										"type": "uint256"
+									},
+									{
+										"internalType": "bytes[]",
+										"name": "color",
+										"type": "bytes[]"
+									},
+									{
+										"internalType": "address",
+										"name": "retailer",
+										"type": "address"
+									},
+									{
+										"internalType": "string",
+										"name": "brandName",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "warranty",
+										"type": "string"
+									},
+									{
+										"internalType": "bool",
+										"name": "isFlashSale",
+										"type": "bool"
+									},
+									{
+										"internalType": "bytes[]",
+										"name": "images",
+										"type": "bytes[]"
+									},
+									{
+										"internalType": "string",
+										"name": "videoUrl",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "boostTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "expiryTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "activateTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "bool",
+										"name": "isMultipleDiscount",
+										"type": "bool"
+									},
+									{
+										"internalType": "bool",
+										"name": "isApprove",
+										"type": "bool"
+									},
+									{
+										"internalType": "uint256",
+										"name": "sold",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct createProductParams",
+								"name": "params",
+								"type": "tuple"
+							},
+							{
+								"internalType": "uint256",
+								"name": "createdAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "updatedAt",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Product[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_retailer",
+						"type": "address"
+					}
+				],
+				"name": "getRetailerProduct",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "id",
+								"type": "uint256"
+							},
+							{
+								"components": [
+									{
+										"internalType": "string",
+										"name": "name",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "categoryID",
+										"type": "uint256"
+									},
+									{
+										"internalType": "string",
+										"name": "description",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "retailPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "vipPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "memberPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "reward",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256[]",
+										"name": "capacity",
+										"type": "uint256[]"
+									},
+									{
+										"internalType": "bytes[]",
+										"name": "size",
+										"type": "bytes[]"
+									},
+									{
+										"internalType": "uint256",
+										"name": "quantity",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "shippingFee",
+										"type": "uint256"
+									},
+									{
+										"internalType": "bytes[]",
+										"name": "color",
+										"type": "bytes[]"
+									},
+									{
+										"internalType": "address",
+										"name": "retailer",
+										"type": "address"
+									},
+									{
+										"internalType": "string",
+										"name": "brandName",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "warranty",
+										"type": "string"
+									},
+									{
+										"internalType": "bool",
+										"name": "isFlashSale",
+										"type": "bool"
+									},
+									{
+										"internalType": "bytes[]",
+										"name": "images",
+										"type": "bytes[]"
+									},
+									{
+										"internalType": "string",
+										"name": "videoUrl",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "boostTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "expiryTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "activateTime",
+										"type": "uint256"
+									},
+									{
+										"internalType": "bool",
+										"name": "isMultipleDiscount",
+										"type": "bool"
+									},
+									{
+										"internalType": "bool",
+										"name": "isApprove",
+										"type": "bool"
+									},
+									{
+										"internalType": "uint256",
+										"name": "sold",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct createProductParams",
+								"name": "params",
+								"type": "tuple"
+							},
+							{
+								"internalType": "uint256",
+								"name": "createdAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "updatedAt",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Product[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_productIds",
+						"type": "uint256[]"
+					}
+				],
+				"name": "getRetailersByProductIds",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					}
+				],
+				"name": "getUserFavorites",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "productID",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "createdAt",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Favorite[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					}
+				],
+				"name": "getUserRate",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bool",
+								"name": "isRated",
+								"type": "bool"
+							},
+							{
+								"internalType": "uint256",
+								"name": "rateValue",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct RateValue",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_variantID",
+						"type": "bytes32"
+					}
+				],
+				"name": "getVariant",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "variantID",
+								"type": "bytes32"
+							},
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "retailPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "vipPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "memberPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "reward",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "quantity",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct Pricing",
+								"name": "priceOptions",
+								"type": "tuple"
+							}
+						],
+						"internalType": "struct Variant",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "mAdmin",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"name": "mAttribute",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "id",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "string",
+						"name": "key",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "value",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "",
+						"type": "bytes"
+					}
+				],
+				"name": "mBrand",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mCategory",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mCategoryAttributes",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mComment",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "message",
+						"type": "string"
+					},
+					{
+						"internalType": "uint8",
+						"name": "commentType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "createdAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "updatedAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "productID",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mCommentOfProduct",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "mController",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mFAQ",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "title",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "content",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mFavorite",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mIsCorrectRetailer",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mProduct",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "categoryID",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "retailPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "vipPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "memberPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "reward",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "capacity",
+								"type": "uint256[]"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "size",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "quantity",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "shippingFee",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "color",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "address",
+								"name": "retailer",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "brandName",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "warranty",
+								"type": "string"
+							},
+							{
+								"internalType": "bool",
+								"name": "isFlashSale",
+								"type": "bool"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "images",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "string",
+								"name": "videoUrl",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "boostTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "expiryTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "activateTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "isMultipleDiscount",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isApprove",
+								"type": "bool"
+							},
+							{
+								"internalType": "uint256",
+								"name": "sold",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct createProductParams",
+						"name": "params",
+						"type": "tuple"
+					},
+					{
+						"internalType": "uint256",
+						"name": "createdAt",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "updatedAt",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mProductFAQ",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mProductRate",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mProductVariant",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mRate",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "rateValue",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "createdAt",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mRetailerProduct",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mReviewRate",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mUserFavorites",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "productID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "createdAt",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mUserRating",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "isRated",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint256",
+						"name": "rateValue",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"name": "mVariant",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "variantID",
+						"type": "bytes32"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "retailPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "vipPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "memberPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "reward",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "quantity",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct Pricing",
+						"name": "priceOptions",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mVariantAttributes",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "id",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "string",
+						"name": "key",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "value",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "productID",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "products",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "ratingID",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "setAdmin",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "name",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "categoryID",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "description",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "retailPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "vipPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "memberPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "reward",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "capacity",
+								"type": "uint256[]"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "size",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "quantity",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "shippingFee",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "color",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "address",
+								"name": "retailer",
+								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "brandName",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "warranty",
+								"type": "string"
+							},
+							{
+								"internalType": "bool",
+								"name": "isFlashSale",
+								"type": "bool"
+							},
+							{
+								"internalType": "bytes[]",
+								"name": "images",
+								"type": "bytes[]"
+							},
+							{
+								"internalType": "string",
+								"name": "videoUrl",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "boostTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "expiryTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "activateTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "isMultipleDiscount",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isApprove",
+								"type": "bool"
+							},
+							{
+								"internalType": "uint256",
+								"name": "sold",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct createProductParams",
+						"name": "params",
+						"type": "tuple"
+					},
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "variantID",
+								"type": "bytes32"
+							},
+							{
+								"components": [
+									{
+										"internalType": "bytes32",
+										"name": "id",
+										"type": "bytes32"
+									},
+									{
+										"internalType": "string",
+										"name": "key",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "value",
+										"type": "string"
+									}
+								],
+								"internalType": "struct Attribute[]",
+								"name": "attrs",
+								"type": "tuple[]"
+							},
+							{
+								"components": [
+									{
+										"internalType": "uint256",
+										"name": "retailPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "vipPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "memberPrice",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "reward",
+										"type": "uint256"
+									},
+									{
+										"internalType": "uint256",
+										"name": "quantity",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct Pricing",
+								"name": "priceOptions",
+								"type": "tuple"
+							}
+						],
+						"internalType": "struct VariantParams[]",
+						"name": "_variants",
+						"type": "tuple[]"
+					}
+				],
+				"name": "updateProduct",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes[]",
+						"name": "_images",
+						"type": "bytes[]"
+					}
+				],
+				"name": "updateProductImages",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_productID",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_variantID",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "updatedQuantity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_sold",
+						"type": "uint256"
+					}
+				],
+				"name": "updateProductQuantity",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "userConfirmedBuyThisProduct",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"src/ecom/EcomProduct.sol": "EcomProductContract"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+			"keccak256": "0xe06a3f08a987af6ad2e1c1e774405d4fe08f1694b67517438b467cecf0da0ef7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://df6f0c459663c9858b6cba2cda1d14a7d05a985bed6d2de72bd8e78c25ee79db",
+				"dweb:/ipfs/QmeTTxZ7qVk9rjEv2R4CpCwdf8UMCcRqDNMvzNxHc3Fnn9"
+			]
+		},
+		"@openzeppelin/contracts/utils/Panic.sol": {
+			"keccak256": "0xf7fe324703a64fc51702311dc51562d5cb1497734f074e4f483bfb6717572d7a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c6a5ff4f9fd8649b7ee20800b7fa387d3465bd77cf20c2d1068cd5c98e1ed57a",
+				"dweb:/ipfs/QmVSaVJf9FXFhdYEYeCEfjMVHrxDh5qL4CGkxdMWpQCrqG"
+			]
+		},
+		"@openzeppelin/contracts/utils/Strings.sol": {
+			"keccak256": "0x44f87e91783e88415bde66f1a63f6c7f0076f2d511548820407d5c95643ac56c",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://13a51bc2b23827744dcf5bad10c69e72528cf015a6fe48c93632cdb2c0eb1251",
+				"dweb:/ipfs/QmZwPA47Yqgje1qtkdEFEja8ntTahMStYzKf5q3JRnaR7d"
+			]
+		},
+		"@openzeppelin/contracts/utils/math/Math.sol": {
+			"keccak256": "0xa00be322d7db5786750ce0ac7e2f5b633ac30a5ed5fa1ced1e74acfc19acecea",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6c84e822f87cbdc4082533b626667b6928715bb2b1e8e7eb96954cebb9e38c8d",
+				"dweb:/ipfs/QmZmy9dgxLTerBAQDuuHqbL6EpgRxddqgv5KmwpXYVbKz1"
+			]
+		},
+		"@openzeppelin/contracts/utils/math/SafeCast.sol": {
+			"keccak256": "0x195533c86d0ef72bcc06456a4f66a9b941f38eb403739b00f21fd7c1abd1ae54",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b1d578337048cad08c1c03041cca5978eff5428aa130c781b271ad9e5566e1f8",
+				"dweb:/ipfs/QmPFKL2r9CBsMwmUqqdcFPfHZB2qcs9g1HDrPxzWSxomvy"
+			]
+		},
+		"@openzeppelin/contracts/utils/math/SignedMath.sol": {
+			"keccak256": "0xb1970fac7b64e6c09611e6691791e848d5e3fe410fa5899e7df2e0afd77a99e3",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://db5fbb3dddd8b7047465b62575d96231ba8a2774d37fb4737fbf23340fabbb03",
+				"dweb:/ipfs/QmVUSvooZKEdEdap619tcJjTLcAuH6QBdZqAzWwnAXZAWJ"
+			]
+		},
+		"src/ecom/EcomProduct.sol": {
+			"keccak256": "0xe7a9d01515b50aad1694c7ca4663ec4bdf1ec773ad01860c7dcef7a63229c0d7",
+			"license": "SEE LICENSE IN LICENSE",
+			"urls": [
+				"bzz-raw://0bc5e66d1f57c9e82c3ef5837f83deae8313269d8cc3527b3c4f1ade3254286c",
+				"dweb:/ipfs/QmbTmqgiTvd5f2uv9tVm5AriTf8Vt6h77t3AR71GtZ3wrK"
+			]
+		},
+		"src/ecom/interfaces/IEcomCart.sol": {
+			"keccak256": "0x7dc77e08b634b937f9aa585a395913b84fd0be86900b2dbd47c0367afbfc9568",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d7d5e763dc06ae1fb4108d73178407bbed49310ce461ee1299ed9ce8eef3c512",
+				"dweb:/ipfs/QmeQ9BD7NtoyzVAkygMWaqvctw2EzHt4xaBrZ5KRWDX8g3"
+			]
+		},
+		"src/ecom/interfaces/IEcomInfo.sol": {
+			"keccak256": "0x2c94d16571881c3e4089e99ead579e233504c1b7532e5d053290c238acde64ac",
+			"license": "SEE LICENSE IN LICENSE",
+			"urls": [
+				"bzz-raw://18cabcb19d8729d35c0c7061549893a7c963d3556207130459d95aee8beeb06f",
+				"dweb:/ipfs/QmNM9B5yZPgxcVedAdRHPmLugndy94QDfodAZXGomvZgdU"
+			]
+		},
+		"src/ecom/interfaces/IEcomOrder.sol": {
+			"keccak256": "0xdf3185a444da41a2716f61c43060170d2ff3d437a03f0dee584a434862a8b751",
+			"license": "SEE LICENSE IN LICENSE",
+			"urls": [
+				"bzz-raw://563a65ea93e5b976292738a5ddc278341d19494a2f59871af73e9c59b44fba1e",
+				"dweb:/ipfs/QmfFkqtquzCBvFCqWyGEtm1m68AxAYWNLpGiVJ1mbMgof6"
+			]
+		},
+		"src/ecom/interfaces/IEcomProduct.sol": {
+			"keccak256": "0x5d08e48bea24a2f72c432292b8eea861cbf15421d5c60b0eaf46d959528ecf88",
+			"license": "SEE LICENSE IN LICENSE",
+			"urls": [
+				"bzz-raw://1c7a549575af0f0ab1f3ecf7704b198549e2fbf068866283979710d32b20ec24",
+				"dweb:/ipfs/QmYh7s6cfniAnXFqQjomqmcmYbA8A5FwXt4S9TS2gqK5M1"
+			]
+		},
+		"src/ecom/interfaces/IEcomUser.sol": {
+			"keccak256": "0xf640ca74583f1cff5c7b4e23274af6ddf8c939fb450a58f14b8008832f71e7d1",
+			"license": "SEE LICENSE IN LICENSE",
+			"urls": [
+				"bzz-raw://20efc4c61f71790922b96d1693d6cf827a498f4678fee7708778253060c65a00",
+				"dweb:/ipfs/QmV9RZudyu5vCmSgCcjJcfwZNfs3tm4oTz8ZV8remYJBwq"
+			]
+		},
+		"src/ecom/libs/utils.sol": {
+			"keccak256": "0x4adfa2c78cd9fdc5548615c80ec9f17d0c10788f040ba98b651a79a8a306679b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ce6c0f24969650e272ed9ff7d7bd5112a50fbe280c3a849498e1dc7f2f721535",
+				"dweb:/ipfs/QmR5r3SPzeqv8qQD5Zh4ZY3yA3tAYrYXBxxBUxyJ37mLBB"
+			]
+		}
+	},
+	"version": 1
+}

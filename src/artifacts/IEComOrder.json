@@ -1,0 +1,212 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"ropsten:3": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"rinkeby:4": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"kovan:42": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"goerli:5": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"gasEstimates": null,
+		"methodIdentifiers": {
+			"ConfirmPaymentForOrderCode(address,bytes32)": "338a6df5",
+			"getOrder(uint256)": "d09ef241",
+			"getOrderCode(bytes32)": "fb08e12e"
+		}
+	},
+	"abi": [
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "user",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "orderCode",
+					"type": "bytes32"
+				}
+			],
+			"name": "ConfirmPaymentForOrderCode",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_id",
+					"type": "uint256"
+				}
+			],
+			"name": "getOrder",
+			"outputs": [
+				{
+					"components": [
+						{
+							"internalType": "uint256",
+							"name": "orderID",
+							"type": "uint256"
+						},
+						{
+							"internalType": "address",
+							"name": "user",
+							"type": "address"
+						},
+						{
+							"internalType": "address",
+							"name": "buyer",
+							"type": "address"
+						},
+						{
+							"internalType": "uint256",
+							"name": "discountID",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256[]",
+							"name": "cartItemIds",
+							"type": "uint256[]"
+						},
+						{
+							"internalType": "uint256[]",
+							"name": "productIds",
+							"type": "uint256[]"
+						},
+						{
+							"internalType": "bytes32[]",
+							"name": "variantIds",
+							"type": "bytes32[]"
+						},
+						{
+							"internalType": "uint256[]",
+							"name": "quantities",
+							"type": "uint256[]"
+						},
+						{
+							"internalType": "uint256[]",
+							"name": "diffPrices",
+							"type": "uint256[]"
+						},
+						{
+							"internalType": "uint256[]",
+							"name": "prices",
+							"type": "uint256[]"
+						},
+						{
+							"internalType": "uint256[]",
+							"name": "rewards",
+							"type": "uint256[]"
+						},
+						{
+							"internalType": "uint256",
+							"name": "totalPrice",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint8",
+							"name": "checkoutType",
+							"type": "uint8"
+						},
+						{
+							"internalType": "uint8",
+							"name": "orderStatus",
+							"type": "uint8"
+						},
+						{
+							"internalType": "bytes32",
+							"name": "codeRef",
+							"type": "bytes32"
+						},
+						{
+							"internalType": "uint256",
+							"name": "afterDiscountPrice",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint256",
+							"name": "shippingPrice",
+							"type": "uint256"
+						},
+						{
+							"internalType": "uint8",
+							"name": "paymentType",
+							"type": "uint8"
+						},
+						{
+							"internalType": "uint256",
+							"name": "createdAt",
+							"type": "uint256"
+						}
+					],
+					"internalType": "struct IEComOrder.Order",
+					"name": "",
+					"type": "tuple"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "orderCode",
+					"type": "bytes32"
+				}
+			],
+			"name": "getOrderCode",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		}
+	]
+}

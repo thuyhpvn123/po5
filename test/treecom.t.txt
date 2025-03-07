@@ -1,0 +1,163 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.13;
+
+import {Test, console2} from "forge-std/Test.sol";
+import {TreeCommission} from "../src/TreeCommission.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {MockERC20} from "./mocks/MockERC20.sol";
+import {BalancesManager} from "../src/BalancesManager.sol";
+import {Showroom} from "../src/Showroom.sol";
+import {ViewTree} from "../src/ViewTree.sol";
+
+contract TreeCommissionTest is Test {
+    TreeCommission public treeCommission;
+    MockERC20 public usdt;
+    BalancesManager public balancesManager;
+    Showroom public showroom;
+    ViewTree public viewTree;
+
+    address public rootNode;
+    address public daoNode;
+    address public stockNode;
+    address public user1;
+    address public user2;
+    address public user3;
+
+    function setUp() public {
+        // Deploy mock contracts
+        usdt = new MockERC20("USDT", "USDT", 6);
+        balancesManager = new BalancesManager();
+        showroom = new Showroom();
+        viewTree = new ViewTree();
+
+        // Setup test addresses
+        rootNode = makeAddr("rootNode");
+        daoNode = makeAddr("daoNode");
+        stockNode = makeAddr("stockNode");
+        user1 = makeAddr("user1");
+        user2 = makeAddr("user2");
+        user3 = makeAddr("user3");
+
+        // Deploy main contract
+        treeCommission = new TreeCommission(
+            address(viewTree),
+            address(showroom),
+            address(balancesManager),
+            rootNode,
+            daoNode,
+            stockNode,
+            address(usdt)
+        );
+
+        // Setup initial balances and approvals
+        usdt.mint(user1, 1000 * 1e6); // 1000 USDT
+        usdt.mint(user2, 1000 * 1e6);
+        usdt.mint(user3, 1000 * 1e6);
+        
+        vm.prank(user1);
+        usdt.approve(address(treeCommission), type(uint256).max);
+        vm.prank(user2);
+        usdt.approve(address(treeCommission), type(uint256).max);
+        vm.prank(user3);
+        usdt.approve(address(treeCommission), type(uint256).max);
+    }
+
+    function test_AddVIPMember() public {
+        // Test adding a VIP member
+        vm.startPrank(user1);
+        treeCommission.addVIPMember(user2, rootNode);
+        vm.stopPrank();
+
+        // Verify VIP node creation
+        (address parent, uint256 expiry) = treeCommission.vipNodes(user2);
+        assertEq(parent, rootNode, "Incorrect parent node");
+        assertGt(expiry, block.timestamp, "Invalid expiry time");
+        
+        // Verify USDT transfer
+        assertEq(usdt.balanceOf(address(treeCommission)), 120 * 1e6, "Incorrect USDT transfer");
+    }
+
+    function test_AddPromoterMember() public {
+        // Test adding a promoter member
+        uint256 longtitude = 100;
+        uint256 lattitude = 100;
+
+        vm.startPrank(user1);
+        treeCommission.addPromoterMember(user2, rootNode, longtitude, lattitude);
+        vm.stopPrank();
+
+        // Verify node creation
+        assertEq(treeCommission.getUserStatus(user2), 0, "Incorrect status"); // 0 = Status.InActive
+        
+        // Verify USDT transfer
+        assertEq(usdt.balanceOf(address(treeCommission)), 160 * 1e6, "Incorrect USDT transfer"); // 120 + 40 USDT
+    }
+
+    function test_UpgradeToPromoter() public {
+        // First add as VIP
+        vm.startPrank(user1);
+        treeCommission.addVIPMember(user2, rootNode);
+
+        // Then upgrade to promoter
+        uint256 longtitude = 100;
+        uint256 lattitude = 100;
+        
+        vm.deal(user1, 40 * 1e6); // Give ETH for activation fee
+        treeCommission.upgradeToPromoter{value: 40 * 1e6}(user2, longtitude, lattitude);
+        vm.stopPrank();
+
+        // Verify upgrade
+        assertEq(treeCommission.getUserStatus(user2), 0, "Incorrect status");
+        
+        // Verify VIP node removal
+        (address parent,) = treeCommission.vipNodes(user2);
+        assertEq(parent, address(0), "VIP node not removed");
+    }
+
+    function test_RenewMembership() public {
+        // First add member
+        uint256 longtitude = 100;
+        uint256 lattitude = 100;
+
+        vm.startPrank(user1);
+        treeCommission.addPromoterMember(user2, rootNode, longtitude, lattitude);
+
+        // Then renew membership
+        skip(30 days); // Skip forward 30 days
+        treeCommission.renewMembership(user2);
+        vm.stopPrank();
+
+        // Verify renewal
+        (,,,,,uint256 expiry,) = treeCommission.nodeData(user2);
+        assertGt(expiry, block.timestamp + 360 days, "Membership not renewed properly");
+    }
+
+    function test_SetAgent() public {
+        // First add member
+        uint256 longtitude = 100;
+        uint256 lattitude = 100;
+
+        vm.prank(user1);
+        treeCommission.addPromoterMember(user2, rootNode, longtitude, lattitude);
+
+        // Set agent level
+        vm.prank(address(this)); // Contract is owner
+        treeCommission.setAgent(user2, 1);
+
+        // Verify agent level
+        (,,,,,,uint256 agentLevel) = treeCommission.nodeData(user2);
+        assertEq(agentLevel, 1, "Agent level not set correctly");
+    }
+
+    function testFail_SetAgentUnauthorized() public {
+        uint256 longtitude = 100;
+        uint256 lattitude = 100;
+
+        vm.prank(user1);
+        treeCommission.addPromoterMember(user2, rootNode, longtitude, lattitude);
+
+        // Try to set agent level as non-owner
+        vm.prank(user1);
+        treeCommission.setAgent(user2, 1);
+    }
+}
