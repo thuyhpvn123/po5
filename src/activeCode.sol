@@ -131,6 +131,10 @@ contract MerchantActiveCode {
         return activeCode;
     }
     
+    function getRegisterDevice() external view returns (uint256) {
+        return devices[msg.sender].activeCode;
+    }
+    
     function getActiveCodeInfo(uint256 _activeCode) external view returns (Merchant memory, Device memory) {
 
         // check active Code

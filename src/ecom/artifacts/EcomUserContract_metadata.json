@@ -62,19 +62,6 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "EcomUser",
-				"outputs": [
-					{
-						"internalType": "contract IEcomUser",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -147,25 +134,6 @@
 					}
 				],
 				"name": "SetEcomOrder",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_ecomProduct",
-						"type": "address"
-					}
-				],
-				"name": "SetEcomUser",
 				"outputs": [
 					{
 						"internalType": "bool",
@@ -1522,8 +1490,8 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": true,
-			"runs": 0
+			"enabled": false,
+			"runs": 200
 		},
 		"remappings": []
 	},
@@ -1577,11 +1545,11 @@
 			]
 		},
 		"src/ecom/EcomUser.sol": {
-			"keccak256": "0xce18e28dcd823bdc97dd92c0107c500410ffbd07c013f01c59cc2821ed1882ac",
+			"keccak256": "0xab10c38b98856bed17fbf7a236475aeb6db6e54991cfe8c6246cf0b1d3070635",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://6be70f17920b65f1c7b0eabbe014c05da1cd6b9bb7099326ba2a89610735e7ec",
-				"dweb:/ipfs/QmeRjS2MDa1m42xxV2xR3XuWrFEaWsBfCvrj1epZpbHgF7"
+				"bzz-raw://a3547ba37f44b97aea4c2d74f85ef5a02451618a822311f28ae777bf5448828c",
+				"dweb:/ipfs/QmVQyMHghFCGE33iy4arZaToW5QLQ4DJyi72Aa3ruFKcEC"
 			]
 		},
 		"src/ecom/interfaces/IEcomCart.sol": {
@@ -1601,11 +1569,11 @@
 			]
 		},
 		"src/ecom/interfaces/IEcomOrder.sol": {
-			"keccak256": "0xdf3185a444da41a2716f61c43060170d2ff3d437a03f0dee584a434862a8b751",
+			"keccak256": "0x0c589357acc2a75f59fcbc293e099698b35048b8cc14cd4c62e59888fa06df7e",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://563a65ea93e5b976292738a5ddc278341d19494a2f59871af73e9c59b44fba1e",
-				"dweb:/ipfs/QmfFkqtquzCBvFCqWyGEtm1m68AxAYWNLpGiVJ1mbMgof6"
+				"bzz-raw://422eb41f60e1e0ea7a9644d6f3b5a64bab0b3074603529e549978a8dc942b057",
+				"dweb:/ipfs/Qmc94d1zvGhw1i73suRYEdgA8ytDdcMeRcizCTqtkzWNSF"
 			]
 		},
 		"src/ecom/interfaces/IEcomProduct.sol": {

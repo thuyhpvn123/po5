@@ -2562,11 +2562,11 @@
 			]
 		},
 		"src/ecom/EcomOrder.sol": {
-			"keccak256": "0x42d5f274803fcb908cb393778b25ecfa75687a4e38e98550523ce2674d58a993",
+			"keccak256": "0x9cc1342341c8f4ae644ca0190a487537a94b6ddfc0c85613218dad1d4eea8106",
 			"license": "No",
 			"urls": [
-				"bzz-raw://36bdd44709deda3ba961cf6582f0bd1eba35ac225c9c5df4349758aa1628d0c7",
-				"dweb:/ipfs/QmPMyzvpske1KFHyVFXAPithzCjaJdA9FysbXCXqsSC8er"
+				"bzz-raw://d2d13e584ca525c0f898e1113fb9b06accea2d7adff8ac84bfe528050d097950",
+				"dweb:/ipfs/QmY6crQeENhXbSp9dpeCsNza83QgjQ7PLSJkf4m5VeDXh3"
 			]
 		},
 		"src/ecom/interfaces/IEcomCart.sol": {

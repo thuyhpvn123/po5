@@ -8,6 +8,7 @@ import "./interfaces/ITreeCom.sol";
 import "./interfaces/IEcomProduct.sol";
 import "./interfaces/IEcomInfo.sol";
 import "./interfaces/IEcomUser.sol";
+// import "forge-std/console.sol";
 contract EcomOrderContract  {
     event eCreateShipping(
         uint256 id,
@@ -73,7 +74,7 @@ contract EcomOrderContract  {
     modifier onlyAddress(address user) {
         require(
             msg.sender == user,
-            '{"from": "EcomProduct.sol","code": 55, "message": "You are not allowed."}'
+            '{"from": "EcomOrder.sol","code": 55, "message": "You are not allowed."}'
         );
         _;
     }
@@ -283,8 +284,8 @@ contract EcomOrderContract  {
     function _deleteItemInCart(address user, uint256 itemID) private {
         uint256 indexToDelete;
         bool found = false;
-
         for (uint256 i = 0; i < mUserCart[user].items.length; i++) {
+
             if (mUserCart[user].items[i].id == itemID) {
                 indexToDelete = i;
                 found = true;
@@ -497,10 +498,11 @@ function ProcessOrder(
             productPrice = productVarient.priceOptions.vipPrice;
         } else {
             productPrice = productVarient.priceOptions.memberPrice;
-            diffPrice = productPrice - productVarient.priceOptions.vipPrice;
+            // diffPrice = productPrice - productVarient.priceOptions.vipPrice;
 
             require(
-                diffPrice > 0,
+                // diffPrice > 0,
+                productPrice < productVarient.priceOptions.vipPrice,
                 '{"from": "EcomProduct.sol","code": 13, "message": "wrong diffPrice"}'
             );
         }
@@ -528,11 +530,11 @@ function ProcessOrder(
     ) external returns (bytes32) {
         require(
             params.length > 0,
-            '{"from": "EcomProduct.sol","code": 11, "message":"Order have no item"}'
+            '{"from": "EcomOrder.sol","code": 11, "message":"Order have no item"}'
         );
         require(
             params.length < 100,
-            '{"from": "EcomProduct.sol","code": 11, "message":"Order have max item"}'
+            '{"from": "EcomOrder.sol","code": 11, "message":"Order have max item"}'
         );
         require(
             details.paymentType == PaymentType.METANODE,
@@ -545,7 +547,7 @@ function ProcessOrder(
         address parent = EcomUser.getUserParent(msg.sender);
         require(
             parent != address(0),
-            '{"from": "EcomProduct.sol","code": 12, "message":"User not exist"}'
+            '{"from": "EcomOrder.sol","code": 12, "message":"User not exist"}'
         );
 
         orderID++;
@@ -602,7 +604,8 @@ function ProcessOrder(
         if (newOrder.cartItemIds.length > 0) {
             for (uint i = 0; i < newOrder.cartItemIds.length; i++) {
                 // delete item in cart
-                deleteItemInCartBySmc(newOrder.user, newOrder.cartItemIds[i]);
+                // deleteItemInCartBySmc(newOrder.user, newOrder.cartItemIds[i]);
+                deleteItemInCartBySmc(msg.sender, newOrder.cartItemIds[i]);
             }
         }
 
@@ -619,17 +622,13 @@ function ProcessOrder(
     
     // xác nhận thanh toán từ bên smart contract po5
     function ConfirmPaymentForOrderCode(
-        // address user,
         bytes32 orderCode
-    ) external onlyAddress(POS) {
-
+    ) external onlyAddress(address(TreeCom)) {
         uint256 _orderID = orderCodes[orderCode];
         require(_orderID > 0, "wrong order ID");
-
         Order memory newOrder = mOrder[_orderID];
 
         require(newOrder.cartItemIds.length > 0, "not found order");
-
 
         for (uint8 i = 0; i < newOrder.productIds.length; i++) {
             Variant memory tempVariant = EcomProduct.getVariant(newOrder.productIds[i], newOrder.variantIds[i]); 

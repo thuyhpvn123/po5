@@ -28,7 +28,6 @@ contract EcomUserContract {
     ITreeCom public TreeCom;
     INoti public Notification;
     IEcomOrder public EcomOrder;
-    IEcomUser public EcomUser;
     IEcomInfo public EcomInfo;
     string public NOTIFIER = "ECOM";
     constructor() payable {
@@ -53,10 +52,6 @@ contract EcomUserContract {
         return true;
     }
 
-    function SetEcomUser(address _ecomProduct) public onlyAddress(owner) returns (bool){
-        EcomUser = IEcomUser(_ecomProduct);
-        return true;
-    }
 
     modifier onlyAddress(address user) {
         require(

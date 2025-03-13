@@ -3819,6 +3819,24 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "retailer",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "categoryID",
+						"type": "uint256"
+					}
+				],
+				"name": "initiatePrductDemo",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
 						"name": "",
 						"type": "address"
 					}
@@ -4960,7 +4978,7 @@
 		},
 		"optimizer": {
 			"enabled": true,
-			"runs": 200
+			"runs": 0
 		},
 		"remappings": []
 	},
@@ -5014,11 +5032,11 @@
 			]
 		},
 		"src/ecom/EcomProduct.sol": {
-			"keccak256": "0xe7a9d01515b50aad1694c7ca4663ec4bdf1ec773ad01860c7dcef7a63229c0d7",
+			"keccak256": "0x42f475230ebd2495e630210d45c219fea198de844c98228830d3d6905c1b465b",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://0bc5e66d1f57c9e82c3ef5837f83deae8313269d8cc3527b3c4f1ade3254286c",
-				"dweb:/ipfs/QmbTmqgiTvd5f2uv9tVm5AriTf8Vt6h77t3AR71GtZ3wrK"
+				"bzz-raw://d4fd0230c4e9165281c14d18f1c520c8a89761c4f1f870379f4791b240d7aeac",
+				"dweb:/ipfs/QmZ3LatafztTJG2mqQ5wfG1aXZbs9wVd1JnakqAxhPpCej"
 			]
 		},
 		"src/ecom/interfaces/IEcomCart.sol": {
@@ -5038,11 +5056,11 @@
 			]
 		},
 		"src/ecom/interfaces/IEcomOrder.sol": {
-			"keccak256": "0xdf3185a444da41a2716f61c43060170d2ff3d437a03f0dee584a434862a8b751",
+			"keccak256": "0x0c589357acc2a75f59fcbc293e099698b35048b8cc14cd4c62e59888fa06df7e",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://563a65ea93e5b976292738a5ddc278341d19494a2f59871af73e9c59b44fba1e",
-				"dweb:/ipfs/QmfFkqtquzCBvFCqWyGEtm1m68AxAYWNLpGiVJ1mbMgof6"
+				"bzz-raw://422eb41f60e1e0ea7a9644d6f3b5a64bab0b3074603529e549978a8dc942b057",
+				"dweb:/ipfs/Qmc94d1zvGhw1i73suRYEdgA8ytDdcMeRcizCTqtkzWNSF"
 			]
 		},
 		"src/ecom/interfaces/IEcomProduct.sol": {

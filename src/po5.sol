@@ -311,7 +311,7 @@ interface IEComOrder {
     function getOrderCode(bytes32 orderCode) external view returns (uint256);
 
     function ConfirmPaymentForOrderCode(
-        address user,
+        // address user,
         bytes32 orderCode
     ) external;
     function getOrder(uint256 _id) external view returns (Order memory);
@@ -2372,12 +2372,12 @@ contract TreeCommission is ITreeCommission {
 
 
 
-    BalancesManager internal balancesManager;
+    BalancesManager public balancesManager;
     Showroom internal showroomManager;
     EventLogger internal eventLoggerManager;
 
-    address internal eComOrderManagerAddress;
-    address internal eComUserManagerAddress;
+    address public eComOrderManagerAddress;
+    address public eComUserManagerAddress;
 
 
     mapping(bytes32 => bool) internal linkViewTree;
@@ -2430,7 +2430,7 @@ contract TreeCommission is ITreeCommission {
     modifier onlyAddress(address user) {
         require(
             msg.sender == user,
-            '{"from": "EcomProduct.sol","code": 55, "message": "You are not allowed."}'
+            '{"from": "TreeCom.sol","code": 55, "message": "You are not allowed."}'
         );
         _;
     }
@@ -2447,6 +2447,16 @@ contract TreeCommission is ITreeCommission {
         require(msg.sender == tx.origin, "Smart contracts not allowed");
         _;
     }
+    function setEcomOrder(address _eComOrderManagerAddress) external onlyOwner{
+        eComOrderManagerAddress = _eComOrderManagerAddress;
+    }
+    function setEcomUser(address _eComUserManagerAddress) external onlyOwner{
+        eComUserManagerAddress = _eComUserManagerAddress;
+    }
+    function setUsdt(address _usdtAddress) external onlyOwner{
+        usdtToken = IERC20(_usdtAddress);
+    }
+
 
     /**
      * @dev Khóa dữ liệu trong hệ thống
@@ -2678,7 +2688,6 @@ contract TreeCommission is ITreeCommission {
 
     }
 
-
     /**
      * @dev Thêm một VIP member vào hệ thống
      * @param newMember Địa chỉ của thành viên mới
@@ -2688,7 +2697,7 @@ contract TreeCommission is ITreeCommission {
         require(isLockData == false, "System upgrade"); // Kiểm tra hệ thống có đang nâng cấp không
         require(nodes[newMember].parent == address(0), "User already exists"); // Kiểm tra user đã tồn tại chưa
         require(vipNodes[newMember].parent == address(0), "User already exists in VIP"); // Kiểm tra user đã tồn tại trong VIP chưa
-        require(vipNodes[parent].parent != address(0) || parent == rootNode, "Parent does not exist"); // Kiểm tra cha có tồn tại và đang active không
+        require(nodes[parent].parent != address(0) || parent == rootNode, "Parent does not exist"); // Kiểm tra cha có tồn tại và đang active không
         
         // bỏ điều kiên này , để khi parent vừa mới đăng ký vẫn có thể cho user khác ở dưới được
         // require(nodes[parent].status == TreeLib.Status.Active, "Parent is not active"); // Kiểm tra cha có đang active không
@@ -2751,6 +2760,13 @@ contract TreeCommission is ITreeCommission {
         }
 
         return paginatedChildren; // Trả về danh sách VIP đã phân trang
+    }
+    function testGetUserParent(address newMember)external view returns(address){
+        IEComUser eComUserManager = IEComUser(eComUserManagerAddress);
+        return eComUserManager.getUserParent(newMember);
+    }
+    function testGetNodeParent(address newMember)external view returns(address){
+        return nodes[newMember].parent;
     }
 
     /**
@@ -2932,6 +2948,9 @@ contract TreeCommission is ITreeCommission {
     function isVIPOrPromoter(address user) external view  returns (bool) {
       return (nodes[user].parent != address(0) || vipNodes[user].parent != address(0) || user == rootNode);
     }
+    function isVIP() external view  returns (bool) {
+        return vipNodes[msg.sender].parent != address(0);
+    }
 
     function isPromoter(address user) external view  returns (bool) {
       return (nodes[user].parent != address(0) && nodes[user].status == TreeLib.Status.Active);
@@ -2961,9 +2980,9 @@ contract TreeCommission is ITreeCommission {
 
         address parent = order.user;
         bool isVIP = order.user == order.buyer; // nếu người mua cũng là người giới thiệu, thì là VIP hoặc Promoter
-
-        uint256 commission = amount / 1e6 - bp;
-        require(commission > 0, "Wrong commission");
+        // uint256 commission = amount / 1e6 - bp;
+        // require(commission > 0, "Wrong commission");
+        require(amount / 1e6 > bp, "Wrong commission");
 
         require(parent != address(0), "Wrong amount");
         require(amount > 0, "Wrong amount");
@@ -2989,7 +3008,7 @@ contract TreeCommission is ITreeCommission {
 
 
         // gọi về smart contract ECOM để báo hoàn tất
-        eComManager.ConfirmPaymentForOrderCode(user, orderCode);
+        eComManager.ConfirmPaymentForOrderCode(orderCode);
 
         // lưu lại trạng thái đơn hàng để đợi admin duyệt
         confirmPayment[orderCode] = ConfirmPayment({
@@ -3085,7 +3104,7 @@ contract TreeCommission is ITreeCommission {
      * @param pageSize Số lượng trả về
      * @return Mảng địa chỉ con
      */
-    function getChildren(address user, uint8 totalLevel, uint256 startIndex, uint256 pageSize) external onlyEOA returns (TreeLib.NodeInfo[] memory, TreeLib.NodeData[] memory) {
+    function getChildren(address user, uint8 totalLevel, uint256 startIndex, uint256 pageSize) external onlyEOA returns (address[] memory, TreeLib.NodeInfo[] memory, TreeLib.NodeData[] memory) {
         // chỉ cho phép ViewTree gọi
         // require(msg.sender == viewTreeContract, "Unauthorized caller");
         require(TreeLib.isDescendant(nodes, user, msg.sender, totalLevel, linkViewTree, allLinkViewTreeKeys), "Unauthorized caller");
@@ -3093,21 +3112,22 @@ contract TreeCommission is ITreeCommission {
 
         uint256 totalChildren = nodes[user].children.length;
 
-        if (startIndex >= totalChildren) return (new TreeLib.NodeInfo[](0), new TreeLib.NodeData[](0));// Trả về mảng rỗng nếu vượt giới hạn
+        if (startIndex >= totalChildren) return (new address[](0), new TreeLib.NodeInfo[](0), new TreeLib.NodeData[](0));// Trả về mảng rỗng nếu vượt giới hạn
 
 
         uint256 actualPageSize = (startIndex + pageSize > totalChildren) ? (totalChildren - startIndex) : pageSize;
 
         TreeLib.NodeInfo[] memory childrenInfo = new TreeLib.NodeInfo[](actualPageSize);
         TreeLib.NodeData[] memory childrenData = new TreeLib.NodeData[](actualPageSize);
-
+        address[] memory children = new address[](actualPageSize);
         for (uint256 i = 0; i < actualPageSize; i++) {
             address child = nodes[user].children[startIndex + i];
             childrenInfo[i] = nodes[child];
             childrenData[i] = nodeData[child];
+            children[i] = child;
         }
 
-        return (childrenInfo, childrenData);
+        return (children, childrenInfo, childrenData);
     }
 
         /**

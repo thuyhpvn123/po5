@@ -7,7 +7,7 @@ import "./libs/utils.sol";
 import "./interfaces/IEcomOrder.sol";
 import "./interfaces/IEcomUser.sol";
 import "./interfaces/IEcomInfo.sol";
-
+// import "forge-std/console.sol";
 contract EcomProductContract  {
     event eRegisterRetailer(string username, address user, string phoneNumber);
     event eCreateProduct(uint256 id, createProductParams params);
@@ -181,6 +181,7 @@ contract EcomProductContract  {
     ) public onlyControllerOrRetailer returns (uint256) {
         productID++;
         {
+            require(params.retailPrice/1e6 >0 && params.vipPrice/1e6 >0 && params.memberPrice/1e6 >0,"price not big enough");
             require(
                 mCategory[params.categoryID].id != 0,
                 getErrorMessage(2, "Category not found")
@@ -1421,5 +1422,70 @@ contract EcomProductContract  {
             res[i] = mProduct[_productIds[i]];
         }
         return res;
+    }
+    function initiatePrductDemo(address retailer,uint categoryID)external {
+        uint256[] memory capacity = new uint256[](3);
+        capacity[0] = 1;
+        capacity[1] = 2;
+        capacity[2] = 3;
+        bytes[]  memory size = new bytes[](3);
+        size[0] = hex"11";  // 1 byte
+        size[1] = hex"0112"; // 2 bytes
+        size[2] = hex"0113"; // 2 bytes
+        bytes[]  memory color = new bytes[](3);
+        color[0] = hex"11";  // 1 byte
+        color[1] = hex"0112"; // 2 bytes
+        color[2] = hex"0113"; // 2 bytes
+        bytes[]  memory images = new bytes[](3);
+        images[0] = hex"11";  // 1 byte
+        images[1] = hex"0112"; // 2 bytes
+        images[2] = hex"0113"; // 2 bytes
+        
+        createProductParams memory params = createProductParams({
+            name: "Test Product",
+            categoryID: categoryID,
+            description: "A sample product",
+            retailPrice: 1000 * 10**6,
+            vipPrice: 1200 * 10**6,
+            memberPrice: 1100 * 10**6,
+            reward: 10,
+            capacity: capacity,          
+            size: size ,
+            quantity: 100,
+            shippingFee: 50,
+            color: color ,
+            retailer: retailer,
+            brandName: "Brand A",
+            warranty: "1 year",
+            isFlashSale: false,
+            images: images ,
+            videoUrl: "",
+            boostTime: 0,
+            expiryTime: block.timestamp + 365 days,
+            activateTime: block.timestamp,
+            isMultipleDiscount: false,
+            isApprove: true,
+            sold: 0
+        });
+        Attribute[] memory attrs = new Attribute[](1);
+        attrs[0] = Attribute({
+            id:keccak256(abi.encodePacked("2")),
+            key:"key",
+            value:"value"
+        });
+        bytes32 variantID = hashAttributes(attrs);
+        VariantParams[] memory variants = new VariantParams[](1);
+        variants[0] = VariantParams({
+            variantID : variantID,
+            attrs: attrs ,
+            priceOptions: Pricing({
+                retailPrice: 1000 * 10**6,
+                vipPrice: 1200 * 10**6,
+                memberPrice: 1100 * 10**6,
+                reward: 10,
+                quantity: 100
+            })
+        });
+        uint256 productId = createProduct(params, variants);
     }
 }
