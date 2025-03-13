@@ -1,0 +1,261 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
+
+import "forge-std/Test.sol";
+import "../src/ecom/EcomProduct.sol";
+import "../src/ecom/EcomOrder.sol";
+import "../src/ecom/EcomUser.sol";
+import "../src/ecom/interfaces/IEcomProduct.sol";
+contract CreateProductTest is Test {
+    EcomProductContract public ECOM_PRODUCT;
+    EcomUserContract public ECOM_USER;
+    EcomOrderContract public ECOM_ORDER;
+    address retailer = address(0x123);
+    address nonRetailer = address(0x456);
+    address owner = address(0x111);
+    address buyer = address(0x222);
+
+    constructor()  {
+        vm.startPrank(owner);
+        ECOM_PRODUCT = new EcomProductContract();
+        ECOM_USER = new EcomUserContract();
+        ECOM_ORDER = new EcomOrderContract();
+        ECOM_PRODUCT.SetEcomUser(address(ECOM_USER));
+        ECOM_ORDER.SetEcomUser(address(ECOM_USER));
+        ECOM_ORDER.SetEcomProduct(address(ECOM_PRODUCT));
+        // ECOM_ORDER.SetTreeCom();
+        vm.stopPrank();
+        
+    }
+
+    function testCreateProductSuccess() public {
+        //setRetailer
+        vm.prank(owner);
+        ECOM_USER.setRetailer(retailer);
+        vm.prank(owner);
+        // ECOM_USER.registerRetailer("Retailer_Name","retailer_phone");//retailer tu dang ki
+        //retailer register
+        address parent = address(0x2345);
+         registerParams memory params;
+        params.fullName = "thuy";
+        params.email = "abc@gmail.com";
+        params.gender = 0;
+        params.dateOfBirth = 23041989;
+        params.phoneNumber = "09312345678";
+        params.parent = parent;
+        vm.prank(retailer);
+        ECOM_USER.register(params);
+        //createCategory
+        vm.prank(owner);
+        ECOM_PRODUCT.createCategory("cat","descrip");
+        //
+        uint256[] memory capacity = new uint256[](3);
+        capacity[0] = 1;
+        capacity[1] = 2;
+        capacity[2] = 3;
+        bytes[]  memory size = new bytes[](3);
+        size[0] = hex"11";  // 1 byte
+        size[1] = hex"0112"; // 2 bytes
+        size[2] = hex"0113"; // 2 bytes
+        bytes[]  memory color = new bytes[](3);
+        color[0] = hex"11";  // 1 byte
+        color[1] = hex"0112"; // 2 bytes
+        color[2] = hex"0113"; // 2 bytes
+        bytes[]  memory images = new bytes[](3);
+        images[0] = hex"11";  // 1 byte
+        images[1] = hex"0112"; // 2 bytes
+        images[2] = hex"0113"; // 2 bytes
+        
+        createProductParams memory params = createProductParams({
+            name: "Test Product",
+            categoryID: 1,
+            description: "A sample product",
+            retailPrice: 1000,
+            vipPrice: 1200,
+            memberPrice: 1100,
+            reward: 10,
+            capacity: capacity,          
+            size: size ,
+            quantity: 100,
+            shippingFee: 50,
+            color: color ,
+            retailer: retailer,
+            brandName: "Brand A",
+            warranty: "1 year",
+            isFlashSale: false,
+            images: images ,
+            videoUrl: "",
+            boostTime: 0,
+            expiryTime: block.timestamp + 365 days,
+            activateTime: block.timestamp,
+            isMultipleDiscount: false,
+            isApprove: true,
+            sold: 0
+        });
+        Attribute[] memory attrs = new Attribute[](1);
+        attrs[0] = Attribute({
+            id:keccak256(abi.encodePacked("2")),
+            key:"key",
+            value:"value"
+        });
+        VariantParams[] memory variants = new VariantParams[](1);
+        variants[0] = VariantParams({
+            variantID : keccak256(abi.encodePacked("1")),
+            attrs: attrs ,
+            priceOptions: Pricing({
+                retailPrice: 1000,
+                vipPrice: 1200,
+                memberPrice: 1100,
+                reward: 10,
+                quantity: 100
+            })
+        });
+        vm.startPrank(retailer);
+        uint256 productId = ECOM_PRODUCT.createProduct(params, variants);
+        bytes memory bytesCodeCall = abi.encodeCall(
+            ECOM_PRODUCT.createProduct,
+            (params, variants)
+        );
+        console.log("ECOM_PRODUCT createProduct: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+
+        assertEq(productId, 1);
+        executeOrderSuccess();
+        GetByteCode();
+
+    }   
+    function executeOrderSuccess() public {
+        vm.startPrank(buyer);
+        
+        CreateOrderParams[] memory params = new CreateOrderParams[](1);
+        params[0] = CreateOrderParams({
+            productID: 1,
+            quantity: 2,
+            variantID: keccak256(abi.encodePacked("variant1")),
+            cartItemId: 1,
+            discountCodes: new string[](0)
+        });
+
+       ShippingParams memory shippingParams = ShippingParams({
+            firstName: "John",
+            lastName: "Doe",
+            email: "john@example.com",
+            country: "US",
+            city: "New York",
+            stateOrProvince: "NY",
+            postalCode: "10001",
+            phone: "1234567890",
+            addressDetail: "123 Street"
+        });
+
+        orderDetails memory details = orderDetails({
+            totalPriceWithoutDiscount: 100,
+            codeRef: keccak256(abi.encodePacked("REF123")),
+            checkoutType: CheckoutType.RECEIVE,
+            paymentType: PaymentType.METANODE
+        });
+
+        bytes32 orderCode = ECOM_ORDER.ExecuteOrder(params, shippingParams, details);
+        assertTrue(orderCode != bytes32(0));
+    }
+    function GetByteCode()public{
+        bytes memory bytesCodeCall = abi.encodeCall(
+            ECOM_PRODUCT.SetEcomUser,
+            (0xf4759F3499Ca53f5CcDd0c9c63a7bB6070880Ad9)
+        );
+        console.log("ECOM_PRODUCT SetEcomUser: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        //setRetailer
+        address retailer1 = 0xB50b908fFd42d2eDb12b325e75330c1AaAf35dc0;
+        bytesCodeCall = abi.encodeCall(
+            ECOM_USER.setRetailer,
+            (retailer1)
+        );
+        console.log("ECOM_USER setRetailer: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        //createCategory
+        // ECOM_PRODUCT.createCategory("cat","descrip");
+    }
+
+    // function testFailCreateProductInvalidCategory() public {
+    //     YourContract.createProductParams memory params = YourContract.createProductParams({
+    //         name: "Test Product",
+    //         categoryID: 999, // Không tồn tại
+    //         description: "A sample product",
+    //         retailPrice: 1000,
+    //         vipPrice: 1200,
+    //         memberPrice: 1100,
+    //         reward: 10,
+    //         capacity: new uint256 ,
+    //         size:bytes ,
+    //         quantity:
+    //         shippingFee: 50,
+    //         color: new bytes ,
+    //         retailer: ret,
+    //         brandName: "Brand A",
+    //         warranty: "1 year",
+    //         isFlashSale: false,
+    //         images: new bytes ,
+    //         videoUrl: "",
+    //    boostTime: 0,
+    //         expiryTime: block.timestamp + 365 days,
+    //         activateTime: block.timestamp,
+    //         isMultipleDiscount: false,
+    //         isApprove: true,
+    //         sold: 0
+    //     });
+
+    //     YourContract.VariantParams[] memory variants = new YourContrac.VariantParams({
+    //         attrs: new YourContract.Attribute ,
+    //         priceOptions: YourCon.Pricing({
+    //             retailPrice: 1000,
+    //             vipPrice: 1200,
+    //             memberPrice: 1100,
+    //             reward: 10,
+    //             quantity: 100
+    //         })
+    //     });
+
+    //     ECOM_PRODUCT.createProduct(params, variants);
+    // }
+
+    // function testFailCreateProductNonRetailer() public {
+    //     vm.stopPrank();
+    //     vm.startPrank(nonRetailer);
+
+    //     YourContract.createProductParams memory params;
+    //     YourContract.VariantParams[] memory variants;
+
+    //     ECOM_PRODUCT.createProduct(params, variants);
+    // }
+
+    // function testFailCreateProductEmptyVariants() public {
+    //     YourContract.createProductParams memory params;
+    //     YourContract.VariantParams[] memory variants = new YourContract.Vat(params, variants);
+    // }
+
+    // function testFailCreateProductInvalidPricing() public {
+    //     YourContract.createProductParams memory params;
+    //     YourContract.VariantParams[] memory variants = new YourContract.VaiantParams({
+    //         attrs: new YourContract.Attribute ,
+    //         priceOptions: YourContraccing({
+    //             retailPrice: 1000,
+    //             vipPrice: 900, // Lỗi: vipPrice < memberPrice
+    //             memberPrice: 1100,
+    //             reward: 10,
+    //             quantity: 100
+    //         })
+    //     });
+
+    //     ECOM_PRODUCT.createProduct(params, variants);
+    // }
+}

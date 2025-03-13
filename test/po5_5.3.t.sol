@@ -7,6 +7,8 @@ import "../src/po5.sol";
 import "../src/usdt.sol";
 import "../src/ecom/EcomOrder.sol";
 import "../src/ecom/EcomUser.sol";
+import "../src/ecom/EcomProduct.sol";
+import "../src/ecom/EcomInfo.sol";
 import "../src/ecom/interfaces/IEcomProduct.sol";
 contract BalancesManagerTest is Test {
     BalancesManager public BALANCE_MAN;
@@ -19,6 +21,8 @@ contract BalancesManagerTest is Test {
     eStock public STOCK_NODE;
     EcomOrderContract public ECOM_ORDER;
     EcomUserContract public ECOM_USER;
+    EcomProductContract public ECOM_PRODUCT;
+    EcomInfoContract public ECOM_INFO;
     address public owner= address(0x1111);
     address[] public rootMembers;
     address[] public daoMembers;
@@ -33,8 +37,21 @@ contract BalancesManagerTest is Test {
     uint RETAIL_COMMISSION_PERCENT=20;
     uint ACTIVATION_BP = 10;
     uint SHOWROOM_BONUS = 20;
+    address retailer = address(0x123);
+    address buyer = address(0x222);
+    
     constructor() {
         vm.startPrank(owner);
+        //Ecom
+        ECOM_PRODUCT = new EcomProductContract();
+        ECOM_USER = new EcomUserContract();
+        ECOM_ORDER = new EcomOrderContract();
+        ECOM_INFO = new EcomInfoContract();
+        ECOM_PRODUCT.SetEcomUser(address(ECOM_USER));
+        ECOM_ORDER.SetEcomUser(address(ECOM_USER));
+        ECOM_ORDER.SetEcomProduct(address(ECOM_PRODUCT));
+        ECOM_ORDER.SetEcomInfo(address(ECOM_INFO));
+        //po5
         rootMembers.push(address(0x11));
         rootMembers.push(address(0x12));
         rootMembers.push(address(0x13));
@@ -47,22 +64,23 @@ contract BalancesManagerTest is Test {
         EVENT_LOG = new EventLogger();
         ROOT_NODE = new ProposalVote(rootMembers, address(BALANCE_MAN));
         DAO_NODE = new ProposalVote(daoMembers, address(BALANCE_MAN));
-        ECOM_ORDER = new EcomOrderContract();
-        ECOM_USER = new EcomUserContract();
         STOCK_NODE = new eStock("eStock", "po5", 1000, 1, address(USDT_ERC));
         TREE_COM = new TreeCommission(
             address(ECOM_ORDER), address(ECOM_USER),
             address(BALANCE_MAN),address(SHOWROOM),address(EVENT_LOG),address(ROOT_NODE),
             address(DAO_NODE),address(STOCK_NODE),address(USDT_ERC)
         );
-        ECOM_USER.SetTreeCom(address(TREE_COM));
-        ECOM_ORDER.SetTreeCom(address(TREE_COM));
-
+        //set treecom
         BALANCE_MAN.setTreeCommissionAddress(address(TREE_COM));
         SHOWROOM.setTreeCommissionContract(address(TREE_COM));
+        ECOM_USER.SetTreeCom(address(TREE_COM));
+        ECOM_ORDER.SetTreeCom(address(TREE_COM));
+        // ECOM_ORDER.SetPos(address(TREE_COM));
+
         USDT_ERC.mintToAddress(user1, 1000* 1e6);
         USDT_ERC.mintToAddress(user2, 1000* 1e6);
         USDT_ERC.mintToAddress(user3, 1000* 1e6);
+        USDT_ERC.mintToAddress(buyer, 10000000* 1e6);
         vm.stopPrank();
         
     }
@@ -239,8 +257,44 @@ contract BalancesManagerTest is Test {
         assertEq(commission, 0); // Should return 0 for expired SHOWROOM
         vm.stopPrank();
     }
+    function testGetChildren()public{
+        registerEcomUser(user1,address(ROOT_NODE));
+        vm.startBroadcast(owner);
+        TREE_COM.addPromoterMember(user1,address(ROOT_NODE),10000,2000,keccak256(abi.encodePacked("1")));
+        vm.stopBroadcast();
+        registerEcomUser(address(0x331),user1);
+        vm.broadcast(user1);
+        TREE_COM.addPromoterMember(address(0x331), user1,10000,2000, keccak256(abi.encodePacked("1")));
+        registerEcomUser(address(0x332),user1);
+        vm.broadcast(user1);
+        TREE_COM.addPromoterMember(address(0x332), user1,10000,2000, keccak256(abi.encodePacked("1")));
+        registerEcomUser(address(0x333),user1);
+        vm.broadcast(user1);
+        TREE_COM.addPromoterMember(address(0x333), user1,10000,2000, keccak256(abi.encodePacked("1")));
+        registerEcomUser(address(0x334),user1);
+        vm.broadcast(user1);
+        TREE_COM.addPromoterMember(address(0x334), user1,10000,2000, keccak256(abi.encodePacked("1")));
+        registerEcomUser(address(0x335),user1);
+        vm.broadcast(user1);
+        TREE_COM.addPromoterMember(address(0x335), user1,10000,2000, keccak256(abi.encodePacked("1")));
+        registerEcomUser(address(0x441),address(0x331));
+        vm.broadcast(user1);
+        TREE_COM.addPromoterMember(address(0x441),address(0x331),10000,2000, keccak256(abi.encodePacked("1")));
+        registerEcomUser(address(0x442),address(0x331));
+        vm.broadcast(user1);
+        TREE_COM.addPromoterMember(address(0x442),address(0x331),10000,2000, keccak256(abi.encodePacked("1")));
+        registerEcomUser(address(0x443),address(0x331));
+        vm.broadcast(user1);
+        TREE_COM.addPromoterMember(address(0x443),address(0x331),10000,2000, keccak256(abi.encodePacked("1")));
+        vm.broadcast(user1);
+        (address[] memory children, TreeLib.NodeInfo[] memory nodeinfos, TreeLib.NodeData[] memory nodedatas)= TREE_COM.getChildren(user1,10,0,1000);
+        console.log("length:",children.length);
+        console.log("child 1:",children[0]);
+        console.log("child 5:",children[4]);
+
+    }
     //TreeCommission
-     function testAddVIPMember() public {
+     function testFull() public {
         //1.register on EcomUser
         registerEcomUser(user1,address(ROOT_NODE));
         //
@@ -289,34 +343,25 @@ contract BalancesManagerTest is Test {
 
         //test addPromoter
         //1.register on EcomUser
-        registerEcomUser(user2,address(ROOT_NODE));
+        registerEcomUser(buyer,address(ROOT_NODE));
         //2.addPromoterMember cho user2 vao rootnode
         vm.startBroadcast(owner);
-        TREE_COM.addPromoterMember(user2,address(ROOT_NODE),10000,2000,bytes32(0));
+        TREE_COM.addPromoterMember(buyer,address(ROOT_NODE),10000,2000,bytes32(0));
         assertEq(USDT_ERC.balanceOf(address(TREE_COM)), 160 * 1e6, "Incorrect USDT transfer"); // 120 + 40 USDT
         vm.stopBroadcast();
         //3.addPromoterMember cho user3 vao user2
-        registerEcomUser(user3,user2);
-        vm.startBroadcast(user2);
+        registerEcomUser(user3,buyer);
+        vm.startBroadcast(buyer);
         USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
-        TREE_COM.addPromoterMember(user3,user2,10000,2000,bytes32(0));
+        TREE_COM.addPromoterMember(user3,buyer,10000,2000,bytes32(0));
         uint balShowRoom = USDT_ERC.balanceOf(address(SHOWROOM));
         console.log("balShowRoom:",balShowRoom);
+        vm.stopBroadcast();
+        vm.prank(owner);
+        TREE_COM.processTeamBPAndActive(0,100);
 
-        // setDirector(user1);
+        setEcom();
 
-        // vm.prank(owner);
-        // TREE_COM.hourlyBatchProcessing();
-
-        // vm.startBroadcast(user1);
-        // ( nodeInfo,nodeData) = TREE_COM.getInfo();
-        // console.log("children count:",nodeInfo.children.length);
-        // console.log("teamBP:",nodeData.teamBP);
-
-        //test national bonus
-
-        // TREE_COM.distributeNationalBonus();
-        // GetByteCode();
     }
     function registerEcomUser(address user,address parent )public{
         registerParams memory params;
@@ -329,38 +374,386 @@ contract BalancesManagerTest is Test {
         vm.prank(user);
         ECOM_USER.register(params);
     }
-    function setDirector(address rootUser) internal {
-        bytes32 utxoID = keccak256("test_utxo");
-        address[256] memory queue; // Danh sách chờ xử lý (max 256 node)
-        uint256 front = 0;
-        uint256 back = 0;
-        uint256 totalNodes = 0;
+    function setEcom()public{
+        //setRetailer
+        vm.prank(owner);
+        ECOM_USER.setRetailer(retailer);
+        // ECOM_USER.registerRetailer("Retailer_Name","retailer_phone");//retailer tu dang ki
+        //retailer register
+        // registerEcomUser(buyer,address(ROOT_NODE));
+        //createCategory
+        vm.prank(owner);
+        ECOM_PRODUCT.createCategory("cat","descrip");
+        //
+        uint256[] memory capacity = new uint256[](3);
+        capacity[0] = 1;
+        capacity[1] = 2;
+        capacity[2] = 3;
+        bytes[]  memory size = new bytes[](3);
+        size[0] = hex"11";  // 1 byte
+        size[1] = hex"0112"; // 2 bytes
+        size[2] = hex"0113"; // 2 bytes
+        bytes[]  memory color = new bytes[](3);
+        color[0] = hex"11";  // 1 byte
+        color[1] = hex"0112"; // 2 bytes
+        color[2] = hex"0113"; // 2 bytes
+        bytes[]  memory images = new bytes[](3);
+        images[0] = hex"11";  // 1 byte
+        images[1] = hex"0112"; // 2 bytes
+        images[2] = hex"0113"; // 2 bytes
+        
+        createProductParams memory params = createProductParams({
+            name: "Test Product",
+            categoryID: 1,
+            description: "A sample product",
+            retailPrice: 1000 * 10**6,
+            vipPrice: 1200 * 10**6,
+            memberPrice: 1100 * 10**6,
+            reward: 10 * 10**6,
+            capacity: capacity,          
+            size: size ,
+            quantity: 100,
+            shippingFee: 50,
+            color: color ,
+            retailer: retailer,
+            brandName: "Brand A",
+            warranty: "1 year",
+            isFlashSale: false,
+            images: images ,
+            videoUrl: "",
+            boostTime: 0,
+            expiryTime: block.timestamp + 365 days,
+            activateTime: block.timestamp,
+            isMultipleDiscount: false,
+            isApprove: true,
+            sold: 0
+        });
+        Attribute[] memory attrs = new Attribute[](1);
+        attrs[0] = Attribute({
+            id:keccak256(abi.encodePacked("2")),
+            key:"key",
+            value:"value"
+        });
+        bytes32 variantID = hashAttributes(attrs);
+        VariantParams[] memory variants = new VariantParams[](1);
+        variants[0] = VariantParams({
+            variantID : variantID,
+            attrs: attrs ,
+            priceOptions: Pricing({
+                retailPrice: 1000 * 10**6,
+                vipPrice: 1200 * 10**6,
+                memberPrice: 1100 * 10**6,
+                reward: 10,
+                quantity: 100
+            })
+        });
+        vm.prank(retailer);
+        uint256 productId = ECOM_PRODUCT.createProduct(params, variants);
+        //getbytecode
+        createProductParams memory paramsByteCode = createProductParams({
+            name: "Test Product",
+            categoryID: 1,
+            description: "A sample product",
+            retailPrice: 1000 * 10**6,
+            vipPrice: 1200 * 10**6,
+            memberPrice: 1100 *10**6,
+            reward: 10,
+            capacity: capacity,          
+            size: size ,
+            quantity: 100,
+            shippingFee: 3*10**6,
+            color: color ,
+            retailer: 0xB50b908fFd42d2eDb12b325e75330c1AaAf35dc0,
+            brandName: "Brand A",
+            warranty: "1 year",
+            isFlashSale: false,
+            images: images ,
+            videoUrl: "",
+            boostTime: 0,
+            expiryTime: block.timestamp + 365 days,
+            activateTime: block.timestamp,
+            isMultipleDiscount: false,
+            isApprove: true,
+            sold: 0
+        });
 
-        queue[back++] = rootUser; // Thêm user gốc vào hàng đợi
+        // bytes memory bytesCodeCall = abi.encodeCall(
+        //     ECOM_PRODUCT.createProduct,
+        //     (paramsByteCode, variants)
+        // );
+        // console.log("ECOM_PRODUCT createProduct: ");
+        // console.logBytes(bytesCodeCall);
+        // console.log(
+        //     "-----------------------------------------------------------------------------"
+        // );
+        //updateProduct
+        // bytes memory bytesCodeCall = abi.encodeCall(
+        //     ECOM_PRODUCT.updateProduct,
+        //     (1,paramsByteCode, variants)
+        // );
+        // console.log("ECOM_PRODUCT updateProduct 1: ");
+        // console.logBytes(bytesCodeCall);
+        // console.log(
+        //     "-----------------------------------------------------------------------------"
+        // );
 
-        while (front < back && totalNodes < 250) {
-            address parent = queue[front++]; // Lấy user đang xử lý từ hàng đợi
+        assertEq(productId, 1);
+        executeOrderSuccess(variantID);
+        // GetByteCode();
 
-            for (uint256 i = 1; i <= 6 && totalNodes < 250; i++) {
-                address child = address(uint160(uint256(keccak256(abi.encodePacked(parent, i))))); // Tạo địa chỉ con giả lập
+    }   
+    function executeOrderSuccess(bytes32 _variantID) public {
+        
+        
+        CreateOrderParams[] memory params = new CreateOrderParams[](1);
+        params[0] = CreateOrderParams({
+            productID: 1,
+            quantity: 2,
+            variantID: _variantID,
+            cartItemId: 1,
+            discountCodes: new string[](0)
+        });
 
-                // Sử dụng vm.prank để giả lập người gọi
-                vm.prank(owner);
-                USDT_ERC.mintToAddress(child, 1000 * 1e6);
+       ShippingParams memory shippingParams = ShippingParams({
+            firstName: "John",
+            lastName: "Doe",
+            email: "john@example.com",
+            country: "US",
+            city: "New York",
+            stateOrProvince: "NY",
+            postalCode: "10001",
+            phone: "1234567890",
+            addressDetail: "123 Street"
+        });
 
-                vm.prank(child);
-                USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
+        orderDetails memory details = orderDetails({
+            totalPriceWithoutDiscount: 100,
+            codeRef: keccak256(abi.encodePacked("REF123")),
+            checkoutType: CheckoutType.RECEIVE,
+            paymentType: PaymentType.METANODE
+        });
+        
+        CartItem memory cartItem = CartItem({
+            id:1,
+            productID: 1,
+            quantity: 1,
+            variantID: _variantID,
+            createAt: block.timestamp
+        });
+        // vm.prank(buyer);
+        // ECOM_ORDER.createCart(cartItem);//khong can
+        vm.prank(buyer);
+        ECOM_ORDER.addItemToCart(1,_variantID,1);
+        //create orderid
+        vm.prank(buyer);
+        bytes32 orderCode = ECOM_ORDER.ExecuteOrder(params, shippingParams, details);
+        assertTrue(orderCode != bytes32(0));
+        //buyProduct 
+        
+        vm.startBroadcast(buyer);
+        bytes32 utxoBuy = bytes32(0);
+        USDT_ERC.approve(address(TREE_COM), 10000000 * 1e6);
+        TREE_COM.buyProduct(orderCode,utxoBuy);
 
-                // Sử dụng vm.broadcast để giả lập giao dịch từ child
-                vm.broadcast(child);
-                TREE_COM.addPromoterMember(child, parent, 10000, 10000 + i * 10,utxoID);
-
-                queue[back++] = child; // Thêm child vào hàng đợi
-                totalNodes++;
-            }
-        }
+        // TREE_COM.updateDeliveryProduct(orderCode);
+        vm.stopBroadcast();
+        // GetByteCode();
     }
 
+    function hashAttributes(
+        Attribute[] memory attrs
+    ) internal pure returns (bytes32) {
+        bytes memory attributesHash;
+
+        for (uint256 i = 0; i < attrs.length; i++) {
+            attributesHash = abi.encodePacked(
+                attributesHash,
+                attrs[i].key,
+                attrs[i].value
+            );
+        }
+
+        return keccak256(attributesHash);
+    }
+
+    function GetByteCode()public {
+         //1.register on EcomUser
+        registerParams memory params;
+        params.fullName = "thuy";
+        params.email = "abc@gmail.com";
+        params.gender = 0;
+        params.dateOfBirth = 23041989;
+        params.phoneNumber = "09312345678";
+        params.parent = 0xcD1Dd05bC96778594F2401380cD20E28705A4E87; //co the la rootnode 
+        bytes memory bytesCodeCall = abi.encodeCall(
+            ECOM_USER.register,
+            (params)
+        );
+        console.log("ECOM_USER register: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        
+        //ECOM_ORDER.addItemToCart(1,_variantID,1);
+        Attribute[] memory attrs = new Attribute[](1);
+        attrs[0] = Attribute({
+            id:keccak256(abi.encodePacked("2")),
+            key:"key",
+            value:"value"
+        });
+        bytes32 _variantID = hashAttributes(attrs);
+        bytesCodeCall = abi.encodeCall(
+            ECOM_ORDER.addItemToCart,
+            (1,_variantID,1)
+        );
+        console.log("ECOM_ORDER addItemToCart: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        //ECOM_USER.setRetailer(retailer);
+        address retailer = 0xEA3Db8925B49B5452eD74959Eb86bBBb7fAb59Ce;
+        bytesCodeCall = abi.encodeCall(
+            ECOM_USER.setRetailer,
+            (retailer)
+        );
+        console.log("ECOM_USER setRetailer: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        //ECOM_USER.mUserInfo(buyer);
+        address buyer = 0x3a1a3ead8267cf63E4F58d4fE09B82f15a541Ae7;
+        bytesCodeCall = abi.encodeCall(
+            ECOM_USER.mUserInfo,
+            (buyer)
+        );
+        console.log("ECOM_USER mUserInfo: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+
+        //TREE_COM.addPromoterMember(user3,user2,10000,2000,bytes32(0));
+
+        address userA = 0x391fFF8136E5066668F254F2bF074e5dAc318867;
+        address parentB = 0xcD1Dd05bC96778594F2401380cD20E28705A4E87;
+        bytes32 utxoID = keccak256(abi.encodePacked("abc"));
+        bytesCodeCall = abi.encodeCall(
+            TREE_COM.addPromoterMember,
+            (userA,parentB,10000,2000,utxoID)
+        );
+        console.log("addPromoterMember: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        //
+        address user = 0x6f0B58b260178333C39F83e0AA0404581Bac8B26;
+        bytesCodeCall = abi.encodeCall(
+            ECOM_USER.getUserParent,
+            (user)
+        );
+        console.log("getUserParent: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        //TREE_COM.addVIPMember(user1, address(ROOT_NODE),utxoID1);
+        address userB = 0x6f0B58b260178333C39F83e0AA0404581Bac8B26;
+        address parentC = 0xf3440BCF4e24Bc17BA2fea252c942D7F52D79147;
+         bytes32 utxoID1 = keccak256(abi.encodePacked("abc"));
+        bytesCodeCall = abi.encodeCall(
+            TREE_COM.addVIPMember,
+            (userB, parentC,bytes32(0))
+        );
+        console.log("addVIPMember: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        //ECOM_USER.registerRetailer("Retailer_Name","retailer_phone")
+        bytesCodeCall = abi.encodeCall(
+            ECOM_USER.registerRetailer,
+            ("Retailer_Name","retailer_phone")
+        );
+        console.log("registerRetailer: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        //addShowroom
+        address showroom = 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2;
+        bytesCodeCall = abi.encodeCall(
+            SHOWROOM.addShowRoom,
+            (
+                showroom,
+                address(0),
+                Showroom.ShowroomTier.Kiosk,
+                1300000,
+                2000000
+            )
+        );
+        console.log("addShowRoom: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        //processTeamBPAndActive
+        // TREE_COM.processTeamBPAndActive(1,100);
+        bytesCodeCall = abi.encodeCall(
+            TREE_COM.processTeamBPAndActive,
+            (0,100)
+        );
+        console.log("processTeamBPAndActive: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        //
+        bytesCodeCall = abi.encodeCall(
+            ECOM_ORDER.SetPos,
+            (0xe6543ceABFD0CB596c453FC702e3355cA54C71b3)
+        );
+        console.log("SetPos: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+   
+    }
+        // function setDirector(address rootUser) internal {
+    //     bytes32 utxoID = keccak256("test_utxo");
+    //     address[256] memory queue; // Danh sách chờ xử lý (max 256 node)
+    //     uint256 front = 0;
+    //     uint256 back = 0;
+    //     uint256 totalNodes = 0;
+
+    //     queue[back++] = rootUser; // Thêm user gốc vào hàng đợi
+
+    //     while (front < back && totalNodes < 250) {
+    //         address parent = queue[front++]; // Lấy user đang xử lý từ hàng đợi
+
+    //         for (uint256 i = 1; i <= 6 && totalNodes < 250; i++) {
+    //             address child = address(uint160(uint256(keccak256(abi.encodePacked(parent, i))))); // Tạo địa chỉ con giả lập
+
+    //             // Sử dụng vm.prank để giả lập người gọi
+    //             vm.prank(owner);
+    //             USDT_ERC.mintToAddress(child, 1000 * 1e6);
+
+    //             vm.prank(child);
+    //             USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
+
+    //             // Sử dụng vm.broadcast để giả lập giao dịch từ child
+    //             vm.broadcast(child);
+    //             TREE_COM.addPromoterMember(child, parent, 10000, 10000 + i * 10,utxoID);
+
+    //             queue[back++] = child; // Thêm child vào hàng đợi
+    //             totalNodes++;
+    //         }
+    //     }
+    // }
 
     // function testDistributeNationalBonus() public {
     //     // Add user1 as a VIP member and upgrade to promoter
@@ -422,24 +815,6 @@ contract BalancesManagerTest is Test {
     //     assertEq(nodeData.membershipSoldThisMonth, 0);
     //     assertEq(nodeData.productBPThisMonth, 0);
     // }
-    function GetByteCode()public {
-         //1.register on EcomUser
-        registerParams memory params;
-        params.fullName = "thuy";
-        params.email = "abc@gmail.com";
-        params.gender = 0;
-        params.dateOfBirth = 23041989;
-        params.phoneNumber = "09312345678";
-        params.parent = 0xe59625Fa4989b91c208Fc18946dD3D3cc5701973;
-        bytes memory bytesCodeCall = abi.encodeCall(
-            ECOM_USER.register,
-            (params)
-        );
-        console.log("ECOM_USER register: ");
-        console.logBytes(bytesCodeCall);
-        console.log(
-            "-----------------------------------------------------------------------------"
-        );
-    }
+
 }
 
