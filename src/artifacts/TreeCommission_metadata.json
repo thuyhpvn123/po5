@@ -9,6 +9,16 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "_ecomOrderAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_ecomUserAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
 						"name": "_balanceManagerAddress",
 						"type": "address"
 					},
@@ -69,6 +79,34 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_timestamp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum TreeCommission.TYPE_OF_COM",
+						"name": "_comType",
+						"type": "uint8"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_amount",
+						"type": "uint256"
+					}
+				],
+				"name": "addCommission",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
 						"name": "newMember",
 						"type": "address"
 					},
@@ -122,6 +160,19 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "balancesManager",
+				"outputs": [
+					{
+						"internalType": "contract BalancesManager",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -138,13 +189,37 @@
 				"inputs": [
 					{
 						"internalType": "bytes32",
-						"name": "orderID",
+						"name": "orderCode",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "utxoID",
 						"type": "bytes32"
 					}
 				],
 				"name": "buyProduct",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "checkPromoter",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -159,6 +234,32 @@
 				"name": "distributeNationalBonus",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "eComOrderManagerAddress",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "eComUserManagerAddress",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -209,6 +310,11 @@
 				],
 				"name": "getChildren",
 				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					},
 					{
 						"components": [
 							{
@@ -270,6 +376,40 @@
 					}
 				],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_startDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_endDate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum TreeCommission.TYPE_OF_COM",
+						"name": "_comType",
+						"type": "uint8"
+					}
+				],
+				"name": "getCommissionInRange",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "totalCommission",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -408,12 +548,73 @@
 						"type": "address"
 					}
 				],
+				"name": "isPromoterActive",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "isVIP",
 				"outputs": [
 					{
 						"internalType": "bool",
 						"name": "",
 						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "isVIPOrPromoter",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "enum TreeCommission.TYPE_OF_COM",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"name": "mUserToDateToCom",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -500,12 +701,102 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "_eComOrderManagerAddress",
+						"type": "address"
+					}
+				],
+				"name": "setEcomOrder",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_eComUserManagerAddress",
+						"type": "address"
+					}
+				],
+				"name": "setEcomUser",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "bool",
 						"name": "isLock",
 						"type": "bool"
 					}
 				],
 				"name": "setLockData",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_usdtAddress",
+						"type": "address"
+					}
+				],
+				"name": "setUsdt",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newMember",
+						"type": "address"
+					}
+				],
+				"name": "testGetNodeParent",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newMember",
+						"type": "address"
+					}
+				],
+				"name": "testGetUserParent",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "orderCode",
+						"type": "bytes32"
+					}
+				],
+				"name": "updateDeliveryProduct",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -600,12 +891,6 @@
 						"parent": "Địa chỉ cha của thành viên"
 					}
 				},
-				"constructor": {
-					"details": "Hàm khởi tạo hợp đồng thông minh TreeCommission",
-					"params": {
-						"_usdtAddress": "Địa chỉ của hợp đồng token USDT"
-					}
-				},
 				"getChildren(address,uint8,uint256,uint256)": {
 					"details": "Lấy danh sách con trực tiếp của một user bao gồm cả con ảo, phân trang",
 					"params": {
@@ -695,7 +980,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"src/po5_3.3.sol": "TreeCommission"
+			"src/po5.sol": "TreeCommission"
 		},
 		"evmVersion": "cancun",
 		"libraries": {},
@@ -797,12 +1082,12 @@
 				"dweb:/ipfs/QmVUSvooZKEdEdap619tcJjTLcAuH6QBdZqAzWwnAXZAWJ"
 			]
 		},
-		"src/po5_3.3.sol": {
-			"keccak256": "0xbe48c5511eb4691d88b2c0b1bdeb6d70fb8bd2711b6218c7d2dff9eb5e484a33",
+		"src/po5.sol": {
+			"keccak256": "0x57c692885dc78f4e9e09f724fde2e6d0222ffb9cd78c2d0f18c234381c71f3aa",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://77365574240f71ee1dceea0a30bcc16aee76198b43385aff536c7f25c5056cbd",
-				"dweb:/ipfs/QmQSEvXxSrcqDJGtRFGmSethbRBPnQqcNBASPcivWx5oqq"
+				"bzz-raw://ced64ea2617b089916d961a4628a2cc1a46c4f51bb158c13a4ba388e3b871b87",
+				"dweb:/ipfs/QmVrE5hPQr7zGdicMEZ5FxsvddbvTFUYJ7UMoUm9oDdHVW"
 			]
 		}
 	},

@@ -280,8 +280,8 @@ interface ITreeCommission {
      * @dev Rút một lượng BP từ tài khoản người dùng.
      * @param amount Số lượng BP cần rút.
      */
-    function withdrawBP(uint256 amount) external;
-    function withdrawBPToAnotherUser(uint256 amount, address user) external;
+    function withdrawBP(uint256 amount,bytes32[] memory utxoArr) external;
+    function withdrawBPToAnotherUser(uint256 amount, address use,bytes32[] memory utxoArrr) external;
 }
 
 
@@ -319,11 +319,12 @@ interface IEComOrder {
 interface IEComUser {
   function getUserParent(address _user) external view returns (address);
 }
+interface IMasterPool{
+    function transferCommission(address _to, uint256 amount) external returns(bool);
+}
 
 // BalancesManager: Quản lý số dư, giao dịch, rút tiền.
 contract BalancesManager is Ownable {
-
-    // ultraUTXO
     
     struct BPultraUTXO {
         uint256 BP;
@@ -332,16 +333,6 @@ contract BalancesManager is Ownable {
         uint256 expiredTime;
         bool isDeny;
     }
-
-
-    mapping(bytes32 => address[]) public utxoToUsers;
-    mapping(address => mapping(bytes32 => BPultraUTXO)) public userUltraBP;
-    bytes32[] public allUltraUTXO; // ✅ Danh sách toàn bộ UTXO
-
-
-    mapping(address => uint256) public balances;
-
-
     struct NodeExtra {
         bytes32 refCode;
         string phoneNumber;
@@ -350,17 +341,18 @@ contract BalancesManager is Ownable {
         uint256 lattitude;
     }
 
+    mapping(bytes32 => address[]) public utxoToUsers;
+    mapping(address => mapping(bytes32 => BPultraUTXO)) public userUltraBP;
+    mapping(address => uint256) public balances;
     mapping(address => NodeExtra) public nodeExtras;
-
     mapping(bytes32 => address) public allUserRefCodes;
-
-
-    address public treeCommissionContract;
-
-
-    uint256 internal nationalBonusPool;
     mapping(bytes32 => uint256) internal pendingNationalBonusPool; // Lưu BP đang chờ duyệt
-    mapping(address => bytes32[]) public mUserToUtxoIds;
+    mapping(address => bytes32[]) public mUserReceivedUltraUTXO;
+
+    bytes32[] public allUltraUTXO; // ✅ Danh sách toàn bộ UTXO
+    address public treeCommissionContract;
+    uint256 internal nationalBonusPool;
+    address public masterpool;
 
     modifier onlyTreeCommission() {
         require(msg.sender == treeCommissionContract, "Unauthorized");
@@ -373,33 +365,23 @@ contract BalancesManager is Ownable {
     }
 
     constructor() Ownable(msg.sender) {}
-
+    function setMasterPool(address _masterpool) external onlyOwner {
+        masterpool = _masterpool;
+    }
     function setTreeCommissionAddress(address _treeCommissionAddress) external onlyOwner {
         treeCommissionContract = _treeCommissionAddress;
     }
 
-
-    // ultra utxo
-    function cancelUltraUTXOExternal(bytes32 utxoID) external onlyOwner {
-        cancelUltraUTXO(utxoID);
+    function isValidUTXO(bytes32 utxoID) internal pure returns (bool) {
+        return utxoID != bytes32(0);
     }
 
-    function withdrawUltraBPExternal(
-        address user,
-        bytes32 utxoID
-    ) external onlyOwner {
-        withdrawUltraBP(user, utxoID);
-    }
-    
     function createUltraUTXO(
         address user,
         bytes32 utxoID,
         uint256 amount
     ) internal {
-        // console.log("user:",user);
-        // console.logBytes32(utxoID);
-        // console.log("amount:",amount);
-        // require(userUltraBP[user][utxoID].BP == 0, "UTXO already exists");
+        require(userUltraBP[user][utxoID].BP == 0, "UTXO already exists");
 
         uint256 createTime = block.timestamp;
         uint256 activeTime = createTime + 60 days;
@@ -408,6 +390,7 @@ contract BalancesManager is Ownable {
         userUltraBP[user][utxoID] = BPultraUTXO(amount, createTime, activeTime, expiredTime, false);
         utxoToUsers[utxoID].push(user);
         allUltraUTXO.push(utxoID); // ✅ Lưu vào danh sách toàn cục
+        mUserReceivedUltraUTXO[user].push(utxoID);
     }
 
     function cancelUltraUTXO(
@@ -423,26 +406,57 @@ contract BalancesManager is Ownable {
             }
         }
     }
+    function cancelUltraUTXOByOwner(bytes32 utxoID
+    ) public onlyOwner returns(bool) {      
+        cancelUltraUTXO(utxoID);
+        return true;
+    }
 
-    function withdrawUltraBP(
+    //rut usdt khi thanh toán bằng visa
+    function _withdrawUltraBP(
         address user,
         bytes32 utxoID
-    ) internal {
+    ) internal returns(uint256){
         BPultraUTXO storage ultra = userUltraBP[user][utxoID];
 
-        require(ultra.BP > 0, "No UltraBP available");
-        require(!ultra.isDeny, "UTXO has been canceled");
-        require(block.timestamp >= ultra.activeTime, "UltraBP is not yet withdrawable");
-        require(block.timestamp <= ultra.expiredTime, "UltraBP has expired");
-
+        require(ultra.BP > 0, "No UltraBP available " );
+        require(!ultra.isDeny, "UTXO has been canceled " );
+        require(block.timestamp >= ultra.activeTime, "UltraBP is not yet withdrawable " );
+        require(block.timestamp <= ultra.expiredTime, "UltraBP has expired " );
         uint256 amount = ultra.BP;
-        require(amount > 0, "withdraw: Wrong amount");
-
         delete userUltraBP[user][utxoID];
+        bytes32[] storage utxoArr = mUserReceivedUltraUTXO[user];
+        for(uint256 i;i< utxoArr.length; i++){
+            if(utxoArr[i] == utxoID ){
+                utxoArr[i] = utxoArr[utxoArr.length -1];
+                utxoArr.pop();
+            }
+        }
+        return amount;
+    }
+    function withdrawUltraBP(
+        address user,
+        bytes32[] memory utxoIDArr
+    ) external onlyTreeCommission returns (bool) {
+        uint256 totalAmount;
+        for(uint256 i; i< utxoIDArr.length; i++){
+            uint256 amount = _withdrawUltraBP(user,utxoIDArr[i]);
+            totalAmount += amount;
+        }
+        IMasterPool(masterpool).transferCommission(user, totalAmount);
+        return true;
+    }
+    function withdrawBP(address user, uint256 amount) external onlyTreeCommission returns (bool) {
+        if(amount <= 0) {
+          return false;
+        }
+        if(balances[user] < amount) {
+          return false;
+        }
 
-        // gọi đến SM ultraUTXO
+        balances[msg.sender] -= amount;
 
-        // usdtToken.transfer(user, amount);
+        return true;
     }
 
     function getUltraBPInfo(address user, bytes32 utxoID)
@@ -457,37 +471,36 @@ contract BalancesManager is Ownable {
     function getAllUltraUTXOs() external view returns (bytes32[] memory) {
         return allUltraUTXO;
     }
-
-    function getUserUltraUTXOs(address user) external view returns (bytes32[] memory) {
-        bytes32[] memory userUTXOs = new bytes32[](allUltraUTXO.length);
-        uint256 count = 0;
-
-        for (uint256 i = 0; i < allUltraUTXO.length; i++) {
-            if (userUltraBP[user][allUltraUTXO[i]].BP > 0) {
-                userUTXOs[count] = allUltraUTXO[i];
-                count++;
-            }
-        }
-
-        bytes32[] memory trimmed = new bytes32[](count);
-        for (uint256 i = 0; i < count; i++) {
-            trimmed[i] = userUTXOs[i];
-        }
-
-        return trimmed;
+    function getUTXOsByUser(address user) external view returns(bytes32[] memory) {
+        return mUserReceivedUltraUTXO[user];
     }
+    // function getUserUltraUTXOs(address user) external view returns (bytes32[] memory) {
+    //     bytes32[] memory userUTXOs = new bytes32[](allUltraUTXO.length);
+    //     uint256 count = 0;
 
-    function isValidUTXO(bytes32 utxoID) internal pure returns (bool) {
-        return utxoID != bytes32(0); //utxo khac bytes32(0) la thanh toan visa
-    }
+    //     for (uint256 i = 0; i < allUltraUTXO.length; i++) {
+    //         if (userUltraBP[user][allUltraUTXO[i]].BP > 0) {
+    //             userUTXOs[count] = allUltraUTXO[i];
+    //             count++;
+    //         }
+    //     }
+
+    //     bytes32[] memory trimmed = new bytes32[](count);
+    //     for (uint256 i = 0; i < count; i++) {
+    //         trimmed[i] = userUTXOs[i];
+    //     }
+
+    //     return trimmed;
+    // }
+
 
     function updateBalance(address user, bytes32 utxoID, uint256 amount, bool isAdd) external onlyTreeCommission {
         require(amount > 0, "update balance: Wrong amount");
         if (isAdd) {
-            if (!isValidUTXO(utxoID)) { //thanh toan usdt thì được ghi nhận balance
+            if (isValidUTXO(utxoID)) {
               balances[user] += amount;
             } else {
-              createUltraUTXO(user, utxoID, amount); //thanh toan bang visa thì tạo utxo
+              createUltraUTXO(user, utxoID, amount);
             }
         } else {
             require(balances[user] >= amount, "Insufficient balance");
@@ -503,7 +516,6 @@ contract BalancesManager is Ownable {
                 if (isValidUTXO(utxoID)) {
                   balances[users[i]] += amounts[i];
                 } else {
-                    // console.log("22222222222");
                   createUltraUTXO(users[i], utxoID, amounts[i]);
                 }
             } else {
@@ -517,18 +529,6 @@ contract BalancesManager is Ownable {
         return balances[user];
     }
 
-    function withdrawBP(address user, uint256 amount) external onlyTreeCommission returns (bool) {
-        if(amount <= 0) {
-          return false;
-        }
-        if(balances[user] < amount) {
-          return false;
-        }
-
-        balances[msg.sender] -= amount;
-
-        return true;
-    }
 
     function getRefCode() external view onlyEOA returns (bytes32) {
         // require(isLockData == false, "System upgrade"); // Kiểm tra hệ thống đang có nâng cấp không
@@ -594,7 +594,7 @@ contract BalancesManager is Ownable {
 
         bytes32 refCode = keccak256(abi.encodePacked(user));
 
-        require( allUserRefCodes[refCode] == address(0) , "ref code exists in another user" );
+        require( allUserRefCodes[refCode] != address(0) , "ref code exists in another user" );
         
         allUserRefCodes[refCode] = user;
 
@@ -896,7 +896,8 @@ contract ProposalVote {
         uint256 amount = proposal.amount;
 
         ITreeCommission treeCommission = ITreeCommission(treeCommissionContract);
-        treeCommission.withdrawBPToAnotherUser(amount, proposal.recipient);
+        bytes32[] memory utxoArr = new bytes32[](0);
+        treeCommission.withdrawBPToAnotherUser(amount, proposal.recipient,utxoArr);
 
     }
 
@@ -1049,7 +1050,8 @@ contract eStock is ERC20, Ownable {
         // require(usdtToken.transfer(msg.sender, amount), "USDT transfer failed");
 
         ITreeCommission treeCommission = ITreeCommission(treeCommissionContract);
-        treeCommission.withdrawBPToAnotherUser(amount, msg.sender);
+        bytes32[] memory utxoArr = new bytes32[](0);
+        treeCommission.withdrawBPToAnotherUser(amount, msg.sender,utxoArr);
 
         emit USDTWithdrawn(msg.sender, amount);
     }
@@ -1388,7 +1390,7 @@ contract Showroom is Ownable {
 
     /**
      */
-    function withdrawBP(uint256 amount) external onlyEOA {
+    function withdrawBPFromShowRoom(uint256 amount) external onlyEOA {
         address showroom = msg.sender;
         uint256 preBalance = showroomNodes[showroom].totalBP;
         require(preBalance >= amount, "Insufficient balance");
@@ -1396,7 +1398,8 @@ contract Showroom is Ownable {
         require(showroomNodes[showroom].expiryDate >= block.timestamp, "Showroom expired");
 
         ITreeCommission treeCommission = ITreeCommission(treeCommissionContract);
-        treeCommission.withdrawBPToAnotherUser(amount, showroom);
+        bytes32[] memory utxoArr = new bytes32[](0);
+        treeCommission.withdrawBPToAnotherUser(amount, showroom, utxoArr);
 
     }
 
@@ -2486,43 +2489,51 @@ contract TreeCommission is ITreeCommission {
     }
 
 
-    function withdrawBPToUser(uint256 amount, address user) internal {
-        uint256 preBalance = balancesManager.getBalance(msg.sender);
-        require(preBalance >= amount, "Insufficient balance");
+    //rút usdt khi user thanh toán bằng usdt
+    function withdrawBPToUser(uint256 amount, address user,bytes32[] memory utxoArr) internal {
+        if(utxoArr.length >0){
+            balancesManager.withdrawUltraBP(user,utxoArr);
 
-        TreeLib.Status userStatus = nodes[msg.sender].status;
-        require(userStatus != TreeLib.Status.Locked && userStatus != TreeLib.Status.Banned, "Deny access");
+        }else{
+            uint256 preBalance = balancesManager.getBalance(msg.sender);
+            require(preBalance >= amount, "Insufficient balance");
 
-        require(balancesManager.withdrawBP(msg.sender, amount), "Insufficient balance for withdraw");
+            TreeLib.Status userStatus = nodes[msg.sender].status;
+            require(userStatus != TreeLib.Status.Locked && userStatus != TreeLib.Status.Banned, "Deny access");
 
-        require(usdtToken.transfer(user, amount), "Transfer failed");
+            require(balancesManager.withdrawBP(msg.sender, amount), "Insufficient balance for withdraw");
 
-        // uint256 lastBalance = balancesManager.getBalance(msg.sender);
+            require(usdtToken.transfer(user, amount), "Transfer failed");
 
-        // #debug tạm ẩn để ko bị warning code
-        // if (lastBalance != preBalance - amount) {
-        //     string memory logMessage = string(
-        //         abi.encodePacked(
-        //             "withdrawBP failed: last balance: ", Strings.toString(lastBalance),
-        //             ", pre balance: ", Strings.toString(preBalance),
-        //             ", amount: ", Strings.toString(amount)
-        //         )
-        //     );
-        //     eventLoggerManager.recordEvent("withdrawBP", logMessage);
-        // }
+            // uint256 lastBalance = balancesManager.getBalance(msg.sender);
 
-        // emit BPChanged(msg.sender, lastBalance);
+            // #debug tạm ẩn để ko bị warning code
+            // if (lastBalance != preBalance - amount) {
+            //     string memory logMessage = string(
+            //         abi.encodePacked(
+            //             "withdrawBP failed: last balance: ", Strings.toString(lastBalance),
+            //             ", pre balance: ", Strings.toString(preBalance),
+            //             ", amount: ", Strings.toString(amount)
+            //         )
+            //     );
+            //     eventLoggerManager.recordEvent("withdrawBP", logMessage);
+            // }
+
+            // emit BPChanged(msg.sender, lastBalance);
+
+        }
     }
     
     // chỉ cho phép stockNode || rootNode || daoNode gọi
-    function withdrawBPToAnotherUser(uint256 amount, address user) external {
+    // chỉ cho phép stockNode || rootNode || daoNode gọi
+    function withdrawBPToAnotherUser(uint256 amount, address user,bytes32[] memory utxoArr) external {
         require(amount > 0, "Amount must be greater than 0");
         
         require(rootNode == msg.sender || stockNode == msg.sender || daoNode == msg.sender, "Contracts not allowed");
 
-        withdrawBPToUser(amount, user);
+        withdrawBPToUser(amount, user, utxoArr);
     }
-    function withdrawBP(uint256 amount) external {
+    function withdrawBP(uint256 amount,bytes32[] memory utxoArr) external {
         require(amount > 0, "Amount must be greater than 0");
         
         /*
@@ -2537,9 +2548,8 @@ contract TreeCommission is ITreeCommission {
         
         */
         require(tx.origin == msg.sender || rootNode == msg.sender || stockNode == msg.sender || daoNode == msg.sender, "Contracts not allowed");
-        withdrawBPToUser(amount, msg.sender);
+        withdrawBPToUser(amount, msg.sender, utxoArr);
     }
-
     /**
      * @dev Cập nhật cấp độ agent cho một người dùng
      * @param user Địa chỉ người dùng
