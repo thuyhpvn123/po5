@@ -9,16 +9,6 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "_ecomOrderAddress",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "_ecomUserAddress",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
 						"name": "_balanceManagerAddress",
 						"type": "address"
 					},
@@ -132,19 +122,6 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "balancesManager",
-				"outputs": [
-					{
-						"internalType": "contract BalancesManager",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -161,12 +138,7 @@
 				"inputs": [
 					{
 						"internalType": "bytes32",
-						"name": "orderCode",
-						"type": "bytes32"
-					},
-					{
-						"internalType": "bytes32",
-						"name": "utxoID",
+						"name": "orderID",
 						"type": "bytes32"
 					}
 				],
@@ -187,32 +159,6 @@
 				"name": "distributeNationalBonus",
 				"outputs": [],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "eComOrderManagerAddress",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "eComUserManagerAddress",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -263,11 +209,6 @@
 				],
 				"name": "getChildren",
 				"outputs": [
-					{
-						"internalType": "address[]",
-						"name": "",
-						"type": "address[]"
-					},
 					{
 						"components": [
 							{
@@ -467,39 +408,7 @@
 						"type": "address"
 					}
 				],
-				"name": "isPromoter",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
 				"name": "isVIP",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "user",
-						"type": "address"
-					}
-				],
-				"name": "isVIPOrPromoter",
 				"outputs": [
 					{
 						"internalType": "bool",
@@ -591,102 +500,12 @@
 			{
 				"inputs": [
 					{
-						"internalType": "address",
-						"name": "_eComOrderManagerAddress",
-						"type": "address"
-					}
-				],
-				"name": "setEcomOrder",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_eComUserManagerAddress",
-						"type": "address"
-					}
-				],
-				"name": "setEcomUser",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
 						"internalType": "bool",
 						"name": "isLock",
 						"type": "bool"
 					}
 				],
 				"name": "setLockData",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_usdtAddress",
-						"type": "address"
-					}
-				],
-				"name": "setUsdt",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "newMember",
-						"type": "address"
-					}
-				],
-				"name": "testGetNodeParent",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "newMember",
-						"type": "address"
-					}
-				],
-				"name": "testGetUserParent",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "bytes32",
-						"name": "orderCode",
-						"type": "bytes32"
-					}
-				],
-				"name": "updateDeliveryProduct",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -725,6 +544,11 @@
 						"internalType": "uint256",
 						"name": "amount",
 						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32[]",
+						"name": "utxoArr",
+						"type": "bytes32[]"
 					}
 				],
 				"name": "withdrawBP",
@@ -743,6 +567,11 @@
 						"internalType": "address",
 						"name": "user",
 						"type": "address"
+					},
+					{
+						"internalType": "bytes32[]",
+						"name": "utxoArr",
+						"type": "bytes32[]"
 					}
 				],
 				"name": "withdrawBPToAnotherUser",
@@ -843,7 +672,7 @@
 						"user": "Địa chỉ tài khoản VIP cần nâng cấp"
 					}
 				},
-				"withdrawBP(uint256)": {
+				"withdrawBP(uint256,bytes32[])": {
 					"details": "Rút một lượng BP từ tài khoản người dùng.",
 					"params": {
 						"amount": "Số lượng BP cần rút."
@@ -866,7 +695,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"src/po5.sol": "TreeCommission"
+			"src/po5_3.3.sol": "TreeCommission"
 		},
 		"evmVersion": "cancun",
 		"libraries": {},
@@ -968,12 +797,12 @@
 				"dweb:/ipfs/QmVUSvooZKEdEdap619tcJjTLcAuH6QBdZqAzWwnAXZAWJ"
 			]
 		},
-		"src/po5.sol": {
-			"keccak256": "0xa29a3abd5af8ea12f6d8f766dcc18003643cb406dd2fdb74cbcd15dc901e3a0f",
+		"src/po5_3.3.sol": {
+			"keccak256": "0xbe48c5511eb4691d88b2c0b1bdeb6d70fb8bd2711b6218c7d2dff9eb5e484a33",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5118ac6fab0c915f7617b13288df1e8605774042ff1b599925227a8e1b15f735",
-				"dweb:/ipfs/QmS9kY31LhDNHa3MtMeCPC8JNP2sL7b1YnkMT78Ks5k7WS"
+				"bzz-raw://77365574240f71ee1dceea0a30bcc16aee76198b43385aff536c7f25c5056cbd",
+				"dweb:/ipfs/QmQSEvXxSrcqDJGtRFGmSethbRBPnQqcNBASPcivWx5oqq"
 			]
 		}
 	},

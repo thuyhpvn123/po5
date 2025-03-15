@@ -162,8 +162,14 @@
 						"type": "bytes32"
 					}
 				],
-				"name": "cancelUltraUTXOExternal",
-				"outputs": [],
+				"name": "cancelUltraUTXOByOwner",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
@@ -282,6 +288,25 @@
 						"internalType": "address",
 						"name": "user",
 						"type": "address"
+					}
+				],
+				"name": "getUTXOsByUser",
+				"outputs": [
+					{
+						"internalType": "bytes32[]",
+						"name": "",
+						"type": "bytes32[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
 					},
 					{
 						"internalType": "bytes32",
@@ -326,25 +351,6 @@
 						"internalType": "address",
 						"name": "user",
 						"type": "address"
-					}
-				],
-				"name": "getUserUltraUTXOs",
-				"outputs": [
-					{
-						"internalType": "bytes32[]",
-						"name": "",
-						"type": "bytes32[]"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "user",
-						"type": "address"
 					},
 					{
 						"internalType": "uint256",
@@ -360,6 +366,43 @@
 				"name": "initUser",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mUserReceivedUltraUTXO",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "masterpool",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -430,6 +473,19 @@
 					}
 				],
 				"name": "resetNationalBonusPool",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_masterpool",
+						"type": "address"
+					}
+				],
+				"name": "setMasterPool",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -645,13 +701,19 @@
 						"type": "address"
 					},
 					{
-						"internalType": "bytes32",
-						"name": "utxoID",
-						"type": "bytes32"
+						"internalType": "bytes32[]",
+						"name": "utxoIDArr",
+						"type": "bytes32[]"
 					}
 				],
-				"name": "withdrawUltraBPExternal",
-				"outputs": [],
+				"name": "withdrawUltraBP",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			}
@@ -691,7 +753,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"src/po5.sol": "BalancesManager"
+			"src/po5_3.3.sol": "BalancesManager"
 		},
 		"evmVersion": "cancun",
 		"libraries": {},
@@ -793,12 +855,12 @@
 				"dweb:/ipfs/QmVUSvooZKEdEdap619tcJjTLcAuH6QBdZqAzWwnAXZAWJ"
 			]
 		},
-		"src/po5.sol": {
-			"keccak256": "0xa29a3abd5af8ea12f6d8f766dcc18003643cb406dd2fdb74cbcd15dc901e3a0f",
+		"src/po5_3.3.sol": {
+			"keccak256": "0xbe48c5511eb4691d88b2c0b1bdeb6d70fb8bd2711b6218c7d2dff9eb5e484a33",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5118ac6fab0c915f7617b13288df1e8605774042ff1b599925227a8e1b15f735",
-				"dweb:/ipfs/QmS9kY31LhDNHa3MtMeCPC8JNP2sL7b1YnkMT78Ks5k7WS"
+				"bzz-raw://77365574240f71ee1dceea0a30bcc16aee76198b43385aff536c7f25c5056cbd",
+				"dweb:/ipfs/QmQSEvXxSrcqDJGtRFGmSethbRBPnQqcNBASPcivWx5oqq"
 			]
 		}
 	},

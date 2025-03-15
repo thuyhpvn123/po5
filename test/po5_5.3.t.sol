@@ -99,13 +99,13 @@ contract BalancesManagerTest is Test {
         
         bytes32 utxoID = keccak256("test_utxo");
         BALANCE_MAN.updateBalance(user1, utxoID,100, true);
-        assertEq(BALANCE_MAN.getBalance(user1), 100,"getBalance should be right");
+        (uint256 BP,,, ,) = BALANCE_MAN.getUltraBPInfo(user1, utxoID);
+        assertEq(BP, 100,"getUltraBPInfo should be right");
 
         //thanh toan usdt
         bytes32 utxoID1 = bytes32(0);
         BALANCE_MAN.updateBalance(user1, utxoID1,100, true);
-        (uint256 BP,,, ,) = BALANCE_MAN.getUltraBPInfo(user1, utxoID1);
-        assertEq(BP, 100,"getUltraBPInfo should be right");
+        assertEq(BALANCE_MAN.getBalance(user1), 100,"getBalance should be right");
         vm.stopPrank();
     }
 
@@ -311,8 +311,8 @@ contract BalancesManagerTest is Test {
         (address  daoNode,address  stockNode,address rootNode) = TREE_COM.getAddress();
         vm.stopPrank();
         vm.broadcast(owner); 
-        // bytes32 utxoID1 = bytes32(0); //tt usdt
-        bytes32 utxoID1 = keccak256(abi.encodePacked("1")); //tt visa
+        bytes32 utxoID1 = bytes32(0); //tt usdt
+        // bytes32 utxoID1 = keccak256(abi.encodePacked("1")); //tt visa
         console.log("rootnode:",address(ROOT_NODE));
         console.log("SHOWROOM:",address(SHOWROOM));
         TREE_COM.addVIPMember(user1, address(ROOT_NODE),utxoID1);
@@ -327,7 +327,8 @@ contract BalancesManagerTest is Test {
         );
         // Upgrade user1 to promoter
         USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
-        bytes32 utxoID2 = keccak256(abi.encodePacked("2"));
+        // bytes32 utxoID2 = keccak256(abi.encodePacked("2"));
+        bytes32 utxoID2 = bytes32(0);
         TREE_COM.upgradeToPromoter(user1, 10000, 15000,utxoID2);
         // Check if user1 is now a promoter
         (TreeLib.NodeInfo memory nodeInfo, TreeLib.NodeData memory nodeData) = TREE_COM.getPromoterInfo();
@@ -347,7 +348,7 @@ contract BalancesManagerTest is Test {
         //2.addPromoterMember cho user2 vao rootnode
         vm.startBroadcast(owner);
         TREE_COM.addPromoterMember(buyer,address(ROOT_NODE),10000,2000,bytes32(0));
-        assertEq(USDT_ERC.balanceOf(address(TREE_COM)), 160 * 1e6, "Incorrect USDT transfer"); // 120 + 40 USDT
+        assertEq(USDT_ERC.balanceOf(address(TREE_COM)), (120+40+160) * 1e6, "Incorrect USDT transfer"); // 120 + 40 USDT
         vm.stopBroadcast();
         //3.addPromoterMember cho user3 vao user2
         registerEcomUser(user3,buyer);
@@ -360,12 +361,12 @@ contract BalancesManagerTest is Test {
         vm.prank(owner);
         TREE_COM.processTeamBPAndActive(0,100);
 
-        setEcom();
+        retailerCreateProduct();
 
     }
     function registerEcomUser(address user,address parent )public{
         registerParams memory params;
-        params.fullName = "thuy";
+        params.fullName = "thuy";buyProduct
         params.email = "abc@gmail.com";
         params.gender = 0;
         params.dateOfBirth = 23041989;
@@ -374,7 +375,7 @@ contract BalancesManagerTest is Test {
         vm.prank(user);
         ECOM_USER.register(params);
     }
-    function setEcom()public{
+    function retailerCreateProduct()public{
         //setRetailer
         vm.prank(owner);
         ECOM_USER.setRetailer(retailer);
@@ -498,11 +499,11 @@ contract BalancesManagerTest is Test {
         // );
 
         assertEq(productId, 1);
-        executeOrderSuccess(variantID);
+        buyProduct(variantID);
         // GetByteCode();
 
     }   
-    function executeOrderSuccess(bytes32 _variantID) public {
+    function buyProduct(bytes32 _variantID) public {
         
         
         CreateOrderParams[] memory params = new CreateOrderParams[](1);
@@ -557,9 +558,12 @@ contract BalancesManagerTest is Test {
 
         // TREE_COM.updateDeliveryProduct(orderCode);
         vm.stopBroadcast();
+        withDrawCommission();
         // GetByteCode();
     }
-
+    function withDrawCommission()public {
+        
+    }
     function hashAttributes(
         Attribute[] memory attrs
     ) internal pure returns (bytes32) {

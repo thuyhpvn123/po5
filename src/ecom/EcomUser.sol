@@ -210,7 +210,7 @@ contract EcomUserContract {
         require(
             // TreeCom.isPromoter(params.parent),
             TreeCom.isVIPOrPromoter(params.parent),
-            '{"from": "EcomUser.sol","code": 101, "message": "Parent not exists"}'
+            '{"from": "EcomUser.sol","code": 101, "message": "Parent not exists"+ params.parent}'
         );
 
         mUserInfo[msg.sender].user = msg.sender;

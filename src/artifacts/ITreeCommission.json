@@ -49,8 +49,8 @@
 		},
 		"gasEstimates": null,
 		"methodIdentifiers": {
-			"withdrawBP(uint256)": "046e489f",
-			"withdrawBPToAnotherUser(uint256,address)": "25e2dee7"
+			"withdrawBP(uint256,bytes32[])": "5f35ca9c",
+			"withdrawBPToAnotherUser(uint256,address,bytes32[])": "185807e4"
 		}
 	},
 	"abi": [
@@ -60,6 +60,11 @@
 					"internalType": "uint256",
 					"name": "amount",
 					"type": "uint256"
+				},
+				{
+					"internalType": "bytes32[]",
+					"name": "utxoArr",
+					"type": "bytes32[]"
 				}
 			],
 			"name": "withdrawBP",
@@ -76,8 +81,13 @@
 				},
 				{
 					"internalType": "address",
-					"name": "user",
+					"name": "use",
 					"type": "address"
+				},
+				{
+					"internalType": "bytes32[]",
+					"name": "utxoArrr",
+					"type": "bytes32[]"
 				}
 			],
 			"name": "withdrawBPToAnotherUser",

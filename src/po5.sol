@@ -360,7 +360,7 @@ contract BalancesManager is Ownable {
 
     uint256 internal nationalBonusPool;
     mapping(bytes32 => uint256) internal pendingNationalBonusPool; // Lưu BP đang chờ duyệt
-
+    mapping(address => bytes32[]) public mUserToUtxoIds;
 
     modifier onlyTreeCommission() {
         require(msg.sender == treeCommissionContract, "Unauthorized");
@@ -378,9 +378,6 @@ contract BalancesManager is Ownable {
         treeCommissionContract = _treeCommissionAddress;
     }
 
-    function isValidUTXO(bytes32 utxoID) internal pure returns (bool) {
-        return utxoID != bytes32(0);
-    }
 
     // ultra utxo
     function cancelUltraUTXOExternal(bytes32 utxoID) external onlyOwner {
@@ -480,17 +477,17 @@ contract BalancesManager is Ownable {
         return trimmed;
     }
 
+    function isValidUTXO(bytes32 utxoID) internal pure returns (bool) {
+        return utxoID != bytes32(0); //utxo khac bytes32(0) la thanh toan visa
+    }
 
     function updateBalance(address user, bytes32 utxoID, uint256 amount, bool isAdd) external onlyTreeCommission {
         require(amount > 0, "update balance: Wrong amount");
         if (isAdd) {
-            if (isValidUTXO(utxoID)) { //khong thanh toan visa
-            // console.log("visa:",user);
-            // console.log("visa amount:",amount);
+            if (!isValidUTXO(utxoID)) { //thanh toan usdt thì được ghi nhận balance
               balances[user] += amount;
             } else {
-                // console.log("11111111"); //thanh toán visa
-              createUltraUTXO(user, utxoID, amount);
+              createUltraUTXO(user, utxoID, amount); //thanh toan bang visa thì tạo utxo
             }
         } else {
             require(balances[user] >= amount, "Insufficient balance");
@@ -2391,12 +2388,23 @@ contract TreeCommission is ITreeCommission {
         bytes32 utxoID;
     }
     mapping(bytes32 => ConfirmPayment) internal confirmPayment;
-
-    
+    mapping(address => mapping(uint256 => mapping(TYPE_OF_COM => uint256))) public mUserToDateToCom; 
+    // Mapping user => time => Type of Commission => Commission Amount
+    mapping(address => uint256[]) private userTimestamps; // Track timestamps per user
     /**
      * @dev Hàm khởi tạo hợp đồng thông minh TreeCommission
      * @param _usdtAddress Địa chỉ của hợp đồng token USDT
      */
+    enum TYPE_OF_COM {
+        RETAIL_COMMISSION,
+        SHOWROOM_COMMISSION,
+        DAO_COMMISSION,
+        OTHER,
+        ACTIVATION_BP,
+        SHOWROOM_BONUS,
+        DIFFPRICE
+    }
+
     constructor(address _ecomOrderAddress, address _ecomUserAddress, address _balanceManagerAddress, address _showroomAddress, address _eventLoggerAddress, address _rootNodeAddress, address _daoNodeAddress, address _stockNodeAddress, address _usdtAddress) {
         // Kiểm tra tính hợp lệ của MEMBERSHIP_BP (tránh lỗi do lập trình sai)
         require(MEMBERSHIP_BP * 1e6 < MEMBERSHIP_FEE, "wrong code");
@@ -2639,6 +2647,7 @@ contract TreeCommission is ITreeCommission {
 
         if (nodes[user].status != TreeLib.Status.Locked) {
           balancesManager.updateBalance(user, utxoID, (bp * commissionPercent) / 100, true);
+          mUserToDateToCom[user][block.timestamp][TYPE_OF_COM.RETAIL_COMMISSION] = (bp * commissionPercent) / 100;
         }
 
         // --- end
@@ -2674,6 +2683,7 @@ contract TreeCommission is ITreeCommission {
             uint256 amountBP = (newBP * SHOWROOM_COMMISSION_PERCENT * comm) / 10000; // Trả hoa hồng cho showroom
             // balances[showroom] += amountBP;
             balancesManager.updateBalance(showroom, utxoID, amountBP, true);
+            mUserToDateToCom[showroom][block.timestamp][TYPE_OF_COM.RETAIL_COMMISSION] = amountBP;
 
         }
         // trả hoa hồng thế hệ 11% = 2 + 3 + 3 + 3 
@@ -2681,10 +2691,13 @@ contract TreeCommission is ITreeCommission {
 
         // hoa hồng cho DAO 4%
         balancesManager.updateBalance(daoNode, utxoID, (newBP * DAO_COMMISSION_PERCENT) / 100, true);
+        mUserToDateToCom[daoNode][block.timestamp][TYPE_OF_COM.DAO_COMMISSION] = (newBP * DAO_COMMISSION_PERCENT) / 100;
+                addCommission(stockNode,block.timestamp,TYPE_OF_COM.OTHER,stockNodeBonus);
+
 
         // hoa hồng cho stock
         balancesManager.updateBalance(stockNode, utxoID, stockNodeBonus, true);
-
+        addCommission(stockNode,block.timestamp,TYPE_OF_COM.OTHER,stockNodeBonus);
 
     }
 
@@ -2728,6 +2741,7 @@ contract TreeCommission is ITreeCommission {
         // emit VIPAdded(newMember, parent); // Phát sự kiện VIP mới được thêm
 
         balancesManager.updateBalance(stockNode, utxoID, MEMBERSHIP_FEE / 1e6 - MEMBERSHIP_BP, true);
+        addCommission(stockNode,block.timestamp,TYPE_OF_COM.OTHER,MEMBERSHIP_FEE / 1e6 - MEMBERSHIP_BP);
 
     }
 
@@ -2798,6 +2812,7 @@ contract TreeCommission is ITreeCommission {
         recordPersonalSales(newMember, MEMBERSHIP_BP, utxoID);
 
         balancesManager.updateBalance(stockNode, utxoID, MEMBERSHIP_FEE / 1e6 - MEMBERSHIP_BP, true);
+        addCommission(stockNode,block.timestamp,TYPE_OF_COM.OTHER,MEMBERSHIP_FEE / 1e6 - MEMBERSHIP_BP);
 
         if (isBatchProcessing) { 
             // Nếu hệ thống đang chạy batch, thêm thành viên vào queue để xử lý sau
@@ -2873,6 +2888,7 @@ contract TreeCommission is ITreeCommission {
         recordPersonalSales(user, MEMBERSHIP_BP, utxoID); // Ghi nhận doanh số cá nhân khi gia hạn
 
         balancesManager.updateBalance(stockNode, utxoID, MEMBERSHIP_FEE / 1e6 - MEMBERSHIP_BP, true);
+        addCommission(stockNode,block.timestamp,TYPE_OF_COM.OTHER,MEMBERSHIP_FEE / 1e6 - MEMBERSHIP_BP);
 
     }
 
@@ -2934,15 +2950,18 @@ contract TreeCommission is ITreeCommission {
         leafNodes.push(newMember); // Thêm vào danh sách nút lá
 
         balancesManager.updateBalance(parent, utxoID, ACTIVATION_BP, true); // Trả hoa hồng kích hoạt $10 cho parent
+        addCommission(parent,block.timestamp,TYPE_OF_COM.ACTIVATION_BP,ACTIVATION_BP);
 
         if (showroom != address(0)) {
             uint256 comm = showroomManager.plusMember(showroom, 1);
             balancesManager.updateBalance(showroom, utxoID, (SHOWROOM_BONUS * comm) / 100, true); // Trả hoa hồng showroom
-
+            addCommission(showroom,block.timestamp,TYPE_OF_COM.SHOWROOM_COMMISSION,SHOWROOM_BONUS * comm / 100);
         }
 
         // balances[stockNode] += ACTIVATION_FEE - (SHOWROOM_BONUS + ACTIVATION_BP); // Trả hoa hồng cho stock
         balancesManager.updateBalance(stockNode, utxoID, ACTIVATION_FEE / 1e6 - (SHOWROOM_BONUS + ACTIVATION_BP), true);
+        addCommission(stockNode,block.timestamp,TYPE_OF_COM.OTHER,ACTIVATION_FEE / 1e6 - (SHOWROOM_BONUS + ACTIVATION_BP));
+
     }
 
     function isVIPOrPromoter(address user) external view  returns (bool) {
@@ -2951,8 +2970,10 @@ contract TreeCommission is ITreeCommission {
     function isVIP() external view  returns (bool) {
         return vipNodes[msg.sender].parent != address(0);
     }
-
-    function isPromoter(address user) external view  returns (bool) {
+    function checkPromoter(address user) external view  returns (bool) {
+      return nodes[user].parent != address(0);
+    }
+    function isPromoterActive(address user) external view  returns (bool) {
       return (nodes[user].parent != address(0) && nodes[user].status == TreeLib.Status.Active);
     }
 
@@ -3036,9 +3057,12 @@ contract TreeCommission is ITreeCommission {
         if (diffPrice > 0) {
           if (nodes[user].status != TreeLib.Status.Locked) {
             balancesManager.updateBalance(user, utxoID, (diffPrice / 1e6) * 80 / 100, true);
+            addCommission(user,block.timestamp,TYPE_OF_COM.DIFFPRICE,(diffPrice / 1e6) * 80 / 100);
           }
           // trả cho DAO 20% số tiền chênh lệch giữa giá member và giá vip
-          balancesManager.updateBalance(daoNode, utxoID, (diffPrice / 1e6) * 20 / 100, true);
+            balancesManager.updateBalance(daoNode, utxoID, (diffPrice / 1e6) * 20 / 100, true);
+            addCommission(daoNode,block.timestamp,TYPE_OF_COM.DIFFPRICE,(diffPrice / 1e6) * 20 / 100);
+
         }
 
 
@@ -3047,7 +3071,7 @@ contract TreeCommission is ITreeCommission {
         delete confirmPayment[orderCode];
 
         balancesManager.updateBalance(rootNode, utxoID, bp, true);
-
+        addCommission(rootNode,block.timestamp,TYPE_OF_COM.OTHER,bp);
     }
 
     // /**
@@ -3108,7 +3132,7 @@ contract TreeCommission is ITreeCommission {
         // chỉ cho phép ViewTree gọi
         // require(msg.sender == viewTreeContract, "Unauthorized caller");
         require(TreeLib.isDescendant(nodes, user, msg.sender, totalLevel, linkViewTree, allLinkViewTreeKeys), "Unauthorized caller");
-        require(startIndex < nodes[user].children.length, "Invalid start index");
+        // require(startIndex < nodes[user].children.length, "Invalid start index");
 
         uint256 totalChildren = nodes[user].children.length;
 
@@ -3129,6 +3153,30 @@ contract TreeCommission is ITreeCommission {
 
         return (children, childrenInfo, childrenData);
     }
+    // function getChildren(address user, uint8 totalLevel, uint256 startIndex, uint256 pageSize) external onlyEOA returns ( TreeLib.NodeInfo[] memory, TreeLib.NodeData[] memory) {
+    //     // chỉ cho phép ViewTree gọi
+    //     // require(msg.sender == viewTreeContract, "Unauthorized caller");
+    //     require(TreeLib.isDescendant(nodes, user, msg.sender, totalLevel, linkViewTree, allLinkViewTreeKeys), "Unauthorized caller");
+    //     require(startIndex < nodes[user].children.length, "Invalid start index");
+
+    //     uint256 totalChildren = nodes[user].children.length;
+
+    //     if (startIndex >= totalChildren) return ( new TreeLib.NodeInfo[](0), new TreeLib.NodeData[](0));// Trả về mảng rỗng nếu vượt giới hạn
+
+
+    //     uint256 actualPageSize = (startIndex + pageSize > totalChildren) ? (totalChildren - startIndex) : pageSize;
+
+    //     TreeLib.NodeInfo[] memory childrenInfo = new TreeLib.NodeInfo[](actualPageSize);
+    //     TreeLib.NodeData[] memory childrenData = new TreeLib.NodeData[](actualPageSize);
+    //     address[] memory children = new address[](actualPageSize);
+    //     for (uint256 i = 0; i < actualPageSize; i++) {
+    //         address child = nodes[user].children[startIndex + i];
+    //         childrenInfo[i] = nodes[child];
+    //         childrenData[i] = nodeData[child];
+    //     }
+
+    //     return (childrenInfo, childrenData);
+    // }
 
         /**
      * @dev Cập nhật danh sách các node lá (leafNodes)
@@ -3399,5 +3447,36 @@ contract TreeCommission is ITreeCommission {
         delete allLinkViewTreeKeys;
 
     }
+    function addCommission(
+        address _user,
+        uint256 _timestamp,
+        TYPE_OF_COM _comType,
+        uint256 _amount
+    ) public {
+        if (mUserToDateToCom[_user][_timestamp][_comType] == 0) {
+            if (userTimestamps[_user].length == 0 || userTimestamps[_user][userTimestamps[_user].length - 1] != _timestamp) {
+                userTimestamps[_user].push(_timestamp); // Track timestamp
+            }
+        }
 
+        mUserToDateToCom[_user][_timestamp][_comType] = _amount;
+    }
+
+    // ✅ Lấy tổng commission của user theo loại trong khoảng thời gian
+    function getCommissionInRange(
+        address _user,
+        uint256 _startDate,
+        uint256 _endDate,
+        TYPE_OF_COM _comType
+    ) public view returns (uint256 totalCommission) {
+        uint256[] memory timestamps = userTimestamps[_user];
+
+        for (uint256 i = 0; i < timestamps.length; i++) {
+            uint256 time = timestamps[i];
+
+            if (time >= _startDate && time <= _endDate) {
+                totalCommission += mUserToDateToCom[_user][time][_comType];
+            }
+        }
+    }
 }

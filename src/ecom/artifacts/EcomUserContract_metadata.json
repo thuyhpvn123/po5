@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.26+commit.8a97fa7a"
+		"version": "0.8.29+commit.ab55807c"
 	},
 	"language": "Solidity",
 	"output": {
@@ -1545,11 +1545,11 @@
 			]
 		},
 		"src/ecom/EcomUser.sol": {
-			"keccak256": "0xab10c38b98856bed17fbf7a236475aeb6db6e54991cfe8c6246cf0b1d3070635",
+			"keccak256": "0xcf73531c1da53b7f13bcd9a73c4708139cffddb33a8b57b77318f8aec354eda8",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://a3547ba37f44b97aea4c2d74f85ef5a02451618a822311f28ae777bf5448828c",
-				"dweb:/ipfs/QmVQyMHghFCGE33iy4arZaToW5QLQ4DJyi72Aa3ruFKcEC"
+				"bzz-raw://90bdb158f9792f02abf7b1c6174a439497df521fc41b7d1e39ec7b0122e017aa",
+				"dweb:/ipfs/QmZtqVPyvQLf6cur8S3epmRBtBXKGBv1DAsiqndjAyvi5f"
 			]
 		},
 		"src/ecom/interfaces/IEcomCart.sol": {
