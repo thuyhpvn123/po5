@@ -51,6 +51,8 @@ contract BalancesManagerTest is Test {
         ECOM_ORDER.SetEcomUser(address(ECOM_USER));
         ECOM_ORDER.SetEcomProduct(address(ECOM_PRODUCT));
         ECOM_ORDER.SetEcomInfo(address(ECOM_INFO));
+        ECOM_INFO.SetEcomOrder(address(ECOM_ORDER));
+        ECOM_INFO.SetEcomProduct(address(ECOM_PRODUCT));
         //po5
         rootMembers.push(address(0x11));
         rootMembers.push(address(0x12));
@@ -98,13 +100,13 @@ contract BalancesManagerTest is Test {
         //thanh toan visa
         
         bytes32 utxoID = keccak256("test_utxo");
-        BALANCE_MAN.updateBalance(user1, utxoID,100, true);
+        BALANCE_MAN.updateBalance(user1, utxoID,100, true,ITreeCommission.TYPE_OF_COM.OTHER);
         (uint256 BP,,, ,) = BALANCE_MAN.getUltraBPInfo(user1, utxoID);
         assertEq(BP, 100,"getUltraBPInfo should be right");
 
         //thanh toan usdt
         bytes32 utxoID1 = bytes32(0);
-        BALANCE_MAN.updateBalance(user1, utxoID1,100, true);
+        BALANCE_MAN.updateBalance(user1, utxoID1,100, true,ITreeCommission.TYPE_OF_COM.OTHER);
         assertEq(BALANCE_MAN.getBalance(user1), 100,"getBalance should be right");
         vm.stopPrank();
     }
@@ -113,7 +115,7 @@ contract BalancesManagerTest is Test {
         bytes32 utxoID = keccak256("test_utxo");
         vm.startPrank(user1);
         vm.expectRevert("Unauthorized");
-        BALANCE_MAN.updateBalance(user1,utxoID, 100, true);
+        BALANCE_MAN.updateBalance(user1,utxoID, 100, true,ITreeCommission.TYPE_OF_COM.OTHER);
         vm.stopPrank();
     }
 
@@ -130,7 +132,7 @@ contract BalancesManagerTest is Test {
         bool isAdd = true;
 
         vm.startPrank(address(TREE_COM));
-        BALANCE_MAN.batchUpdateBalances(utxoID,users, amounts, isAdd);
+        BALANCE_MAN.batchUpdateBalances(utxoID,users, amounts, isAdd,ITreeCommission.TYPE_OF_COM.OTHER);
         vm.stopPrank();
 
         assertEq(BALANCE_MAN.getBalance(user1), 100);
@@ -145,7 +147,7 @@ contract BalancesManagerTest is Test {
 
         vm.startPrank(address(TREE_COM));
         vm.expectRevert("Array lengths mismatch");
-        BALANCE_MAN.batchUpdateBalances(utxoID,users, amounts, isAdd);
+        BALANCE_MAN.batchUpdateBalances(utxoID,users, amounts, isAdd,ITreeCommission.TYPE_OF_COM.OTHER);
         vm.stopPrank();
     }
     //showroom
@@ -264,35 +266,75 @@ contract BalancesManagerTest is Test {
         vm.stopBroadcast();
         registerEcomUser(address(0x331),user1);
         vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x331), user1,10000,2000, keccak256(abi.encodePacked("1")));
+        TREE_COM.addPromoterMember(address(0x331), user1,10000,2000, keccak256(abi.encodePacked("2")));
         registerEcomUser(address(0x332),user1);
         vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x332), user1,10000,2000, keccak256(abi.encodePacked("1")));
+        TREE_COM.addPromoterMember(address(0x332), user1,10000,2000, keccak256(abi.encodePacked("3")));
         registerEcomUser(address(0x333),user1);
         vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x333), user1,10000,2000, keccak256(abi.encodePacked("1")));
+        TREE_COM.addPromoterMember(address(0x333), user1,10000,2000, keccak256(abi.encodePacked("4")));
         registerEcomUser(address(0x334),user1);
         vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x334), user1,10000,2000, keccak256(abi.encodePacked("1")));
+        TREE_COM.addPromoterMember(address(0x334), user1,10000,2000, keccak256(abi.encodePacked("5")));
         registerEcomUser(address(0x335),user1);
         vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x335), user1,10000,2000, keccak256(abi.encodePacked("1")));
+        TREE_COM.addPromoterMember(address(0x335), user1,10000,2000, keccak256(abi.encodePacked("6")));
         registerEcomUser(address(0x441),address(0x331));
         vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x441),address(0x331),10000,2000, keccak256(abi.encodePacked("1")));
+        TREE_COM.addPromoterMember(address(0x441),address(0x331),10000,2000, keccak256(abi.encodePacked("7")));
         registerEcomUser(address(0x442),address(0x331));
         vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x442),address(0x331),10000,2000, keccak256(abi.encodePacked("1")));
+        TREE_COM.addPromoterMember(address(0x442),address(0x331),10000,2000, keccak256(abi.encodePacked("8")));
         registerEcomUser(address(0x443),address(0x331));
         vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x443),address(0x331),10000,2000, keccak256(abi.encodePacked("1")));
+        TREE_COM.addPromoterMember(address(0x443),address(0x331),10000,2000, keccak256(abi.encodePacked("9")));
         vm.broadcast(user1);
         (address[] memory children, TreeLib.NodeInfo[] memory nodeinfos, TreeLib.NodeData[] memory nodedatas)= TREE_COM.getChildren(user1,10,0,1000);
-        console.log("length:",children.length);
-        console.log("child 1:",children[0]);
-        console.log("child 5:",children[4]);
+        assertEq(children.length,5,"children number should be equal");
 
     }
+    function testWithDrawCommission()public {
+        uint256 startTime = 1742025115; //7h49 ngay 15/3/2025
+        vm.warp(startTime);
+        registerEcomUser(user1,address(ROOT_NODE));
+        vm.startBroadcast(owner);
+        USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
+        TREE_COM.addPromoterMember(user1,address(ROOT_NODE),10000,2000,bytes32(0));
+        vm.stopBroadcast();
+        (uint rootnodeBal,uint daonodeBal,uint stocknodeBal,uint showroomBal,uint user1Bal,uint user2Bal,uint user3Bal,uint buyerBal) = getBalance();
+        uint256 endTime = 1742197963; //7h49 ngay 17/3/2025
+        (uint256 retailBonus,,,,,,,,) = TREE_COM.getCommissionUSDTInRange(user1,startTime,endTime);
+        console.log("amount:",retailBonus);
+        // assertEq(user1Bal,20);//20 retail --personalSale
+        // assertEq(stocknodeBal,62); 
+        //62=10+20+32 voi
+        // 10 = ACTIVATION_FEE -(SHOWROOM_BONUS + ACTIVATION_BP)  = 40-(20+10) = 10
+        // 20 = membership_fee - membership_bp = 120-100 = 20
+        // 32 = (bp * 32) / 100 = 32 --personalSale
+        // assertEq(daonodeBal,4); //4- daonode
+        //11 unilever
+        //1 showroom
+    }
+    function getBalance()public returns(uint,uint,uint,uint,uint,uint,uint,uint){
+        uint amount1 = BALANCE_MAN.getBalance(address(ROOT_NODE));
+        uint amount2 = BALANCE_MAN.getBalance(address(DAO_NODE));
+        uint amount3 = BALANCE_MAN.getBalance(address(STOCK_NODE));
+        uint amount4 = BALANCE_MAN.getBalance(address(SHOWROOM1));
+        uint amount5 = BALANCE_MAN.getBalance(user1);
+        uint amount6 = BALANCE_MAN.getBalance(user2);
+        uint amount7 = BALANCE_MAN.getBalance(user3);
+        uint amount8 = BALANCE_MAN.getBalance(buyer);
+        console.log("ROOT_NODE:",amount1);
+        console.log("DAO_NODE:",amount2);
+        console.log("STOCK_NODE:",amount3);
+        console.log("SHOWROOM1:",amount4);
+        console.log("user1:",amount5);
+        console.log("user2:",amount6);
+        console.log("user3:",amount7);
+        console.log("buyer:",amount8);
+
+    }
+
     //TreeCommission
      function testFull() public {
         //1.register on EcomUser
@@ -360,13 +402,24 @@ contract BalancesManagerTest is Test {
         vm.stopBroadcast();
         vm.prank(owner);
         TREE_COM.processTeamBPAndActive(0,100);
-
+        withdraw();
         retailerCreateProduct();
 
     }
+    function withdraw() public {
+        //  console.log("balance:");
+        // BALANCE_MAN.getBalance(address(ROOT_NODE));
+        // BALANCE_MAN.getBalance(address(DAO_NODE));
+        // BALANCE_MAN.getBalance(address(STOCK_NODE));
+        // BALANCE_MAN.getBalance(address(SHOWROOM1));
+        // BALANCE_MAN.getBalance(user1);
+        // BALANCE_MAN.getBalance(user2);
+        // BALANCE_MAN.getBalance(user3);
+        // BALANCE_MAN.getBalance(buyer);
+    }
     function registerEcomUser(address user,address parent )public{
         registerParams memory params;
-        params.fullName = "thuy";buyProduct
+        params.fullName = "thuy";
         params.email = "abc@gmail.com";
         params.gender = 0;
         params.dateOfBirth = 23041989;
@@ -558,11 +611,9 @@ contract BalancesManagerTest is Test {
 
         // TREE_COM.updateDeliveryProduct(orderCode);
         vm.stopBroadcast();
-        withDrawCommission();
+        vm.prank(owner);
+        ECOM_INFO.getUserPurchaseInfo(buyer);
         // GetByteCode();
-    }
-    function withDrawCommission()public {
-        
     }
     function hashAttributes(
         Attribute[] memory attrs

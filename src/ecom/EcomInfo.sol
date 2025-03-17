@@ -7,7 +7,7 @@ import "./libs/utils.sol";
 import "./interfaces/IEcomProduct.sol";
 import "./interfaces/IEcomUser.sol";
 import "./interfaces/IEcomOrder.sol";
-
+import "forge-std/console.sol";
 contract EcomInfoContract {
     uint256 public totalSystemFavorite;
     uint256 public totalSystemAddedToCart;
