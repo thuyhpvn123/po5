@@ -23,6 +23,7 @@ contract BalancesManagerTest is Test {
     EcomUserContract public ECOM_USER;
     EcomProductContract public ECOM_PRODUCT;
     EcomInfoContract public ECOM_INFO;
+    MasterPool public MASTERPOOL;
     address public owner= address(0x1111);
     address[] public rootMembers;
     address[] public daoMembers;
@@ -66,15 +67,18 @@ contract BalancesManagerTest is Test {
         EVENT_LOG = new EventLogger();
         ROOT_NODE = new ProposalVote(rootMembers, address(BALANCE_MAN));
         DAO_NODE = new ProposalVote(daoMembers, address(BALANCE_MAN));
-        STOCK_NODE = new eStock("eStock", "po5", 1000, 1, address(USDT_ERC));
+        STOCK_NODE = new eStock("eStock", "po5", 1000, 10000, address(USDT_ERC));
         TREE_COM = new TreeCommission(
             address(ECOM_ORDER), address(ECOM_USER),
             address(BALANCE_MAN),address(SHOWROOM),address(EVENT_LOG),address(ROOT_NODE),
             address(DAO_NODE),address(STOCK_NODE),address(USDT_ERC)
         );
+        MASTERPOOL = new MasterPool(address(USDT_ERC),address(BALANCE_MAN));
         //set treecom
         BALANCE_MAN.setTreeCommissionAddress(address(TREE_COM));
+        BALANCE_MAN.setMasterPool(address(MASTERPOOL));
         SHOWROOM.setTreeCommissionContract(address(TREE_COM));
+        STOCK_NODE.setTreeCom(address(TREE_COM));
         ECOM_USER.SetTreeCom(address(TREE_COM));
         ECOM_ORDER.SetTreeCom(address(TREE_COM));
         // ECOM_ORDER.SetPos(address(TREE_COM));
@@ -86,6 +90,37 @@ contract BalancesManagerTest is Test {
         vm.stopPrank();
         
     }
+    function testSetExchangeRate() public {
+        vm.prank(owner);
+        STOCK_NODE.setExchangeRate(1500000);
+        assertEq(STOCK_NODE.getExchangeRate(), 1500000);
+    }
+
+    function testBuyStock() public {
+        vm.startPrank(user1);
+        USDT_ERC.approve(address(STOCK_NODE), 100 * 1e6);
+        STOCK_NODE.buyStock(100 * 1e6, 10000);
+        assertEq(STOCK_NODE.balanceOf(user1), 10**6);
+        vm.stopPrank();
+    }
+    function testReceiveProfit() public {
+        vm.startPrank(user1);
+        USDT_ERC.approve(address(STOCK_NODE), 200 * 1e6);
+        STOCK_NODE.receiveProfitFromContract(200 * 1e6);
+        // assertEq(STOCK_NODE.getUserUSDTCommission(user1), 200 * 1e6);
+        vm.stopPrank();
+    }
+    // function testWithdrawUSDTCommission() public {
+    //     vm.startPrank(user);
+    //     usdt.approve(address(stock), 300 * 1e6);
+    //     stock.receiveProfitFromContract(300 * 1e6);
+    //     assertEq(stock.getUserUSDTCommission(user), 300 * 1e6);
+        
+    //     stock.withdrawUSDTCommission();
+    //     assertEq(stock.getUserUSDTCommission(user), 0);
+    //     assertEq(stock.getUserUSDTWithdrawn(user), 300 * 1e6);
+    //     vm.stopPrank();
+    // }
 
     function testSetTreeCommissionAddress() public {
         vm.startPrank(owner);
@@ -293,7 +328,7 @@ contract BalancesManagerTest is Test {
         assertEq(children.length,5,"children number should be equal");
 
     }
-    function testWithDrawCommission()public {
+    function testWithDrawCommissionUSDT()public {
         uint256 startTime = 1742025115; //7h49 ngay 15/3/2025
         vm.warp(startTime);
         registerEcomUser(user1,address(ROOT_NODE));
@@ -301,29 +336,46 @@ contract BalancesManagerTest is Test {
         USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
         TREE_COM.addPromoterMember(user1,address(ROOT_NODE),10000,2000,bytes32(0));
         vm.stopBroadcast();
-        (uint rootnodeBal,uint daonodeBal,uint stocknodeBal,uint showroomBal,uint user1Bal,uint user2Bal,uint user3Bal,uint buyerBal) = getBalance();
+        (uint rootnodeBal,uint daonodeBal,uint stocknodeBal,,uint user1Bal,,,) = getBalance();
         uint256 endTime = 1742197963; //7h49 ngay 17/3/2025
-        (uint256 retailBonus,,,,,,,,) = TREE_COM.getCommissionUSDTInRange(user1,startTime,endTime);
-        console.log("amount:",retailBonus);
-        // assertEq(user1Bal,20);//20 retail --personalSale
-        // assertEq(stocknodeBal,62); 
+        ITreeCommission.CommissionData memory commissionData = TREE_COM.getCommissionUSDTInRange(user1,startTime,endTime);
+        assertEq(commissionData.retailBonus,20);//20 retail --personalSale
+        assertEq(user1Bal,20);
+        assertEq(stocknodeBal,62); 
         //62=10+20+32 voi
         // 10 = ACTIVATION_FEE -(SHOWROOM_BONUS + ACTIVATION_BP)  = 40-(20+10) = 10
         // 20 = membership_fee - membership_bp = 120-100 = 20
         // 32 = (bp * 32) / 100 = 32 --personalSale
-        // assertEq(daonodeBal,4); //4- daonode
-        //11 unilever
-        //1 showroom
+        assertEq(daonodeBal,4); //4- daonode
+        //11 unilever???
+        //1 showroom???
+        //Masterpool can nap usdt de co the tra commission
+        vm.prank(owner);
+        USDT_ERC.approve(address(MASTERPOOL), 1_000_000 * 1e6);
+        vm.prank(owner);
+        MASTERPOOL.deposit(1_000_000 * 1e6);
+        vm.startBroadcast(user1);
+        bytes32[] memory utxoArr = new  bytes32[](0);
+        uint256 balUser1Before = USDT_ERC.balanceOf(user1);
+        TREE_COM.withdrawBP(20,utxoArr);
+        (rootnodeBal, daonodeBal, stocknodeBal, , user1Bal, , , ) = getBalance();
+        assertEq(user1Bal,0);
+        uint256 balUser1After = USDT_ERC.balanceOf(user1);
+        assertEq(balUser1Before + 20 * 120 * 10**6 /100,balUser1After);
+        vm.stopBroadcast();
+
+
+
     }
-    function getBalance()public returns(uint,uint,uint,uint,uint,uint,uint,uint){
-        uint amount1 = BALANCE_MAN.getBalance(address(ROOT_NODE));
-        uint amount2 = BALANCE_MAN.getBalance(address(DAO_NODE));
-        uint amount3 = BALANCE_MAN.getBalance(address(STOCK_NODE));
-        uint amount4 = BALANCE_MAN.getBalance(address(SHOWROOM1));
-        uint amount5 = BALANCE_MAN.getBalance(user1);
-        uint amount6 = BALANCE_MAN.getBalance(user2);
-        uint amount7 = BALANCE_MAN.getBalance(user3);
-        uint amount8 = BALANCE_MAN.getBalance(buyer);
+    function getBalance()public returns(uint amount1,uint amount2,uint amount3,uint amount4,uint amount5,uint amount6,uint amount7,uint amount8){
+         amount1 = BALANCE_MAN.getBalance(address(ROOT_NODE));
+         amount2 = BALANCE_MAN.getBalance(address(DAO_NODE));
+         amount3 = BALANCE_MAN.getBalance(address(STOCK_NODE));
+         amount4 = BALANCE_MAN.getBalance(address(SHOWROOM1));
+         amount5 = BALANCE_MAN.getBalance(user1);
+         amount6 = BALANCE_MAN.getBalance(user2);
+         amount7 = BALANCE_MAN.getBalance(user3);
+         amount8 = BALANCE_MAN.getBalance(buyer);
         console.log("ROOT_NODE:",amount1);
         console.log("DAO_NODE:",amount2);
         console.log("STOCK_NODE:",amount3);
@@ -332,7 +384,7 @@ contract BalancesManagerTest is Test {
         console.log("user2:",amount6);
         console.log("user3:",amount7);
         console.log("buyer:",amount8);
-
+        
     }
 
     //TreeCommission

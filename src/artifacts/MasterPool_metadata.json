@@ -172,6 +172,11 @@
 						"internalType": "address",
 						"name": "_address",
 						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "_isController",
+						"type": "bool"
 					}
 				],
 				"name": "setController",
@@ -291,7 +296,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"src/po5_3.3.sol": "MasterPool"
+			"src/po5.sol": "MasterPool"
 		},
 		"evmVersion": "cancun",
 		"libraries": {},
@@ -393,12 +398,20 @@
 				"dweb:/ipfs/QmVUSvooZKEdEdap619tcJjTLcAuH6QBdZqAzWwnAXZAWJ"
 			]
 		},
-		"src/po5_3.3.sol": {
-			"keccak256": "0xbe48c5511eb4691d88b2c0b1bdeb6d70fb8bd2711b6218c7d2dff9eb5e484a33",
+		"forge-std/console.sol": {
+			"keccak256": "0x91d5413c2434ca58fd278b6e1e79fd98d10c83931cc2596a6038eee4daeb34ba",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://77365574240f71ee1dceea0a30bcc16aee76198b43385aff536c7f25c5056cbd",
-				"dweb:/ipfs/QmQSEvXxSrcqDJGtRFGmSethbRBPnQqcNBASPcivWx5oqq"
+				"bzz-raw://91ccea707361e48b9b7a161fe81f496b9932bc471e9c4e4e1e9c283f2453cc70",
+				"dweb:/ipfs/QmcB66sZhQ6Kz7MUHcLE78YXRUZxoZnnxZjN6yATsbB2ec"
+			]
+		},
+		"src/po5.sol": {
+			"keccak256": "0x54c26e1a50d241ff9922bf909d5ca505b5e194bf497ac454a84ce55ba50ad003",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0481d7942dd1d3a21f7b3c091c8adcbf571c964ceb80cb9514614425d59a7124",
+				"dweb:/ipfs/QmPNpT3wVwSiJ59GtBmh72MfhipfBFJYPrMds1qVsPEVJt"
 			]
 		}
 	},

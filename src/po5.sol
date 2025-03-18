@@ -345,6 +345,56 @@ interface IEComUser {
 interface IMasterPool{
     function transferCommission(address _to, uint256 amount) external returns(bool);
 }
+contract MasterPool is Ownable  {
+    
+    address public usdt;
+    // address public refContract;
+    mapping(address => bool) public isController;
+    uint256 public FEE_RATE;
+    address public balanceManager;
+    constructor(address _usdt,address _balanceManager) Ownable(msg.sender) payable {
+        usdt = _usdt;
+        FEE_RATE = 5; //5%
+        balanceManager = _balanceManager;
+        isController[msg.sender] = true;
+    }
+
+    function setController(address _address, bool _isController) external onlyOwner {
+        isController[_address] = _isController;
+    }
+    function setFeeRate(uint256 _feeRate) external onlyOwner {
+        FEE_RATE = _feeRate;
+    }
+    function setBalanceManager(address _balanceManager) external onlyOwner {
+        balanceManager = _balanceManager;
+    }
+    function SetUsdt(address _usdt) external onlyOwner {
+        usdt = _usdt;
+    }
+
+    modifier onlyController {
+        require(isController[msg.sender] == true, "Only Controller");
+        _;
+    }
+    modifier onlyBalanceManager {
+        require(msg.sender == balanceManager, "Only Controller");
+        _;
+    }
+    function deposit(uint256 amount) external {
+        IERC20(usdt).transferFrom(msg.sender,address(this),amount);
+    }
+    function widthdraw(uint256 amount) external onlyController {
+        require(usdt != address(0), "Invalid usdt");
+        require(amount <= IERC20(usdt).balanceOf(address(this)),"over balance of token");
+        IERC20(usdt).transfer(msg.sender, amount);
+    }   
+
+    function transferCommission(address _to, uint256 amount) external onlyBalanceManager returns(bool) {
+        require(balanceManager != address(0) && _to != address(0), "balanceManager and receiver can not be address(0)");
+        require(amount >0,"amount can be zero");
+        return IERC20(usdt).transfer(_to, amount * (100 - FEE_RATE )/100);
+    }
+} 
 
 // BalancesManager: Quản lý số dư, giao dịch, rút tiền.
 contract BalancesManager is Ownable {
@@ -483,7 +533,7 @@ contract BalancesManager is Ownable {
           return false;
         }
 
-        balances[msg.sender] -= amount;
+        balances[user] -= amount;
 
         return true;
     }
@@ -542,25 +592,32 @@ contract BalancesManager is Ownable {
         address _user,
         uint256 _startDate,
         uint256 _endDate
-    ) external onlyTreeCommission view returns (
-        ITreeCommission.CommissionData memory commissionData
-    ) {
+    ) external onlyTreeCommission view returns (ITreeCommission.CommissionData memory commissionData) {
         uint256[] memory timestamps = userTimestamps[_user];
+        uint256 length = timestamps.length;
 
-        for (uint256 i = 0; i < timestamps.length; i++) {
+        if (length == 0) {
+            return commissionData;
+        }
+
+        for (uint256 i = 0; i < length; ) {
             uint256 time = timestamps[i];
 
             if (time >= _startDate && time <= _endDate) {
-                commissionData.retailBonus += mUserToDateToCom[_user][time][ITreeCommission.TYPE_OF_COM.RETAIL_COMMISSION];
-                commissionData.showroomBonus += mUserToDateToCom[_user][time][ITreeCommission.TYPE_OF_COM.SHOWROOM_BONUS];
-                commissionData.daoBonus += mUserToDateToCom[_user][time][ITreeCommission.TYPE_OF_COM.DAO_COMMISSION];
-                commissionData.otherBonus += mUserToDateToCom[_user][time][ITreeCommission.TYPE_OF_COM.OTHER];
-                commissionData.activationBp += mUserToDateToCom[_user][time][ITreeCommission.TYPE_OF_COM.ACTIVATION_BP];
-                commissionData.diffPrice += mUserToDateToCom[_user][time][ITreeCommission.TYPE_OF_COM.DIFFPRICE];
-                commissionData.unilevelBonus += mUserToDateToCom[_user][time][ITreeCommission.TYPE_OF_COM.UNILEVEL];
-                commissionData.generationBonus += mUserToDateToCom[_user][time][ITreeCommission.TYPE_OF_COM.GENERATION];
-                commissionData.nationalBonus += mUserToDateToCom[_user][time][ITreeCommission.TYPE_OF_COM.NATIONAL_COMMISSION];
+                mapping(ITreeCommission.TYPE_OF_COM => uint256) storage userCommissions = mUserToDateToCom[_user][time];
+
+                commissionData.retailBonus += userCommissions[ITreeCommission.TYPE_OF_COM.RETAIL_COMMISSION];
+                commissionData.showroomBonus += userCommissions[ITreeCommission.TYPE_OF_COM.SHOWROOM_BONUS];
+                commissionData.daoBonus += userCommissions[ITreeCommission.TYPE_OF_COM.DAO_COMMISSION];
+                commissionData.otherBonus += userCommissions[ITreeCommission.TYPE_OF_COM.OTHER];
+                commissionData.activationBp += userCommissions[ITreeCommission.TYPE_OF_COM.ACTIVATION_BP];
+                commissionData.diffPrice += userCommissions[ITreeCommission.TYPE_OF_COM.DIFFPRICE];
+                commissionData.unilevelBonus += userCommissions[ITreeCommission.TYPE_OF_COM.UNILEVEL];
+                commissionData.generationBonus += userCommissions[ITreeCommission.TYPE_OF_COM.GENERATION];
+                commissionData.nationalBonus += userCommissions[ITreeCommission.TYPE_OF_COM.NATIONAL_COMMISSION];
             }
+
+            unchecked { i++; }  // Gas optimization: No need for overflow check
         }
     }
 
@@ -1056,9 +1113,11 @@ contract eStock is ERC20, Ownable {
         // Gán địa chỉ hợp đồng USDT cho biến usdtToken
         usdtToken = IERC20(_usdtAddress);
         
-        treeCommissionContract = msg.sender;
+        // treeCommissionContract = msg.sender;
     }
-
+    function setTreeCom (address _treeCom) external onlyOwner {
+        treeCommissionContract = _treeCom;
+    }
     /**
      * @dev Cập nhật tỷ giá quy đổi eStock/USDT (chỉ Owner có thể thay đổi).
      * @param newRate Tỷ giá mới.
@@ -2549,7 +2608,7 @@ contract TreeCommission is ITreeCommission {
     }
 
 
-    //rút usdt khi user thanh toán bằng usdt
+    //rút usdt khi user thanh toán bằng usdt, nếu thanh toán bằng visa thì nhập mảng utxo
     function withdrawBPToUser(uint256 amount, address user,bytes32[] memory utxoArr) internal {
         if(utxoArr.length >0){
             balancesManager.withdrawUltraBP(user,utxoArr);
