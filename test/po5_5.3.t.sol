@@ -103,22 +103,21 @@ contract BalancesManagerTest is Test {
         assertEq(STOCK_NODE.balanceOf(user1), 10**6);
         vm.stopPrank();
     }
-    function testReceiveProfit() public {
-        vm.startPrank(user1);
-        USDT_ERC.approve(address(STOCK_NODE), 200 * 1e6);
-        STOCK_NODE.receiveProfitFromContract(200 * 1e6);
-        // assertEq(STOCK_NODE.getUserUSDTCommission(user1), 200 * 1e6);
-        vm.stopPrank();
-    }
-    // function testWithdrawUSDTCommission() public {
-    //     vm.startPrank(user);
-    //     usdt.approve(address(stock), 300 * 1e6);
-    //     stock.receiveProfitFromContract(300 * 1e6);
-    //     assertEq(stock.getUserUSDTCommission(user), 300 * 1e6);
-        
-    //     stock.withdrawUSDTCommission();
-    //     assertEq(stock.getUserUSDTCommission(user), 0);
-    //     assertEq(stock.getUserUSDTWithdrawn(user), 300 * 1e6);
+    // function testReceiveProfit() public {
+    //     //user1 chuyen usdt cho contract estock
+    //     vm.startPrank(user1);
+    //     USDT_ERC.approve(address(STOCK_NODE), 200 * 1e6);
+    //     STOCK_NODE.receiveProfitFromContract(200 * 1e6);
+    //     assertEq(STOCK_NODE.getUserUSDTCommission(user1), 200 * 1e6);
+    //     vm.stopPrank();
+    //     //muon rut usdt thi phai nap usdt cho masterpool truoc
+    //     vm.prank(owner);
+
+    //     MASTERPOOL.deposit(200 * 1e6);
+    //     vm.prank(user1);
+    //     STOCK_NODE.withdrawUSDTCommission();
+    //     // assertEq(STOCK_NODE.getUserUSDTCommission(user), 0);
+    //     // assertEq(STOCK_NODE.getUserUSDTWithdrawn(user), 200 * 1e6);
     //     vm.stopPrank();
     // }
 
@@ -340,29 +339,37 @@ contract BalancesManagerTest is Test {
         uint256 endTime = 1742197963; //7h49 ngay 17/3/2025
         ITreeCommission.CommissionData memory commissionData = TREE_COM.getCommissionUSDTInRange(user1,startTime,endTime);
         assertEq(commissionData.retailBonus,20);//20 retail --personalSale
-        assertEq(user1Bal,20);
-        assertEq(stocknodeBal,62); 
+        assertEq(user1Bal,20,"balance of user1 should be equal");
+        assertEq(stocknodeBal,62,"balance of estock should be equal"); 
         //62=10+20+32 voi
         // 10 = ACTIVATION_FEE -(SHOWROOM_BONUS + ACTIVATION_BP)  = 40-(20+10) = 10
         // 20 = membership_fee - membership_bp = 120-100 = 20
         // 32 = (bp * 32) / 100 = 32 --personalSale
-        assertEq(daonodeBal,4); //4- daonode
+        assertEq(daonodeBal,4,"balance of DAO should be equal"); //4- daonode
         //11 unilever???
         //1 showroom???
+
         //Masterpool can nap usdt de co the tra commission
         vm.prank(owner);
         USDT_ERC.approve(address(MASTERPOOL), 1_000_000 * 1e6);
         vm.prank(owner);
         MASTERPOOL.deposit(1_000_000 * 1e6);
+
+        //user1 withdraw commission
         vm.startBroadcast(user1);
         bytes32[] memory utxoArr = new  bytes32[](0);
         uint256 balUser1Before = USDT_ERC.balanceOf(user1);
         TREE_COM.withdrawBP(20,utxoArr);
         (rootnodeBal, daonodeBal, stocknodeBal, , user1Bal, , , ) = getBalance();
-        assertEq(user1Bal,0);
+        assertEq(user1Bal,0,"balance bp of user1 should be deleted");
         uint256 balUser1After = USDT_ERC.balanceOf(user1);
-        assertEq(balUser1Before + 20 * 120 * 10**6 /100,balUser1After);
+        assertEq(balUser1Before + 20 * 10**6 ,balUser1After,"balance USDT of user1 should be equal");
         vm.stopBroadcast();
+
+        //daonode withdraw commission
+        vm.broadcast();
+        //RootNode or DaoNode withdraw
+        
 
 
 

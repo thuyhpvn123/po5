@@ -298,6 +298,12 @@ interface ITreeCommission {
         GENERATION,
         NATIONAL_COMMISSION
     }
+    struct CommissionInfo {
+        address user;
+        uint256 amount;
+        TYPE_OF_COM typ;
+        uint256 createdAt;
+    }
 
     /**
      * @dev Rút một lượng BP từ tài khoản người dùng.
@@ -398,7 +404,7 @@ contract MasterPool is Ownable  {
 
 // BalancesManager: Quản lý số dư, giao dịch, rút tiền.
 contract BalancesManager is Ownable {
-    
+
     struct BPultraUTXO {
         uint256 BP;
         uint256 createTime;
@@ -423,7 +429,7 @@ contract BalancesManager is Ownable {
     mapping(address => bytes32[]) public mUserReceivedUltraUTXO;
     mapping(address => mapping(uint256 => mapping(ITreeCommission.TYPE_OF_COM => uint256))) public mUserToDateToCom; 
     mapping(address => uint256[]) private userTimestamps; // Track timestamps per user
-
+    mapping(address => mapping(uint256 => ITreeCommission.CommissionInfo[])) public mUserToComInfos;
     bytes32[] public allUltraUTXO; // ✅ Danh sách toàn bộ UTXO
     address public treeCommissionContract;
     uint256 internal nationalBonusPool;
@@ -571,7 +577,6 @@ contract BalancesManager is Ownable {
 
     //     return trimmed;
     // }
-
     function addCommission(
         address _user,
         uint256 _timestamp,
@@ -585,8 +590,58 @@ contract BalancesManager is Ownable {
         }
 
         mUserToDateToCom[_user][_timestamp][_comType] = _amount;
+        ITreeCommission.CommissionInfo memory cominfo = ITreeCommission.CommissionInfo({
+            user: _user,
+            amount: _amount,
+            typ: _comType,
+            createdAt: _timestamp
+        });
+        mUserToComInfos[_user][_timestamp].push(cominfo);
     }
+    function getCommissionArrInRange(
+        address _user,
+        uint256 _startDate,
+        uint256 _endDate
+    ) external view onlyTreeCommission returns (ITreeCommission.CommissionInfo[] memory comInfos) {
+        uint256[] memory timestamps = userTimestamps[_user];
+        uint256 length = timestamps.length;
 
+        if (length == 0) {
+            return comInfos;
+        }
+
+        // Sử dụng một mảng động để gom tất cả CommissionInfo lại
+        ITreeCommission.CommissionInfo[] memory tempCommissions;
+        uint256 totalComs = 0;
+
+        for (uint256 i = 0; i < length; ) {
+            uint256 time = timestamps[i];
+
+            if (time >= _startDate && time <= _endDate) {
+                ITreeCommission.CommissionInfo[] memory userComs = mUserToComInfos[_user][time];
+                uint256 comLength = userComs.length;
+
+                if (comLength > 0) {
+                    // Mở rộng mảng tempCommissions
+                    ITreeCommission.CommissionInfo[] memory newTemp = new ITreeCommission.CommissionInfo[](totalComs + comLength);
+                    for (uint256 j = 0; j < totalComs; j++) {
+                        newTemp[j] = tempCommissions[j];
+                    }
+                    for (uint256 k = 0; k < comLength; k++) {
+                        newTemp[totalComs + k] = userComs[k];
+                    }
+                    tempCommissions = newTemp;
+                    totalComs += comLength;
+                }
+            }
+
+            unchecked {
+                i++;
+            }
+        }
+
+        comInfos = tempCommissions;
+    }
     // ✅ Lấy tổng commission của user theo loại trong khoảng thời gian
     function getCommissionInRange(
         address _user,
@@ -2622,7 +2677,7 @@ contract TreeCommission is ITreeCommission {
 
             require(balancesManager.withdrawBP(msg.sender, amount), "Insufficient balance for withdraw");
 
-            require(usdtToken.transfer(user, amount * 120 * 10**6 /100), "Transfer failed");
+            require(usdtToken.transfer(user, amount * 10**6 ), "Transfer failed");
 
             // uint256 lastBalance = balancesManager.getBalance(msg.sender);
 
@@ -3161,7 +3216,7 @@ contract TreeCommission is ITreeCommission {
 
     }
 
-
+    //admin goi sau khi giao hang thanh cong
     function updateDeliveryProduct(bytes32 orderCode) external onlyAddress(eComOrderManagerAddress) {
         require(isLockData == false, "System upgrade"); // Kiểm tra hệ thống có đang nâng cấp không
         require(orderCode != bytes32(0), "wrong order Code");
@@ -3564,6 +3619,7 @@ contract TreeCommission is ITreeCommission {
         delete allLinkViewTreeKeys;
 
     }
+    
     function getCommissionUSDTInRange(
         address _user,
         uint256 _startDate,
@@ -3575,4 +3631,16 @@ contract TreeCommission is ITreeCommission {
         commissionData = balancesManager.getCommissionInRange(_user,_startDate,_endDate);
     }
 
+    function getCommInfoUSDTInRange(
+        address _user,
+        uint256 _startDate,
+        uint256 _endDate
+    ) external view returns (
+        CommissionInfo[]  memory comInfos
+    ) 
+    {
+        comInfos = balancesManager.getCommissionArrInRange(_user,_startDate,_endDate);
+    }
+
+    
 }
