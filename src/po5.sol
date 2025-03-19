@@ -559,24 +559,6 @@ contract BalancesManager is Ownable {
     function getUTXOsByUser(address user) external view returns(bytes32[] memory) {
         return mUserReceivedUltraUTXO[user];
     }
-    // function getUserUltraUTXOs(address user) external view returns (bytes32[] memory) {
-    //     bytes32[] memory userUTXOs = new bytes32[](allUltraUTXO.length);
-    //     uint256 count = 0;
-
-    //     for (uint256 i = 0; i < allUltraUTXO.length; i++) {
-    //         if (userUltraBP[user][allUltraUTXO[i]].BP > 0) {
-    //             userUTXOs[count] = allUltraUTXO[i];
-    //             count++;
-    //         }
-    //     }
-
-    //     bytes32[] memory trimmed = new bytes32[](count);
-    //     for (uint256 i = 0; i < count; i++) {
-    //         trimmed[i] = userUTXOs[i];
-    //     }
-
-    //     return trimmed;
-    // }
     function addCommission(
         address _user,
         uint256 _timestamp,
@@ -824,7 +806,7 @@ contract BalancesManager is Ownable {
  * @title DAO Voting Contract
  * @dev Quản lý biểu quyết chi tiêu. Yêu cầu 2/3 phiếu chấp thuận.
  */
-contract ProposalVote {
+contract ProposalVote is Ownable{
     struct Proposal {
         address payable recipient; 
         uint256 amount;            
@@ -866,7 +848,7 @@ contract ProposalVote {
         _;
     }
         
-    constructor(address[] memory _initialMembers, address _balancesAddress) {
+    constructor(address[] memory _initialMembers, address _balancesAddress)Ownable(msg.sender) {
         require(_initialMembers.length >= 3, "Must have at least 3 members");
         for (uint i = 0; i < _initialMembers.length; i++) {
             isMember[_initialMembers[i]] = true;
@@ -874,7 +856,11 @@ contract ProposalVote {
         }
 
         balancesManager = BalancesManager(_balancesAddress);
-        treeCommissionContract = msg.sender;
+        // treeCommissionContract = msg.sender;
+    }
+
+    function setTreeCom (address _treeCom) external onlyOwner {
+        treeCommissionContract = _treeCom;
     }
 
     /**
@@ -1062,7 +1048,9 @@ contract ProposalVote {
         // Kiểm tra nếu có đủ 2/3 số phiếu đồng ý, thực thi đề xuất
         if (proposal.approvals >= getApprovalThreshold()) {
             executeProposal(_proposalId);
+
         }
+        
     }
 
     /**
@@ -2671,14 +2659,13 @@ contract TreeCommission is ITreeCommission {
         }else{
             uint256 preBalance = balancesManager.getBalance(msg.sender);
             require(preBalance >= amount, "Insufficient balance");
-
+            require(balancesManager.withdrawBP(msg.sender, amount), "Insufficient balance for withdraw");
             TreeLib.Status userStatus = nodes[msg.sender].status;
             require(userStatus != TreeLib.Status.Locked && userStatus != TreeLib.Status.Banned, "Deny access");
 
-            require(balancesManager.withdrawBP(msg.sender, amount), "Insufficient balance for withdraw");
-
+            require(amount * 10**6 < usdtToken.balanceOf(address(this)),"Not enough usdt in treeCom");
+            console.log("amount la:",amount);
             require(usdtToken.transfer(user, amount * 10**6 ), "Transfer failed");
-
             // uint256 lastBalance = balancesManager.getBalance(msg.sender);
 
             // #debug tạm ẩn để ko bị warning code
@@ -3277,12 +3264,14 @@ contract TreeCommission is ITreeCommission {
     // }
 
 
-    function getPromoterInfo() external onlyEOA view returns (TreeLib.NodeInfo memory, TreeLib.NodeData memory) {
+    function getPromoterInfo() external onlyEOA view returns (TreeLib.NodeInfo memory nodesUser, TreeLib.NodeData memory nodeDataUser) {
         // chỉ cho phép ViewTree gọi
         // require(msg.sender == viewTreeContract, "Unauthorized caller");
         address user = msg.sender;
         require(nodes[user].parent != address(0), "User does not exist");
-        return (nodes[user], nodeData[user]);
+        TreeLib.NodeInfo memory nodesUser = nodes[user];
+        TreeLib.NodeData memory nodeDataUser = nodeData[user];
+        return (nodesUser, nodeDataUser);
     }
 
     function getVIPInfo() external onlyEOA view returns (VIPNode memory) {
@@ -3293,14 +3282,7 @@ contract TreeCommission is ITreeCommission {
         return vipNodes[user];
     }
 
-    /**
-     * @dev Lấy danh sách con trực tiếp của một user bao gồm cả con ảo, phân trang
-     * @param user Địa chỉ thành viên cần lấy danh sách con
-     * @param startIndex Vị trí bắt đầu
-     * @param pageSize Số lượng trả về
-     * @return Mảng địa chỉ con
-     */
-    function getChildren(address user, uint8 totalLevel, uint256 startIndex, uint256 pageSize) external onlyEOA returns (address[] memory, TreeLib.NodeInfo[] memory, TreeLib.NodeData[] memory) {
+    function getChildren(address user, uint8 totalLevel, uint256 startIndex, uint256 pageSize) external onlyEOA returns (address[] memory children, TreeLib.NodeInfo[] memory childrenInfo, TreeLib.NodeData[] memory childrenData) {
         // chỉ cho phép ViewTree gọi
         // require(msg.sender == viewTreeContract, "Unauthorized caller");
         require(TreeLib.isDescendant(nodes, user, msg.sender, totalLevel, linkViewTree, allLinkViewTreeKeys), "Unauthorized caller");
@@ -3313,9 +3295,9 @@ contract TreeCommission is ITreeCommission {
 
         uint256 actualPageSize = (startIndex + pageSize > totalChildren) ? (totalChildren - startIndex) : pageSize;
 
-        TreeLib.NodeInfo[] memory childrenInfo = new TreeLib.NodeInfo[](actualPageSize);
-        TreeLib.NodeData[] memory childrenData = new TreeLib.NodeData[](actualPageSize);
-        address[] memory children = new address[](actualPageSize);
+        childrenInfo = new TreeLib.NodeInfo[](actualPageSize);
+        childrenData = new TreeLib.NodeData[](actualPageSize);
+        children = new address[](actualPageSize);
         for (uint256 i = 0; i < actualPageSize; i++) {
             address child = nodes[user].children[startIndex + i];
             childrenInfo[i] = nodes[child];

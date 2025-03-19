@@ -22,6 +22,28 @@
 				"type": "constructor"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					}
+				],
+				"name": "OwnableInvalidOwner",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "OwnableUnauthorizedAccount",
+				"type": "error"
+			},
+			{
 				"anonymous": false,
 				"inputs": [
 					{
@@ -64,6 +86,25 @@
 					}
 				],
 				"name": "MemberRemoved",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
 				"type": "event"
 			},
 			{
@@ -432,6 +473,19 @@
 			},
 			{
 				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "proposalCount",
 				"outputs": [
 					{
@@ -515,6 +569,39 @@
 			},
 			{
 				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_treeCom",
+						"type": "address"
+					}
+				],
+				"name": "setTreeCom",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "treeCommissionContract",
 				"outputs": [
 					{
@@ -583,6 +670,18 @@
 		],
 		"devdoc": {
 			"details": "Quản lý biểu quyết chi tiêu. Yêu cầu 2/3 phiếu chấp thuận.",
+			"errors": {
+				"OwnableInvalidOwner(address)": [
+					{
+						"details": "The owner is not a valid owner account. (eg. `address(0)`)"
+					}
+				],
+				"OwnableUnauthorizedAccount(address)": [
+					{
+						"details": "The caller account is not authorized to perform an operation."
+					}
+				]
+			},
 			"events": {
 				"ProposalCreated(uint256,address,uint256,string,address)": {
 					"details": "Sự kiện khi tạo đề xuất mới"
@@ -616,6 +715,9 @@
 						"_proposalId": "ID của đề xuất"
 					}
 				},
+				"owner()": {
+					"details": "Returns the address of the current owner."
+				},
 				"proposeAddMember(address)": {
 					"details": "Yêu cầu thêm một thành viên mới thông qua biểu quyết",
 					"params": {
@@ -627,6 +729,12 @@
 					"params": {
 						"_member": "Địa chỉ của thành viên bị loại bỏ"
 					}
+				},
+				"renounceOwnership()": {
+					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+				},
+				"transferOwnership(address)": {
+					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
 				},
 				"voteProposal(uint256,bool)": {
 					"details": "Biểu quyết một đề xuất",
@@ -772,11 +880,11 @@
 			]
 		},
 		"src/po5.sol": {
-			"keccak256": "0x5bf30cff3d8c942b162a3b4e9e6f5e618d950b4a9f903ac3c4a8d168032f1807",
+			"keccak256": "0xd59afdf2fee997fa6498ec3919537aefbd1d2f86872b11aeeb09fce9f52de384",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://fa73b79a0fea60ab33a171203c6fa9e2f23c42f803dc9e4e24dddd2ed3892652",
-				"dweb:/ipfs/QmdBx7yoRwqRsVppeLzqrDv54ozMTEv93xoq3nN2UBCVTn"
+				"bzz-raw://32dc4bb3c9a62d105ed48a4080b8d8cb1396fa0f18785e02730e14cf872c4eeb",
+				"dweb:/ipfs/QmXyyCRB1KnhQW9VjBT5NgvMQgh5cok61NQGguELAtgi1y"
 			]
 		}
 	},

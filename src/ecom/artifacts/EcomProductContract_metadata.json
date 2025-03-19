@@ -4977,8 +4977,8 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": true,
-			"runs": 0
+			"enabled": false,
+			"runs": 200
 		},
 		"remappings": []
 	},

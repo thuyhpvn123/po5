@@ -67,7 +67,7 @@ contract BalancesManagerTest is Test {
         EVENT_LOG = new EventLogger();
         ROOT_NODE = new ProposalVote(rootMembers, address(BALANCE_MAN));
         DAO_NODE = new ProposalVote(daoMembers, address(BALANCE_MAN));
-        STOCK_NODE = new eStock("eStock", "po5", 1000, 10000, address(USDT_ERC));
+        STOCK_NODE = new eStock("eStock", "po5", 1000*10**18, 10000, address(USDT_ERC));
         TREE_COM = new TreeCommission(
             address(ECOM_ORDER), address(ECOM_USER),
             address(BALANCE_MAN),address(SHOWROOM),address(EVENT_LOG),address(ROOT_NODE),
@@ -79,6 +79,8 @@ contract BalancesManagerTest is Test {
         BALANCE_MAN.setMasterPool(address(MASTERPOOL));
         SHOWROOM.setTreeCommissionContract(address(TREE_COM));
         STOCK_NODE.setTreeCom(address(TREE_COM));
+        ROOT_NODE.setTreeCom(address(TREE_COM));
+        DAO_NODE.setTreeCom(address(TREE_COM));
         ECOM_USER.SetTreeCom(address(TREE_COM));
         ECOM_ORDER.SetTreeCom(address(TREE_COM));
         // ECOM_ORDER.SetPos(address(TREE_COM));
@@ -90,6 +92,62 @@ contract BalancesManagerTest is Test {
         vm.stopPrank();
         
     }
+    //test ProposalVote
+    function testProposeAddMember() public {
+        address newMember = address(0x4);
+        vm.broadcast(address(0x11));
+        ROOT_NODE.proposeAddMember(newMember);
+
+        (address member, , , ) = ROOT_NODE.membershipProposals(0);
+        assertEq(member, newMember);
+    }
+    function testVoteToAddAndRemoveMember() public {
+        address newMember = address(0x4);
+        vm.broadcast(address(0x11));
+        ROOT_NODE.proposeAddMember(newMember);
+
+        vm.broadcast(address(0x11));
+        ROOT_NODE.voteToAddMember(0, true);
+        vm.broadcast(address(0x12));
+        ROOT_NODE.voteToAddMember(0, true);
+
+        assertTrue(ROOT_NODE.isMember(newMember));
+        //remove member
+        vm.broadcast(address(0x11));
+        ROOT_NODE.proposeRemoveMember(newMember);
+
+        (address member, , , ) = ROOT_NODE.membershipProposals(1);
+        assertEq(member, newMember);
+        vm.broadcast(address(0x12));
+        ROOT_NODE.voteToRemoveMember(1, true);
+        vm.broadcast(address(0x13));
+        ROOT_NODE.voteToRemoveMember(1, true);
+
+        assertFalse(ROOT_NODE.isMember(newMember));
+    }
+    function testCreateProposal() public {
+        vm.broadcast(address(0x11));
+        ROOT_NODE.createProposal(payable(user2), 100 , "Project funding"); //neu muon chuyen amount usdt = 100*10**6 thi de la 100
+        vm.startBroadcast(address(0x12));
+        (address recipient, uint256 amount, string memory reason, , , ) = ROOT_NODE.getProposal(0);
+        assertEq(recipient, user2);
+        assertEq(amount, 100 );
+        assertEq(reason, "Project funding");
+        vm.stopBroadcast();
+        //Gia dinh chuyen usdt cho Treecom de co the tra commission 
+        vm.prank(owner);
+        USDT_ERC.mintToAddress(address(TREE_COM),1_000_000 * 1e6);
+
+        //
+        vm.broadcast(address(0x12));
+        ROOT_NODE.voteProposal(0, true);
+        // vm.startBroadcast(address(0x13)); //chua test duoc tiep vi RootNode chua du tien. test ben Po5
+        // ROOT_NODE.voteProposal(0, true);
+        // (, , , uint256 approvals, , bool executed) = ROOT_NODE.getProposal(0);
+        // assertTrue(executed);
+        // assertEq(approvals, 2);
+    }
+    //test EStock
     function testSetExchangeRate() public {
         vm.prank(owner);
         STOCK_NODE.setExchangeRate(1500000);
@@ -121,6 +179,7 @@ contract BalancesManagerTest is Test {
     //     vm.stopPrank();
     // }
 
+    //test BalanceManager
     function testSetTreeCommissionAddress() public {
         vm.startPrank(owner);
         address newTreeCommission = address(0x4);
@@ -184,7 +243,8 @@ contract BalancesManagerTest is Test {
         BALANCE_MAN.batchUpdateBalances(utxoID,users, amounts, isAdd,ITreeCommission.TYPE_OF_COM.OTHER);
         vm.stopPrank();
     }
-    //showroom
+
+    //test Showroom
     function testShowroomTierCommissionRates() public {
         assertEq(SHOWROOM.getShowroomCommissionRate(Showroom.ShowroomTier.ShopInShop), 25);
         assertEq(SHOWROOM.getShowroomCommissionRate(Showroom.ShowroomTier.Kiosk), 50);
@@ -293,6 +353,8 @@ contract BalancesManagerTest is Test {
         assertEq(commission, 0); // Should return 0 for expired SHOWROOM
         vm.stopPrank();
     }
+
+    //test TreeCom
     function testGetChildren()public{
         registerEcomUser(user1,address(ROOT_NODE));
         vm.startBroadcast(owner);
@@ -348,13 +410,6 @@ contract BalancesManagerTest is Test {
         assertEq(daonodeBal,4,"balance of DAO should be equal"); //4- daonode
         //11 unilever???
         //1 showroom???
-
-        //Masterpool can nap usdt de co the tra commission
-        vm.prank(owner);
-        USDT_ERC.approve(address(MASTERPOOL), 1_000_000 * 1e6);
-        vm.prank(owner);
-        MASTERPOOL.deposit(1_000_000 * 1e6);
-
         //user1 withdraw commission
         vm.startBroadcast(user1);
         bytes32[] memory utxoArr = new  bytes32[](0);
@@ -365,15 +420,85 @@ contract BalancesManagerTest is Test {
         uint256 balUser1After = USDT_ERC.balanceOf(user1);
         assertEq(balUser1Before + 20 * 10**6 ,balUser1After,"balance USDT of user1 should be equal");
         vm.stopBroadcast();
+        assertEq(rootnodeBal,10,"balance of RootNode should be equal"); 
 
         //daonode withdraw commission
-        vm.broadcast();
-        //RootNode or DaoNode withdraw
-        
+        //RootNode or DaoNode withdraw commission by withdrawUSDTCommission or withdrawUSDTCommission
+        // executeProposal
+        vm.broadcast(address(0x12));
+        ROOT_NODE.createProposal(payable(user2), 10 , "Project funding"); //neu muon chuyen amount usdt = 100*10**6 thi de la 100
+        //
+        uint256 balUserBef = USDT_ERC.balanceOf(user2);
+        vm.broadcast(address(0x12));
+        ROOT_NODE.voteProposal(0, true);
+        vm.startBroadcast(address(0x13)); 
+        ROOT_NODE.voteProposal(0, true);
+        (, , , uint256 approvals, , bool executed) = ROOT_NODE.getProposal(0);
+        assertTrue(executed);
+        assertEq(approvals, 2);
+        assertEq(balUserBef + 10 * 10**6 ,USDT_ERC.balanceOf(user2),"balance USDT of user2 should be equal");
+    }
+    function testWithDrawCommissionVisa()public {
+        bytes32 utxoID = keccak256(abi.encodePacked("1"));
+        uint256 startTime = 1742025115; //7h49 ngay 15/3/2025
+        vm.warp(startTime);
+        registerEcomUser(user1,address(ROOT_NODE));
+        vm.startBroadcast(owner);
+        USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
+        TREE_COM.addPromoterMember(user1,address(ROOT_NODE),10000,2000,utxoID);
+        vm.stopBroadcast();
+        (uint rootnodeBal,uint daonodeBal,uint stocknodeBal,,uint user1Bal,,,) = getBalanceUtxo(utxoID);
+        (uint256 BP, uint256 createTime, uint256 activeTime, uint256 expiredTime, bool isDeny) = BALANCE_MAN.getUltraBPInfo(user1,utxoID);
+        console.log("BP la:",BP);
+        uint256 endTime = 1742197963; //7h49 ngay 17/3/2025
+        ITreeCommission.CommissionData memory commissionData = TREE_COM.getCommissionUSDTInRange(user1,startTime,endTime);
+        assertEq(commissionData.retailBonus,20);//20 retail --personalSale
+        assertEq(user1Bal,20,"balance of user1 should be equal");
+        assertEq(stocknodeBal,62,"balance of estock should be equal"); 
+        //62=10+20+32 voi
+        // 10 = ACTIVATION_FEE -(SHOWROOM_BONUS + ACTIVATION_BP)  = 40-(20+10) = 10
+        // 20 = membership_fee - membership_bp = 120-100 = 20
+        // 32 = (bp * 32) / 100 = 32 --personalSale
+        assertEq(daonodeBal,4,"balance of DAO should be equal"); //4- daonode
+        //11 unilever???
+        //1 showroom???
+        //user1 withdraw commission
+        vm.startBroadcast(user1);
+        bytes32[] memory utxoArr = new  bytes32[](0);
+        uint256 balUser1Before = USDT_ERC.balanceOf(user1);
+        TREE_COM.withdrawBP(20,utxoArr);
+        // (rootnodeBal, daonodeBal, stocknodeBal, , user1Bal, , , ) = getBalance();
+        // assertEq(user1Bal,0,"balance bp of user1 should be deleted");
+        // uint256 balUser1After = USDT_ERC.balanceOf(user1);
+        // assertEq(balUser1Before + 20 * 10**6 ,balUser1After,"balance USDT of user1 should be equal");
+        // vm.stopBroadcast();
+        // assertEq(rootnodeBal,10,"balance of RootNode should be equal"); 
 
+        // //daonode withdraw commission
+        // //RootNode or DaoNode withdraw commission by withdrawUSDTCommission or withdrawUSDTCommission
+        // // executeProposal
+        // vm.broadcast(address(0x12));
+        // ROOT_NODE.createProposal(payable(user2), 10 , "Project funding"); //neu muon chuyen amount usdt = 100*10**6 thi de la 100
+        // //
+        // uint256 balUserBef = USDT_ERC.balanceOf(user2);
+        // vm.broadcast(address(0x12));
+        // ROOT_NODE.voteProposal(0, true);
+        // vm.startBroadcast(address(0x13)); 
+        // ROOT_NODE.voteProposal(0, true);
+        // (, , , uint256 approvals, , bool executed) = ROOT_NODE.getProposal(0);
+        // assertTrue(executed);
+        // assertEq(approvals, 2);
+        // assertEq(balUserBef + 10 * 10**6 ,USDT_ERC.balanceOf(user2),"balance USDT of user2 should be equal");
+
+        //Masterpool can nap usdt de co the tra commission
+        // vm.prank(owner);
+        // USDT_ERC.approve(address(MASTERPOOL), 1_000_000 * 1e6);
+        // vm.prank(owner);
+        // MASTERPOOL.deposit(1_000_000 * 1e6);
 
 
     }
+
     function getBalance()public returns(uint amount1,uint amount2,uint amount3,uint amount4,uint amount5,uint amount6,uint amount7,uint amount8){
          amount1 = BALANCE_MAN.getBalance(address(ROOT_NODE));
          amount2 = BALANCE_MAN.getBalance(address(DAO_NODE));
@@ -383,6 +508,25 @@ contract BalancesManagerTest is Test {
          amount6 = BALANCE_MAN.getBalance(user2);
          amount7 = BALANCE_MAN.getBalance(user3);
          amount8 = BALANCE_MAN.getBalance(buyer);
+        // console.log("ROOT_NODE:",amount1);
+        // console.log("DAO_NODE:",amount2);
+        // console.log("STOCK_NODE:",amount3);
+        // console.log("SHOWROOM1:",amount4);
+        // console.log("user1:",amount5);
+        // console.log("user2:",amount6);
+        // console.log("user3:",amount7);
+        // console.log("buyer:",amount8);
+        
+    }
+    function getBalanceUtxo(bytes32 utxoID)public returns(uint amount1,uint amount2,uint amount3,uint amount4,uint amount5,uint amount6,uint amount7,uint amount8){
+         (amount1,,,,) = BALANCE_MAN.getUltraBPInfo(address(ROOT_NODE),utxoID);
+         (amount2,,,,) = BALANCE_MAN.getUltraBPInfo(address(DAO_NODE),utxoID);
+         (amount3,,,,) = BALANCE_MAN.getUltraBPInfo(address(STOCK_NODE),utxoID);
+         (amount4,,,,) = BALANCE_MAN.getUltraBPInfo(address(SHOWROOM1),utxoID);
+         (amount5,,,,) = BALANCE_MAN.getUltraBPInfo(user1,utxoID);
+         (amount6,,,,) = BALANCE_MAN.getUltraBPInfo(user2,utxoID);
+         (amount7,,,,) = BALANCE_MAN.getUltraBPInfo(user3,utxoID);
+         (amount8,,,,) = BALANCE_MAN.getUltraBPInfo(buyer,utxoID);
         console.log("ROOT_NODE:",amount1);
         console.log("DAO_NODE:",amount2);
         console.log("STOCK_NODE:",amount3);

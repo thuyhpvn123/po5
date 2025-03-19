@@ -284,7 +284,7 @@
 				"outputs": [
 					{
 						"internalType": "address[]",
-						"name": "",
+						"name": "children",
 						"type": "address[]"
 					},
 					{
@@ -311,7 +311,7 @@
 							}
 						],
 						"internalType": "struct TreeLib.NodeInfo[]",
-						"name": "",
+						"name": "childrenInfo",
 						"type": "tuple[]"
 					},
 					{
@@ -343,7 +343,7 @@
 							}
 						],
 						"internalType": "struct TreeLib.NodeData[]",
-						"name": "",
+						"name": "childrenData",
 						"type": "tuple[]"
 					}
 				],
@@ -505,7 +505,7 @@
 							}
 						],
 						"internalType": "struct TreeLib.NodeInfo",
-						"name": "",
+						"name": "nodesUser",
 						"type": "tuple"
 					},
 					{
@@ -537,7 +537,7 @@
 							}
 						],
 						"internalType": "struct TreeLib.NodeData",
-						"name": "",
+						"name": "nodeDataUser",
 						"type": "tuple"
 					}
 				],
@@ -933,17 +933,6 @@
 						"_usdtAddress": "Địa chỉ của hợp đồng token USDT"
 					}
 				},
-				"getChildren(address,uint8,uint256,uint256)": {
-					"details": "Lấy danh sách con trực tiếp của một user bao gồm cả con ảo, phân trang",
-					"params": {
-						"pageSize": "Số lượng trả về",
-						"startIndex": "Vị trí bắt đầu",
-						"user": "Địa chỉ thành viên cần lấy danh sách con"
-					},
-					"returns": {
-						"_0": "Mảng địa chỉ con"
-					}
-				},
 				"getVIPMembers(address,uint256,uint256)": {
 					"details": "Lấy danh sách các thành viên VIP trực thuộc một node",
 					"params": {
@@ -1133,11 +1122,11 @@
 			]
 		},
 		"src/po5.sol": {
-			"keccak256": "0x5bf30cff3d8c942b162a3b4e9e6f5e618d950b4a9f903ac3c4a8d168032f1807",
+			"keccak256": "0xd59afdf2fee997fa6498ec3919537aefbd1d2f86872b11aeeb09fce9f52de384",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://fa73b79a0fea60ab33a171203c6fa9e2f23c42f803dc9e4e24dddd2ed3892652",
-				"dweb:/ipfs/QmdBx7yoRwqRsVppeLzqrDv54ozMTEv93xoq3nN2UBCVTn"
+				"bzz-raw://32dc4bb3c9a62d105ed48a4080b8d8cb1396fa0f18785e02730e14cf872c4eeb",
+				"dweb:/ipfs/QmXyyCRB1KnhQW9VjBT5NgvMQgh5cok61NQGguELAtgi1y"
 			]
 		}
 	},
