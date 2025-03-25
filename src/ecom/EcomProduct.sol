@@ -19,7 +19,7 @@ contract EcomProductContract  {
     event eSetRetailer(address retailer);
 
     address public owner;
-    mapping(address => bool) public mController;
+    // mapping(address => bool) public mController;
 
     mapping(address => mapping(uint256 => bool)) public mIsCorrectRetailer; // retailer => product => true;
     // Product
@@ -64,8 +64,8 @@ contract EcomProductContract  {
     mapping(address => Favorite[]) public mUserFavorites; //user => favorite products;
 
     // Admin
-    mapping(address => bool) public mAdmin;
-    address[] public admins;
+    // mapping(address => bool) public mAdmin;
+    // address[] public admins;
 
     mapping(address => mapping(uint256 => bool))
         public userConfirmedBuyThisProduct;
@@ -82,17 +82,17 @@ contract EcomProductContract  {
     IEcomInfo public EcomInfo;
 
     constructor() payable {
-        mAdmin[msg.sender] = true;
-        admins.push(msg.sender);
+        // mAdmin[msg.sender] = true;
+        // admins.push(msg.sender);
         owner = msg.sender;
     }
 
-    function SetController(
-        address _controller
-    ) public onlyAddress(owner) returns (bool) {
-        mController[_controller] = true;
-        return true;
-    }
+    // function SetController(
+    //     address _controller
+    // ) public onlyAddress(owner) returns (bool) {
+    //     mController[_controller] = true;
+    //     return true;
+    // }
 
     function SetEcomOrder(
         address _ecomOrder
@@ -133,15 +133,17 @@ contract EcomProductContract  {
 
     modifier onlyAdmin() {
         require(
-            mAdmin[msg.sender],
-            '{"from": "EcomProduct.sol","code": 53, "message": "You are not allowed."}'
+            EcomUser.IsAdmin(msg.sender),
+            // mAdmin[msg.sender],
+            '{"from": "EcomProduct.sol","code": 53, "message": "You are not ADMIN."}'
         );
         _;
     }
 
     modifier onlyController() {
         require(
-            mController[msg.sender],
+            // mController[msg.sender],
+            EcomUser.IsController(msg.sender),
             '{"from": "EcomProduct.sol","code": 52, "message": "You are not controller."}'
         );
         _;
@@ -149,31 +151,31 @@ contract EcomProductContract  {
 
     modifier onlyControllerOrRetailer() {
         require(
-            mController[msg.sender] || EcomUser.IsRetailer(msg.sender),
+            EcomUser.IsController(msg.sender) || EcomUser.IsRetailer(msg.sender),
             getErrorMessage(55, "Only controller or retailer")
         );
         _;
     }
 
-    function setAdmin(address user) public onlyAddress(owner) returns (bool) {
-        mAdmin[user] = true;
-        admins.push(user);
-        return true;
-    }
+    // function setAdmin(address user) public onlyAddress(owner) returns (bool) {
+    //     mAdmin[user] = true;
+    //     admins.push(user);
+    //     return true;
+    // }
 
-    function deleteAdmin(
-        address user
-    ) public onlyAddress(owner) returns (bool) {
-        mAdmin[user] = false;
-        for (uint256 i = 0; i < admins.length; i++) {
-            if (admins[i] == user) {
-                admins[i] = admins[admins.length - 1];
-                admins.pop();
-                break;
-            }
-        }
-        return true;
-    }
+    // function deleteAdmin(
+    //     address user
+    // ) public onlyAddress(owner) returns (bool) {
+    //     mAdmin[user] = false;
+    //     for (uint256 i = 0; i < admins.length; i++) {
+    //         if (admins[i] == user) {
+    //             admins[i] = admins[admins.length - 1];
+    //             admins.pop();
+    //             break;
+    //         }
+    //     }
+    //     return true;
+    // }
 
     function createProduct(
         createProductParams memory params,
@@ -754,10 +756,11 @@ contract EcomProductContract  {
             address[] memory receivers = new address[](2);
             receivers[0] = mProduct[_productID].params.retailer;
             receivers[1] = owner;
+            string memory productId = Strings.toString(_productID);
             EcomUser.sendMultipleNotification(
-                abi.encodePacked(_productID),
-                0,
-                "Customer Feedback Received!",
+                // abi.encodePacked(_productID),
+                // 0,
+                string(abi.encodePacked("Customer Feedback Received!",productId)),
                 "You've received new feedback about your product! Check customer feedback and respond",
                 receivers,
                 "CommentUpdate"
@@ -800,7 +803,7 @@ contract EcomProductContract  {
     }
 
     function editComments(
-        uint256 _productID,
+        // uint256 _productID,
         editCommentsParam[] memory params
     ) public onlyController {
         for (uint i = 0; i < params.length; i++) {
@@ -857,7 +860,7 @@ contract EcomProductContract  {
     }
 
     function editFAQProduct(
-        uint256 _productID,
+        // uint256 _productID,
         uint256 _faqID,
         string memory _title,
         string memory _content
@@ -871,12 +874,12 @@ contract EcomProductContract  {
     }
 
     function editFAQProducts(
-        uint256 _productID,
+        // uint256 _productID,
         editFAQsProductParam[] memory params
     ) public onlyController {
         for (uint i = 0; i < params.length; i++) {
             editFAQProduct(
-                _productID,
+                // _productID,
                 params[i].faqID,
                 params[i].title,
                 params[i].content
@@ -1423,7 +1426,7 @@ contract EcomProductContract  {
         }
         return res;
     }
-    function initiatePrductDemo(address retailer,uint categoryID)external {
+    function initiatePrductDemo(address retailer,uint _categoryID)external {
         uint256[] memory capacity = new uint256[](3);
         capacity[0] = 1;
         capacity[1] = 2;
@@ -1443,7 +1446,7 @@ contract EcomProductContract  {
         
         createProductParams memory params = createProductParams({
             name: "Test Product",
-            categoryID: categoryID,
+            categoryID: _categoryID,
             description: "A sample product",
             retailPrice: 1000 * 10**6,
             vipPrice: 1200 * 10**6,
@@ -1486,6 +1489,6 @@ contract EcomProductContract  {
                 quantity: 100
             })
         });
-        uint256 productId = createProduct(params, variants);
+        createProduct(params, variants);
     }
 }

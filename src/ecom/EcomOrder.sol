@@ -24,7 +24,7 @@ contract EcomOrderContract  {
         string phone,
         string addressDetail
     );
-    event eCreateOrder(uint256 orderID);
+    event eCreateOrder(bytes32 orderCode);
     event eExecuteOrder(uint256 id);
 
     mapping(address => Cart) public mUserCart;
@@ -35,7 +35,7 @@ contract EcomOrderContract  {
     mapping(address => uint256[]) public mOrders;
     // all orders id
     uint256[] internal orders;
-
+    mapping(address => bytes32) public mAddToOrderCode;
     mapping(bytes32 => uint256) private orderCodes;
 
 
@@ -599,7 +599,8 @@ function ProcessOrder(
 
         bytes32 orderCode = keccak256(abi.encode(block.timestamp, block.number, msg.sender, orderID));
 
-        // emit eCreateOrder(orderID);
+        emit eCreateOrder(orderCode);
+        mAddToOrderCode[msg.sender] = orderCode;
 
         if (newOrder.cartItemIds.length > 0) {
             for (uint i = 0; i < newOrder.cartItemIds.length; i++) {

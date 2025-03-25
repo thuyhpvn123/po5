@@ -37,7 +37,7 @@ contract EcomInfoContract {
     mapping(string => Purchase[]) public mCountryPurchases; //country =>
     uint256[] public systemPurchases;
 
-    mapping(address => bool) public mAdmin;
+    // mapping(address => bool) public mAdmin;
     address[] public admins;
     address public owner;
 
@@ -47,15 +47,15 @@ contract EcomInfoContract {
 
     constructor() payable {
         owner = msg.sender;
-        mAdmin[msg.sender] = true;
+        // mAdmin[msg.sender] = true;
         admins.push(msg.sender);
     }
 
-    function setAdmin(address user) public onlyAddress(owner) returns (bool) {
-        mAdmin[user] = true;
-        admins.push(user);
-        return true;
-    }
+    // function setAdmin(address user) public onlyAddress(owner) returns (bool) {
+    //     mAdmin[user] = true;
+    //     admins.push(user);
+    //     return true;
+    // }
 
     function SetEcomProduct(
         address _ecomProduct
@@ -81,15 +81,16 @@ contract EcomInfoContract {
     modifier onlyAddress(address user) {
         require(
             msg.sender == user,
-            '{"from": "EcomProduct.sol","code": 55, "message": "You are not allowed."}'
+            '{"from": "EcomInfo.sol","code": 55, "message": "You are not allowed."}'
         );
         _;
     }
 
     modifier onlyAdmin() {
         require(
-            mAdmin[msg.sender],
-            '{"from": "EcomProduct.sol","code": 53, "message": "You are not allowed."}'
+            // mAdmin[msg.sender],
+            EcomUser.IsAdmin(msg.sender),
+            '{"from": "EcomInfo.sol","code": 53, "message": "You are not Admin."}'
         );
         _;
     }

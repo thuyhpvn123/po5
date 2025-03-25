@@ -1,0 +1,423 @@
+{
+	"compiler": {
+		"version": "0.8.29+commit.ab55807c"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "payable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "dapp",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "encryptedToken",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint8",
+						"name": "platform",
+						"type": "uint8"
+					}
+				],
+				"name": "DeviceTokenRegistered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "dapp",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "title",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "body",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "atTime",
+						"type": "uint256"
+					}
+				],
+				"name": "NotificationSent",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "title",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "body",
+								"type": "string"
+							}
+						],
+						"internalType": "struct NotiParams",
+						"name": "params",
+						"type": "tuple"
+					},
+					{
+						"internalType": "address[]",
+						"name": "_to",
+						"type": "address[]"
+					}
+				],
+				"name": "AddMultipleNoti",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "title",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "body",
+								"type": "string"
+							}
+						],
+						"internalType": "struct NotiParams",
+						"name": "params",
+						"type": "tuple"
+					},
+					{
+						"internalType": "address",
+						"name": "_to",
+						"type": "address"
+					}
+				],
+				"name": "AddNoti",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_newAdmin",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "add",
+						"type": "bool"
+					}
+				],
+				"name": "SetAdmin",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "dapp",
+						"type": "address"
+					}
+				],
+				"name": "addSystemDApp",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					}
+				],
+				"name": "getAllDAppsPermissionByUser",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "list",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getAllSystemDApps",
+				"outputs": [
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "isAdmin",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "mDappUserToPermission",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "mSystemDApps",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mUserToDApps",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "dapp",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "encryptedToken",
+						"type": "string"
+					},
+					{
+						"internalType": "enum PlatformEnum",
+						"name": "_platform",
+						"type": "uint8"
+					}
+				],
+				"name": "registerDeviceToken",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "dapp",
+						"type": "address"
+					}
+				],
+				"name": "removeSystemDApp",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "dapp",
+						"type": "address"
+					}
+				],
+				"name": "revokeDAppPermission",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "systemDApps",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"src/ecom/Noti.sol": "NotificationManager"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 0
+		},
+		"remappings": []
+	},
+	"sources": {
+		"src/ecom/Noti.sol": {
+			"keccak256": "0xd42227e58c68e0b6f955082bbeda404e73b9a62387348c3ca3e3b256fd9b52ce",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://a8c6e1a26784f45754bd07e780bdfd1f811628a98313f21177c0e57cacd438d2",
+				"dweb:/ipfs/QmZ7dSsq7X99ZnZCjjaqzkMaJEwzyUtXA8PMfKZkU4vSq7"
+			]
+		},
+		"src/ecom/interfaces/INoti.sol": {
+			"keccak256": "0xa6505cee677b0424bfe3844bcb2c8bd67020dbe43f17542e2206788c7a64da82",
+			"license": "SEE LICENSE IN LICENSE",
+			"urls": [
+				"bzz-raw://a4850da47cb80406643554926286dae8d788c1cb9bf29b7cc17f1e608c28653b",
+				"dweb:/ipfs/QmZYtoA21mPpd6dMQqA1BCZm7cyFZm6abptjEH3ZHcSBDh"
+			]
+		}
+	},
+	"version": 1
+}

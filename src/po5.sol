@@ -41,6 +41,7 @@ pragma solidity ^0.8.20;
 */
 
 // Import các hợp đồng ERC20 và Ownable từ OpenZeppelin để quản lý token và kiểm soát quyền
+import "./eStock.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -398,7 +399,9 @@ contract MasterPool is Ownable  {
     function transferCommission(address _to, uint256 amount) external onlyBalanceManager returns(bool) {
         require(balanceManager != address(0) && _to != address(0), "balanceManager and receiver can not be address(0)");
         require(amount >0,"amount can be zero");
-        return IERC20(usdt).transfer(_to, amount * (100 - FEE_RATE )/100);
+        uint256 amountAfterFee = amount * (100 - FEE_RATE )/100;
+        require(amountAfterFee <= IERC20(usdt).balanceOf(address(this)),"not enough token to transfer");
+        return IERC20(usdt).transfer(_to, amountAfterFee);
     }
 } 
 
@@ -528,7 +531,7 @@ contract BalancesManager is Ownable {
             uint256 amount = _withdrawUltraBP(user,utxoIDArr[i]);
             totalAmount += amount;
         }
-        IMasterPool(masterpool).transferCommission(user, totalAmount);
+        IMasterPool(masterpool).transferCommission(user, totalAmount * 1e6);
         return true;
     }
     function withdrawBP(address user, uint256 amount) external onlyTreeCommission returns (bool) {
@@ -1116,155 +1119,155 @@ contract ProposalVote is Ownable{
  * 3. Rút hoa hồng USDT đã tích lũy.
  * 4. Quản lý tỷ giá và theo dõi thông tin giao dịch của user.
  */
-contract eStock is ERC20, Ownable {
-    IERC20 public usdtToken; // Địa chỉ hợp đồng USDT
+// contract eStock is ERC20, Ownable {
+//     IERC20 public usdtToken; // Địa chỉ hợp đồng USDT
 
-    uint256 public exchangeRate; // Tỷ giá eStock/USDT (lưu với 6 chữ số thập phân)
-    uint256 public totalUSDTReceived; // Tổng USDT đã nhận từ các nguồn khác
-    uint256 public totalUSDTWithdrawn; // Tổng USDT đã rút
+//     uint256 public exchangeRate; // Tỷ giá eStock/USDT (lưu với 6 chữ số thập phân)
+//     uint256 public totalUSDTReceived; // Tổng USDT đã nhận từ các nguồn khác
+//     uint256 public totalUSDTWithdrawn; // Tổng USDT đã rút
 
-    mapping(address => uint256) public userUSDTBalance; // Số dư USDT của user
-    mapping(address => uint256) public userUSDTWithdrawn; // Tổng USDT user đã rút
+//     mapping(address => uint256) public userUSDTBalance; // Số dư USDT của user
+//     mapping(address => uint256) public userUSDTWithdrawn; // Tổng USDT user đã rút
 
-    // Sự kiện
-    event ExchangeRateUpdated(uint256 newRate);
-    event StockPurchased(address indexed buyer, uint256 amount, uint256 usdtSpent);
-    event ProfitReceived(address indexed source, uint256 amount);
-    event USDTWithdrawn(address indexed user, uint256 amount);
-
-
-    address public treeCommissionContract;
-    /**
-     * @dev Khởi tạo hợp đồng eStock.
-     * @param name Tên token
-     * @param symbol Ký hiệu token
-     * @param initialSupply Tổng số token ban đầu
-     * @param _exchangeRate Tỷ giá eStock/USDT ban đầu
-     * @param _usdtAddress Địa chỉ hợp đồng USDT
-     */
-    constructor(
-        string memory name,
-        string memory symbol,
-        uint256 initialSupply,
-        uint256 _exchangeRate,
-        address _usdtAddress
-    ) ERC20(name, symbol) Ownable(msg.sender) {
-        _mint(msg.sender, initialSupply * (10 ** decimals())); // Phát hành token ban đầu
-        exchangeRate = _exchangeRate;
+//     // Sự kiện
+//     event ExchangeRateUpdated(uint256 newRate);
+//     event StockPurchased(address indexed buyer, uint256 amount, uint256 usdtSpent);
+//     event ProfitReceived(address indexed source, uint256 amount);
+//     event USDTWithdrawn(address indexed user, uint256 amount);
 
 
-        // Gán địa chỉ hợp đồng USDT cho biến usdtToken
-        usdtToken = IERC20(_usdtAddress);
+//     address public treeCommissionContract;
+//     /**
+//      * @dev Khởi tạo hợp đồng eStock.
+//      * @param name Tên token
+//      * @param symbol Ký hiệu token
+//      * @param initialSupply Tổng số token ban đầu
+//      * @param _exchangeRate Tỷ giá eStock/USDT ban đầu
+//      * @param _usdtAddress Địa chỉ hợp đồng USDT
+//      */
+//     constructor(
+//         string memory name,
+//         string memory symbol,
+//         uint256 initialSupply,
+//         uint256 _exchangeRate,
+//         address _usdtAddress
+//     ) ERC20(name, symbol) Ownable(msg.sender) {
+//         _mint(msg.sender, initialSupply * (10 ** decimals())); // Phát hành token ban đầu
+//         exchangeRate = _exchangeRate;
+
+
+//         // Gán địa chỉ hợp đồng USDT cho biến usdtToken
+//         usdtToken = IERC20(_usdtAddress);
         
-        // treeCommissionContract = msg.sender;
-    }
-    function setTreeCom (address _treeCom) external onlyOwner {
-        treeCommissionContract = _treeCom;
-    }
-    /**
-     * @dev Cập nhật tỷ giá quy đổi eStock/USDT (chỉ Owner có thể thay đổi).
-     * @param newRate Tỷ giá mới.
-     */
-    function setExchangeRate(uint256 newRate) external onlyOwner {
-        require(newRate > 0, "Rate must be greater than 0");
-        exchangeRate = newRate;
-        emit ExchangeRateUpdated(newRate);
-    }
+//         // treeCommissionContract = msg.sender;
+//     }
+//     function setTreeCom (address _treeCom) external onlyOwner {
+//         treeCommissionContract = _treeCom;
+//     }
+//     /**
+//      * @dev Cập nhật tỷ giá quy đổi eStock/USDT (chỉ Owner có thể thay đổi).
+//      * @param newRate Tỷ giá mới.
+//      */
+//     function setExchangeRate(uint256 newRate) external onlyOwner {
+//         require(newRate > 0, "Rate must be greater than 0");
+//         exchangeRate = newRate;
+//         emit ExchangeRateUpdated(newRate);
+//     }
 
-    /**
-     * @dev Trả về tỷ giá hiện tại của eStock.
-     */
-    function getExchangeRate() external view returns (uint256) {
-        return exchangeRate;
-    }
+//     /**
+//      * @dev Trả về tỷ giá hiện tại của eStock.
+//      */
+//     function getExchangeRate() external view returns (uint256) {
+//         return exchangeRate;
+//     }
 
-    /**
-     * @dev Người dùng mua eStock bằng USDT.
-     * @param usdtAmount Số USDT gửi vào.
-     * @param expectedRate Tỷ giá mong đợi để tránh thay đổi đột ngột.
-     */
-    function buyStock(uint256 usdtAmount, uint256 expectedRate) external {
-        require(usdtAmount > 0, "Must send USDT to buy stock");
-        require(expectedRate == exchangeRate, "Exchange rate changed");
+//     /**
+//      * @dev Người dùng mua eStock bằng USDT.
+//      * @param usdtAmount Số USDT gửi vào.
+//      * @param expectedRate Tỷ giá mong đợi để tránh thay đổi đột ngột.
+//      */
+//     function buyStock(uint256 usdtAmount, uint256 expectedRate) external {
+//         require(usdtAmount > 0, "Must send USDT to buy stock");
+//         require(expectedRate == exchangeRate, "Exchange rate changed");
         
-        uint256 stockAmount = (usdtAmount * exchangeRate) / 1e6;
-        require(balanceOf(owner()) >= stockAmount, "Not enough stock available");
+//         uint256 stockAmount = (usdtAmount * exchangeRate) / 1e6;
+//         require(balanceOf(owner()) >= stockAmount, "Not enough stock available");
         
-        uint256 balanceBefore = usdtToken.balanceOf(address(this));
-        require(usdtToken.transferFrom(msg.sender, address(this), usdtAmount), "USDT transfer failed");
-        uint256 balanceAfter = usdtToken.balanceOf(address(this));
-        uint256 receivedUSDT = balanceAfter - balanceBefore;
-        require(receivedUSDT >= usdtAmount - 1e6 && receivedUSDT <= usdtAmount + 1e6, "Incorrect USDT transfer amount");
+//         uint256 balanceBefore = usdtToken.balanceOf(address(this));
+//         require(usdtToken.transferFrom(msg.sender, address(this), usdtAmount), "USDT transfer failed");
+//         uint256 balanceAfter = usdtToken.balanceOf(address(this));
+//         uint256 receivedUSDT = balanceAfter - balanceBefore;
+//         require(receivedUSDT >= usdtAmount - 1e6 && receivedUSDT <= usdtAmount + 1e6, "Incorrect USDT transfer amount");
         
-        _transfer(owner(), msg.sender, stockAmount);
-        emit StockPurchased(msg.sender, stockAmount, usdtAmount);
-    }
+//         _transfer(owner(), msg.sender, stockAmount);
+//         emit StockPurchased(msg.sender, stockAmount, usdtAmount);
+//     }
 
-    /**
-     * @dev Nhận lợi nhuận từ smart contract khác bằng USDT.
-     * @param amount Số USDT nhận được.
-     */
-    function receiveProfitFromContract(uint256 amount) external {
-        require(amount > 0, "Amount must be greater than 0");
-        require(usdtToken.transferFrom(msg.sender, address(this), amount), "USDT transfer failed");
-        totalUSDTReceived += amount;
-        userUSDTBalance[msg.sender] += amount;
-        emit ProfitReceived(msg.sender, amount);
-    }
+//     /**
+//      * @dev Nhận lợi nhuận từ smart contract khác bằng USDT.
+//      * @param amount Số USDT nhận được.
+//      */
+//     function receiveProfitFromContract(uint256 amount) external {
+//         require(amount > 0, "Amount must be greater than 0");
+//         require(usdtToken.transferFrom(msg.sender, address(this), amount), "USDT transfer failed");
+//         totalUSDTReceived += amount;
+//         userUSDTBalance[msg.sender] += amount;
+//         emit ProfitReceived(msg.sender, amount);
+//     }
 
-    /**
-     * @dev User rút USDT từ số dư lợi nhuận.
-     */
-    function withdrawUSDTCommission() external {
-        uint256 amount = userUSDTBalance[msg.sender];
-        require(amount > 0, "No USDT balance to withdraw");
-        userUSDTBalance[msg.sender] = 0;
-        userUSDTWithdrawn[msg.sender] += amount;
-        totalUSDTWithdrawn += amount;
-        // require(usdtToken.transfer(msg.sender, amount), "USDT transfer failed");
+//     /**
+//      * @dev User rút USDT từ số dư lợi nhuận.
+//      */
+//     function withdrawUSDTCommission() external {
+//         uint256 amount = userUSDTBalance[msg.sender];
+//         require(amount > 0, "No USDT balance to withdraw");
+//         userUSDTBalance[msg.sender] = 0;
+//         userUSDTWithdrawn[msg.sender] += amount;
+//         totalUSDTWithdrawn += amount;
+//         // require(usdtToken.transfer(msg.sender, amount), "USDT transfer failed");
 
-        ITreeCommission treeCommission = ITreeCommission(treeCommissionContract);
-        bytes32[] memory utxoArr = new bytes32[](0);
-        treeCommission.withdrawBPToAnotherUser(amount, msg.sender,utxoArr);
+//         ITreeCommission treeCommission = ITreeCommission(treeCommissionContract);
+//         bytes32[] memory utxoArr = new bytes32[](0);
+//         treeCommission.withdrawBPToAnotherUser(amount, msg.sender,utxoArr);
 
-        emit USDTWithdrawn(msg.sender, amount);
-    }
+//         emit USDTWithdrawn(msg.sender, amount);
+//     }
 
-    /**
-     * @dev Xem số dư eStock của user.
-     */
-    function getUserStockBalance(address user) external view returns (uint256) {
-        return balanceOf(user);
-    }
+//     /**
+//      * @dev Xem số dư eStock của user.
+//      */
+//     function getUserStockBalance(address user) external view returns (uint256) {
+//         return balanceOf(user);
+//     }
 
-    /**
-     * @dev Xem số dư hoa hồng USDT của user.
-     */
-    function getUserUSDTCommission(address user) external view returns (uint256) {
-        return userUSDTBalance[user];
-    }
+//     /**
+//      * @dev Xem số dư hoa hồng USDT của user.
+//      */
+//     function getUserUSDTCommission(address user) external view returns (uint256) {
+//         return userUSDTBalance[user];
+//     }
 
-    /**
-     * @dev Xem tổng USDT user đã rút.
-     */
-    function getUserUSDTWithdrawn(address user) external view returns (uint256) {
-        return userUSDTWithdrawn[user];
-    }
+//     /**
+//      * @dev Xem tổng USDT user đã rút.
+//      */
+//     function getUserUSDTWithdrawn(address user) external view returns (uint256) {
+//         return userUSDTWithdrawn[user];
+//     }
 
-    /**
-     * @dev Xem tổng USDT đã nhận vào hợp đồng từ các nguồn khác.
-     */
-    function getTotalUSDTReceived() external view returns (uint256) {
-        return totalUSDTReceived;
-    }
+//     /**
+//      * @dev Xem tổng USDT đã nhận vào hợp đồng từ các nguồn khác.
+//      */
+//     function getTotalUSDTReceived() external view returns (uint256) {
+//         return totalUSDTReceived;
+//     }
 
-    /**
-     * @dev Xem tổng USDT đã rút khỏi hợp đồng.
-     */
-    function getTotalUSDTWithdrawn() external view returns (uint256) {
-        return totalUSDTWithdrawn;
-    }
-}
+//     /**
+//      * @dev Xem tổng USDT đã rút khỏi hợp đồng.
+//      */
+//     function getTotalUSDTWithdrawn() external view returns (uint256) {
+//         return totalUSDTWithdrawn;
+//     }
+// }
 
 contract Showroom is Ownable {
     
@@ -2975,7 +2978,6 @@ contract TreeCommission is ITreeCommission {
         recordPersonalSales(newMember, MEMBERSHIP_BP, utxoID);
 
         balancesManager.updateBalance(stockNode, utxoID, MEMBERSHIP_FEE / 1e6 - MEMBERSHIP_BP, true,TYPE_OF_COM.OTHER);
-        console.log("addPromoterMember la:",MEMBERSHIP_FEE / 1e6 - MEMBERSHIP_BP);
 
 
         if (isBatchProcessing) { 
@@ -3122,7 +3124,6 @@ contract TreeCommission is ITreeCommission {
 
         // balances[stockNode] += ACTIVATION_FEE - (SHOWROOM_BONUS + ACTIVATION_BP); // Trả hoa hồng cho stock
         balancesManager.updateBalance(stockNode, utxoID, ACTIVATION_FEE / 1e6 - (SHOWROOM_BONUS + ACTIVATION_BP), true,TYPE_OF_COM.OTHER);
-        console.log("_processNewMember la:",ACTIVATION_FEE / 1e6 - (SHOWROOM_BONUS + ACTIVATION_BP));
 
     }
 
@@ -3269,8 +3270,8 @@ contract TreeCommission is ITreeCommission {
         // require(msg.sender == viewTreeContract, "Unauthorized caller");
         address user = msg.sender;
         require(nodes[user].parent != address(0), "User does not exist");
-        TreeLib.NodeInfo memory nodesUser = nodes[user];
-        TreeLib.NodeData memory nodeDataUser = nodeData[user];
+        nodesUser = nodes[user];
+        nodeDataUser = nodeData[user];
         return (nodesUser, nodeDataUser);
     }
 
@@ -3624,5 +3625,8 @@ contract TreeCommission is ITreeCommission {
         comInfos = balancesManager.getCommissionArrInRange(_user,_startDate,_endDate);
     }
 
-    
+    function sendProfitForEStock(uint256 amount) external onlyOwner{
+        usdtToken.approve(stockNode,amount);
+        eStock(stockNode).receiveProfitFromContract(amount);
+    }
 }

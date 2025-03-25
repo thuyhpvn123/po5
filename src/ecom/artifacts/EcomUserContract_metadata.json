@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.29+commit.ab55807c"
+		"version": "0.8.26+commit.8a97fa7a"
 	},
 	"language": "Solidity",
 	"output": {
@@ -56,6 +56,44 @@
 						"internalType": "contract IEcomOrder",
 						"name": "",
 						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					}
+				],
+				"name": "IsAdmin",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					}
+				],
+				"name": "IsController",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -271,12 +309,50 @@
 			{
 				"inputs": [
 					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "controllers",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "address",
 						"name": "user",
 						"type": "address"
 					}
 				],
 				"name": "deleteAdmin",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "deleteController",
 				"outputs": [
 					{
 						"internalType": "bool",
@@ -774,6 +850,25 @@
 						"internalType": "address",
 						"name": "",
 						"type": "address"
+					}
+				],
+				"name": "mController",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
 					},
 					{
 						"internalType": "uint256",
@@ -956,6 +1051,11 @@
 								"internalType": "address",
 								"name": "parent",
 								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "image",
+								"type": "string"
 							}
 						],
 						"internalType": "struct registerParams",
@@ -1047,16 +1147,6 @@
 			{
 				"inputs": [
 					{
-						"internalType": "bytes",
-						"name": "data",
-						"type": "bytes"
-					},
-					{
-						"internalType": "uint8",
-						"name": "dataStruct",
-						"type": "uint8"
-					},
-					{
 						"internalType": "string",
 						"name": "title",
 						"type": "string"
@@ -1084,16 +1174,6 @@
 			},
 			{
 				"inputs": [
-					{
-						"internalType": "bytes",
-						"name": "data",
-						"type": "bytes"
-					},
-					{
-						"internalType": "uint8",
-						"name": "dataStruct",
-						"type": "uint8"
-					},
 					{
 						"internalType": "string",
 						"name": "title",
@@ -1196,6 +1276,25 @@
 					}
 				],
 				"name": "setAdminNotificationSetting",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "setController",
 				"outputs": [
 					{
 						"internalType": "bool",
@@ -1355,6 +1454,11 @@
 								"internalType": "address",
 								"name": "parent",
 								"type": "address"
+							},
+							{
+								"internalType": "string",
+								"name": "image",
+								"type": "string"
 							}
 						],
 						"internalType": "struct registerParams",
@@ -1490,8 +1594,8 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
-			"runs": 200
+			"enabled": true,
+			"runs": 0
 		},
 		"remappings": []
 	},
@@ -1545,11 +1649,11 @@
 			]
 		},
 		"src/ecom/EcomUser.sol": {
-			"keccak256": "0xcf73531c1da53b7f13bcd9a73c4708139cffddb33a8b57b77318f8aec354eda8",
+			"keccak256": "0xbb132a87d16dbe6a797c357716266c188332e24e3cfd755be57d7e2e2c948b08",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://90bdb158f9792f02abf7b1c6174a439497df521fc41b7d1e39ec7b0122e017aa",
-				"dweb:/ipfs/QmZtqVPyvQLf6cur8S3epmRBtBXKGBv1DAsiqndjAyvi5f"
+				"bzz-raw://6e3934942d771c8896381388f2a1332fc09249911238eed21abf88e074628386",
+				"dweb:/ipfs/QmXnsaFQnjPfxsaowL4fNQkqgcTZPbY8jS8RwzmxKx2PR5"
 			]
 		},
 		"src/ecom/interfaces/IEcomCart.sol": {
@@ -1577,27 +1681,27 @@
 			]
 		},
 		"src/ecom/interfaces/IEcomProduct.sol": {
-			"keccak256": "0x5d08e48bea24a2f72c432292b8eea861cbf15421d5c60b0eaf46d959528ecf88",
+			"keccak256": "0x92d6c610b5a1fa29834682bd1f52d21120f9e22dd0439a5f3564b906eb60be36",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://1c7a549575af0f0ab1f3ecf7704b198549e2fbf068866283979710d32b20ec24",
-				"dweb:/ipfs/QmYh7s6cfniAnXFqQjomqmcmYbA8A5FwXt4S9TS2gqK5M1"
+				"bzz-raw://8761b73a107ad84c086170eb45d4026da1c09db6d1b80410732df8f14465327c",
+				"dweb:/ipfs/QmZVFMqFb2cGakJ6HTr8g1RDjaaDe1SVEx5KFFvVmb9pZZ"
 			]
 		},
 		"src/ecom/interfaces/IEcomUser.sol": {
-			"keccak256": "0xf640ca74583f1cff5c7b4e23274af6ddf8c939fb450a58f14b8008832f71e7d1",
+			"keccak256": "0x43c07682578353e4eac353acd5fb31c505cdd452671bd5e80208783df1959edc",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://20efc4c61f71790922b96d1693d6cf827a498f4678fee7708778253060c65a00",
-				"dweb:/ipfs/QmV9RZudyu5vCmSgCcjJcfwZNfs3tm4oTz8ZV8remYJBwq"
+				"bzz-raw://264edf1e0de4b14966358a01e288f1dd508c7d8daac6e72d4b9b57dba60b955c",
+				"dweb:/ipfs/QmWZKFp2Ykhyfx33GRnCNjAfcPWWQ31FVMvcd5zmPDTdza"
 			]
 		},
 		"src/ecom/interfaces/INoti.sol": {
-			"keccak256": "0x70dcb518e95a966d366d1d804059d6ac29f07ee1026096d591ca7c920118c8f7",
+			"keccak256": "0xa6505cee677b0424bfe3844bcb2c8bd67020dbe43f17542e2206788c7a64da82",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://491d39ce2e1db584281ae065755053f1f3d576b2826af909efd115e3f1447ca2",
-				"dweb:/ipfs/QmRvNV4wVfhB5Jsu8WUr4gtBss93pyVVzkg9dCjxBLSoob"
+				"bzz-raw://a4850da47cb80406643554926286dae8d788c1cb9bf29b7cc17f1e608c28653b",
+				"dweb:/ipfs/QmZYtoA21mPpd6dMQqA1BCZm7cyFZm6abptjEH3ZHcSBDh"
 			]
 		},
 		"src/ecom/interfaces/ITreeCom.sol": {

@@ -1370,25 +1370,6 @@
 			{
 				"inputs": [
 					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "mAdmin",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
 						"internalType": "string",
 						"name": "",
 						"type": "string"
@@ -1593,25 +1574,6 @@
 				],
 				"name": "removeUserActivity",
 				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "user",
-						"type": "address"
-					}
-				],
-				"name": "setAdmin",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
@@ -1837,8 +1799,8 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
-			"runs": 200
+			"enabled": true,
+			"runs": 0
 		},
 		"remappings": []
 	},
@@ -1900,10 +1862,10 @@
 			]
 		},
 		"src/ecom/EcomInfo.sol": {
-			"keccak256": "0xc06f39f5ed55112eb8be48ab7adce8b49a2c2cc0df0221b7d5ba68d2bc6c150c",
+			"keccak256": "0xc3432414e99162cd2902100bb900265e5a05dc640249056e67f4fe8ad088ab8e",
 			"urls": [
-				"bzz-raw://dc8158576731f8f5658444568fed03dc2ed27050fd0b3a5431b6a3c694a36715",
-				"dweb:/ipfs/QmStLxzeg9EkAKZjaVu836w4eG7CGrnYeEyFKJu8tJePvU"
+				"bzz-raw://c5ffc0027896512ac06396fd71d239d0aad3c9a4c44e7bf5936f2cf83a08ff18",
+				"dweb:/ipfs/Qmcs2A9xs2BZemnRLgobChA5fEPTgc2w7emzgLwGymLBye"
 			]
 		},
 		"src/ecom/interfaces/IEcomCart.sol": {
@@ -1923,19 +1885,19 @@
 			]
 		},
 		"src/ecom/interfaces/IEcomProduct.sol": {
-			"keccak256": "0x5d08e48bea24a2f72c432292b8eea861cbf15421d5c60b0eaf46d959528ecf88",
+			"keccak256": "0x92d6c610b5a1fa29834682bd1f52d21120f9e22dd0439a5f3564b906eb60be36",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://1c7a549575af0f0ab1f3ecf7704b198549e2fbf068866283979710d32b20ec24",
-				"dweb:/ipfs/QmYh7s6cfniAnXFqQjomqmcmYbA8A5FwXt4S9TS2gqK5M1"
+				"bzz-raw://8761b73a107ad84c086170eb45d4026da1c09db6d1b80410732df8f14465327c",
+				"dweb:/ipfs/QmZVFMqFb2cGakJ6HTr8g1RDjaaDe1SVEx5KFFvVmb9pZZ"
 			]
 		},
 		"src/ecom/interfaces/IEcomUser.sol": {
-			"keccak256": "0xf640ca74583f1cff5c7b4e23274af6ddf8c939fb450a58f14b8008832f71e7d1",
+			"keccak256": "0x43c07682578353e4eac353acd5fb31c505cdd452671bd5e80208783df1959edc",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://20efc4c61f71790922b96d1693d6cf827a498f4678fee7708778253060c65a00",
-				"dweb:/ipfs/QmV9RZudyu5vCmSgCcjJcfwZNfs3tm4oTz8ZV8remYJBwq"
+				"bzz-raw://264edf1e0de4b14966358a01e288f1dd508c7d8daac6e72d4b9b57dba60b955c",
+				"dweb:/ipfs/QmWZKFp2Ykhyfx33GRnCNjAfcPWWQ31FVMvcd5zmPDTdza"
 			]
 		},
 		"src/ecom/libs/utils.sol": {

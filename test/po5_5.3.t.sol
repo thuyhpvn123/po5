@@ -10,6 +10,7 @@ import "../src/ecom/EcomUser.sol";
 import "../src/ecom/EcomProduct.sol";
 import "../src/ecom/EcomInfo.sol";
 import "../src/ecom/interfaces/IEcomProduct.sol";
+import "../src/ecom/Noti.sol";
 contract BalancesManagerTest is Test {
     BalancesManager public BALANCE_MAN;
     TreeCommission public TREE_COM;
@@ -24,6 +25,7 @@ contract BalancesManagerTest is Test {
     EcomProductContract public ECOM_PRODUCT;
     EcomInfoContract public ECOM_INFO;
     MasterPool public MASTERPOOL;
+    NotificationManager public NOTI;
     address public owner= address(0x1111);
     address[] public rootMembers;
     address[] public daoMembers;
@@ -38,9 +40,13 @@ contract BalancesManagerTest is Test {
     uint RETAIL_COMMISSION_PERCENT=20;
     uint ACTIVATION_BP = 10;
     uint SHOWROOM_BONUS = 20;
+    uint256 public FEE_RATE = 5; //fee withdraw visa
     address retailer = address(0x123);
     address buyer = address(0x222);
-    
+    uint256 public initialSupply = 1_000_000; // 1 million tokens
+    uint256 public initialExchangeRate = 100_000; // 1 eStock = 1 USDT (100000/100 = 1000, 1000/1000 = 1)
+    uint256 public initialSaleQuota = 500_000 * 10**18; // 500,000 tokens
+
     constructor() {
         vm.startPrank(owner);
         //Ecom
@@ -48,12 +54,17 @@ contract BalancesManagerTest is Test {
         ECOM_USER = new EcomUserContract();
         ECOM_ORDER = new EcomOrderContract();
         ECOM_INFO = new EcomInfoContract();
+        NOTI = new NotificationManager();
         ECOM_PRODUCT.SetEcomUser(address(ECOM_USER));
+        ECOM_PRODUCT.SetEcomInfo(address(ECOM_INFO));
         ECOM_ORDER.SetEcomUser(address(ECOM_USER));
         ECOM_ORDER.SetEcomProduct(address(ECOM_PRODUCT));
         ECOM_ORDER.SetEcomInfo(address(ECOM_INFO));
         ECOM_INFO.SetEcomOrder(address(ECOM_ORDER));
         ECOM_INFO.SetEcomProduct(address(ECOM_PRODUCT));
+        ECOM_INFO.SetEcomUser(address(ECOM_USER));
+        ECOM_USER.SetNotification(address(NOTI));
+        
         //po5
         rootMembers.push(address(0x11));
         rootMembers.push(address(0x12));
@@ -67,7 +78,10 @@ contract BalancesManagerTest is Test {
         EVENT_LOG = new EventLogger();
         ROOT_NODE = new ProposalVote(rootMembers, address(BALANCE_MAN));
         DAO_NODE = new ProposalVote(daoMembers, address(BALANCE_MAN));
-        STOCK_NODE = new eStock("eStock", "po5", 1000*10**18, 10000, address(USDT_ERC));
+        TransactionHistoryFactory factory = new TransactionHistoryFactory();
+        // STOCK_NODE = new eStock("eStock", "po5", 1000*10**18, 10000, address(USDT_ERC));
+        STOCK_NODE = new eStock("eStock Token", "ESTK", initialSupply, initialExchangeRate, initialSaleQuota, address(USDT_ERC), address(factory));
+
         TREE_COM = new TreeCommission(
             address(ECOM_ORDER), address(ECOM_USER),
             address(BALANCE_MAN),address(SHOWROOM),address(EVENT_LOG),address(ROOT_NODE),
@@ -147,37 +161,6 @@ contract BalancesManagerTest is Test {
         // assertTrue(executed);
         // assertEq(approvals, 2);
     }
-    //test EStock
-    function testSetExchangeRate() public {
-        vm.prank(owner);
-        STOCK_NODE.setExchangeRate(1500000);
-        assertEq(STOCK_NODE.getExchangeRate(), 1500000);
-    }
-
-    function testBuyStock() public {
-        vm.startPrank(user1);
-        USDT_ERC.approve(address(STOCK_NODE), 100 * 1e6);
-        STOCK_NODE.buyStock(100 * 1e6, 10000);
-        assertEq(STOCK_NODE.balanceOf(user1), 10**6);
-        vm.stopPrank();
-    }
-    // function testReceiveProfit() public {
-    //     //user1 chuyen usdt cho contract estock
-    //     vm.startPrank(user1);
-    //     USDT_ERC.approve(address(STOCK_NODE), 200 * 1e6);
-    //     STOCK_NODE.receiveProfitFromContract(200 * 1e6);
-    //     assertEq(STOCK_NODE.getUserUSDTCommission(user1), 200 * 1e6);
-    //     vm.stopPrank();
-    //     //muon rut usdt thi phai nap usdt cho masterpool truoc
-    //     vm.prank(owner);
-
-    //     MASTERPOOL.deposit(200 * 1e6);
-    //     vm.prank(user1);
-    //     STOCK_NODE.withdrawUSDTCommission();
-    //     // assertEq(STOCK_NODE.getUserUSDTCommission(user), 0);
-    //     // assertEq(STOCK_NODE.getUserUSDTWithdrawn(user), 200 * 1e6);
-    //     vm.stopPrank();
-    // }
 
     //test BalanceManager
     function testSetTreeCommissionAddress() public {
@@ -450,8 +433,8 @@ contract BalancesManagerTest is Test {
         (uint rootnodeBal,uint daonodeBal,uint stocknodeBal,,uint user1Bal,,,) = getBalanceUtxo(utxoID);
         (uint256 BP, uint256 createTime, uint256 activeTime, uint256 expiredTime, bool isDeny) = BALANCE_MAN.getUltraBPInfo(user1,utxoID);
         console.log("BP la:",BP);
-        uint256 endTime = 1742197963; //7h49 ngay 17/3/2025
-        ITreeCommission.CommissionData memory commissionData = TREE_COM.getCommissionUSDTInRange(user1,startTime,endTime);
+        // uint256 endTime = 1742197963; //7h49 ngay 17/3/2025
+        ITreeCommission.CommissionData memory commissionData = TREE_COM.getCommissionUSDTInRange(user1,startTime,startTime + 1 days);
         assertEq(commissionData.retailBonus,20);//20 retail --personalSale
         assertEq(user1Bal,20,"balance of user1 should be equal");
         assertEq(stocknodeBal,62,"balance of estock should be equal"); 
@@ -463,20 +446,30 @@ contract BalancesManagerTest is Test {
         //11 unilever???
         //1 showroom???
         //user1 withdraw commission
-        vm.startBroadcast(user1);
-        bytes32[] memory utxoArr = new  bytes32[](0);
-        uint256 balUser1Before = USDT_ERC.balanceOf(user1);
-        TREE_COM.withdrawBP(20,utxoArr);
-        // (rootnodeBal, daonodeBal, stocknodeBal, , user1Bal, , , ) = getBalance();
-        // assertEq(user1Bal,0,"balance bp of user1 should be deleted");
-        // uint256 balUser1After = USDT_ERC.balanceOf(user1);
-        // assertEq(balUser1Before + 20 * 10**6 ,balUser1After,"balance USDT of user1 should be equal");
-        // vm.stopBroadcast();
-        // assertEq(rootnodeBal,10,"balance of RootNode should be equal"); 
+        // Masterpool can nap usdt de co the tra commission
+        vm.prank(owner);
+        USDT_ERC.approve(address(MASTERPOOL), 1_000_000 * 1e6);
+        vm.prank(owner);
+        MASTERPOOL.deposit(1_000_000 * 1e6);
 
-        // //daonode withdraw commission
-        // //RootNode or DaoNode withdraw commission by withdrawUSDTCommission or withdrawUSDTCommission
-        // // executeProposal
+        vm.startBroadcast(user1);
+        bytes32[] memory utxoArr = new  bytes32[](1);
+        utxoArr[0] = utxoID;
+        uint256 balUser1Before = USDT_ERC.balanceOf(user1);
+        uint256 afterActiveTime = startTime + 60 days;
+        vm.warp(afterActiveTime);
+        TREE_COM.withdrawBP(20,utxoArr);
+        (rootnodeBal, , , , user1Bal, , , ) = getBalanceUtxo(utxoID);
+        assertEq(user1Bal,0,"balance bp of user1 should be deleted");
+        // uint256 balUser1After = USDT_ERC.balanceOf(user1);
+        assertEq(balUser1Before + (20 * 10**6) * (100 - FEE_RATE)/100,USDT_ERC.balanceOf(user1),"balance USDT of user1 should be equal");
+        vm.stopBroadcast();
+        assertEq(rootnodeBal,10,"balance of RootNode should be equal"); 
+
+        //daonode withdraw commission
+        //RootNode or DaoNode withdraw commission by withdrawUSDTCommission or withdrawUSDTCommission
+        // executeProposal
+        BALANCE_MAN.getUTXOsByUser(address(ROOT_NODE));
         // vm.broadcast(address(0x12));
         // ROOT_NODE.createProposal(payable(user2), 10 , "Project funding"); //neu muon chuyen amount usdt = 100*10**6 thi de la 100
         // //
@@ -490,11 +483,6 @@ contract BalancesManagerTest is Test {
         // assertEq(approvals, 2);
         // assertEq(balUserBef + 10 * 10**6 ,USDT_ERC.balanceOf(user2),"balance USDT of user2 should be equal");
 
-        //Masterpool can nap usdt de co the tra commission
-        // vm.prank(owner);
-        // USDT_ERC.approve(address(MASTERPOOL), 1_000_000 * 1e6);
-        // vm.prank(owner);
-        // MASTERPOOL.deposit(1_000_000 * 1e6);
 
 
     }
@@ -605,20 +593,8 @@ contract BalancesManagerTest is Test {
         vm.stopBroadcast();
         vm.prank(owner);
         TREE_COM.processTeamBPAndActive(0,100);
-        withdraw();
         retailerCreateProduct();
 
-    }
-    function withdraw() public {
-        //  console.log("balance:");
-        // BALANCE_MAN.getBalance(address(ROOT_NODE));
-        // BALANCE_MAN.getBalance(address(DAO_NODE));
-        // BALANCE_MAN.getBalance(address(STOCK_NODE));
-        // BALANCE_MAN.getBalance(address(SHOWROOM1));
-        // BALANCE_MAN.getBalance(user1);
-        // BALANCE_MAN.getBalance(user2);
-        // BALANCE_MAN.getBalance(user3);
-        // BALANCE_MAN.getBalance(buyer);
     }
     function registerEcomUser(address user,address parent )public{
         registerParams memory params;
@@ -755,10 +731,60 @@ contract BalancesManagerTest is Test {
         // );
 
         assertEq(productId, 1);
+        createListTrackUser();
         buyProduct(variantID);
-        // GetByteCode();
 
     }   
+    function createListTrackUser() public{
+        uint256[] memory productIds = new uint256[](2);
+        productIds[0] = 1;
+        productIds[1] = 2;
+
+        uint256[] memory quantities = new uint256[](2) ;
+        quantities[0] = 3;
+        quantities[1] = 5;
+
+        address customer = address(0xABC);
+        createListTrackUserParams memory params = createListTrackUserParams({
+            orderID: "ORD123",
+            trackType: 1,
+            customer: customer,
+            productIds: productIds,
+            quantities: quantities
+        });
+
+        ECOM_INFO.createListTrackUser(params);
+        bytes memory bytesCodeCall = abi.encodeCall(
+            ECOM_INFO.createListTrackUser,
+            (params)
+        );
+        console.log("ECOM_INFO createListTrackUser: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        // Kiểm tra listTrackUserSystem đã lưu dữ liệu đúng
+        vm.prank(owner);
+        ListTrackUser[] memory storedTrackUser = ECOM_INFO.getListTrackUser();
+        assertEq(storedTrackUser[0].orderID, "ORD123");
+        assertEq(storedTrackUser[0].trackType, 1);
+        assertEq(storedTrackUser[0].customer, customer);
+        assertEq(storedTrackUser[0].productIds.length, 2);
+        assertEq(storedTrackUser[0].productIds[0], 1);
+        assertEq(storedTrackUser[0].productIds[1], 2);
+        assertEq(storedTrackUser[0].quantities[0], 3);
+        assertEq(storedTrackUser[0].quantities[1], 5);
+
+        // Kiểm tra retailer có dữ liệu trong `mListTrackUserRetailer`
+        vm.prank(retailer);
+        ListTrackUser[] memory retailerTrack1 = ECOM_INFO.getListTrackUserRetailer();
+
+        assertEq(retailerTrack1[0].orderID, "ORD123");
+        assertEq(retailerTrack1[0].customer, customer);
+        assertEq(retailerTrack1[0].productIds.length, 2);
+        assertEq(retailerTrack1[0].productIds[0], 1);
+        assertEq(retailerTrack1[0].quantities[0], 3);
+    }
     function buyProduct(bytes32 _variantID) public {
         
         
@@ -816,8 +842,36 @@ contract BalancesManagerTest is Test {
         vm.stopBroadcast();
         vm.prank(owner);
         ECOM_INFO.getUserPurchaseInfo(buyer);
-        // GetByteCode();
+        createCommentProduct();
+        GetByteCode();
     }
+    function createCommentProduct()public {
+        uint256 productID = 1;
+        createCommentParams[] memory params = new createCommentParams[](2);
+        params[0] = createCommentParams({
+            commentType: CommentType.REVIEW,
+            content: "Great product!",
+            name: "Alice",
+            rate: 5
+        });
+
+        params[1] = createCommentParams({
+            commentType: CommentType.PRESSCOMMENT,
+            content: "This product was featured in a magazine!",
+            name: "Tech Mag",
+            rate: 0
+        });
+        ECOM_PRODUCT.createComments(productID,params);
+        //edit comment
+        vm.prank(owner);
+        // ECOM_PRODUCT.SetController(owner);
+        ECOM_USER.setController(owner);
+        editCommentsParam[] memory paramsEdit = new editCommentsParam[](1);
+        paramsEdit[0] = editCommentsParam(1, "Updated comment 1");
+        vm.prank(owner);
+        ECOM_PRODUCT.editComments(paramsEdit);
+    }
+
     function hashAttributes(
         Attribute[] memory attrs
     ) internal pure returns (bytes32) {
@@ -835,7 +889,45 @@ contract BalancesManagerTest is Test {
     }
 
     function GetByteCode()public {
-         //1.register on EcomUser
+        //EcomProduct createComments
+        uint256 productID = 1;
+        createCommentParams[] memory paramsCm = new createCommentParams[](2);
+        paramsCm[0] = createCommentParams({
+            commentType: CommentType.REVIEW,
+            content: "Great product!",
+            name: "Alice",
+            rate: 5
+        });
+
+        paramsCm[1] = createCommentParams({
+            commentType: CommentType.PRESSCOMMENT,
+            content: "This product was featured in a magazine!",
+            name: "Tech Mag",
+            rate: 0
+        });
+        bytes memory bytesCodeCall = abi.encodeCall(
+            ECOM_PRODUCT.createComments,
+            (productID, paramsCm)
+        );
+        console.log("ECOM_PRODUCT createComments: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+        //EcomProduct editComments
+        editCommentsParam[] memory paramsEdit = new editCommentsParam[](1);
+        paramsEdit[0] = editCommentsParam(1, "Updated comment 1");
+        bytesCodeCall = abi.encodeCall(
+            ECOM_PRODUCT.editComments,
+            (paramsEdit)
+        );
+        console.log("ECOM_PRODUCT editComments: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+
+         //register on EcomUser
         registerParams memory params;
         params.fullName = "thuy";
         params.email = "abc@gmail.com";
@@ -843,7 +935,7 @@ contract BalancesManagerTest is Test {
         params.dateOfBirth = 23041989;
         params.phoneNumber = "09312345678";
         params.parent = 0xcD1Dd05bC96778594F2401380cD20E28705A4E87; //co the la rootnode 
-        bytes memory bytesCodeCall = abi.encodeCall(
+         bytesCodeCall = abi.encodeCall(
             ECOM_USER.register,
             (params)
         );

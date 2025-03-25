@@ -449,25 +449,6 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "_controller",
-						"type": "address"
-					}
-				],
-				"name": "SetController",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
 						"name": "_ecomInfo",
 						"type": "address"
 					}
@@ -557,25 +538,6 @@
 					}
 				],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"name": "admins",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -1120,25 +1082,6 @@
 			{
 				"inputs": [
 					{
-						"internalType": "address",
-						"name": "user",
-						"type": "address"
-					}
-				],
-				"name": "deleteAdmin",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
 						"internalType": "uint256",
 						"name": "_id",
 						"type": "uint256"
@@ -1323,11 +1266,6 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint256",
-						"name": "_productID",
-						"type": "uint256"
-					},
-					{
 						"components": [
 							{
 								"internalType": "uint256",
@@ -1381,11 +1319,6 @@
 			},
 			{
 				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "_productID",
-						"type": "uint256"
-					},
 					{
 						"components": [
 							{
@@ -3824,32 +3757,13 @@
 					},
 					{
 						"internalType": "uint256",
-						"name": "categoryID",
+						"name": "_categoryID",
 						"type": "uint256"
 					}
 				],
 				"name": "initiatePrductDemo",
 				"outputs": [],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "mAdmin",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -4026,25 +3940,6 @@
 						"internalType": "uint256",
 						"name": "",
 						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "mController",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -4651,25 +4546,6 @@
 			{
 				"inputs": [
 					{
-						"internalType": "address",
-						"name": "user",
-						"type": "address"
-					}
-				],
-				"name": "setAdmin",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
 						"internalType": "uint256",
 						"name": "_productID",
 						"type": "uint256"
@@ -4977,8 +4853,8 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
-			"runs": 200
+			"enabled": true,
+			"runs": 0
 		},
 		"remappings": []
 	},
@@ -5032,11 +4908,11 @@
 			]
 		},
 		"src/ecom/EcomProduct.sol": {
-			"keccak256": "0x42f475230ebd2495e630210d45c219fea198de844c98228830d3d6905c1b465b",
+			"keccak256": "0x0936694d2e63285c0bc32544288ed4413dc608d2809b51b0c3c7fd2225b84674",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://d4fd0230c4e9165281c14d18f1c520c8a89761c4f1f870379f4791b240d7aeac",
-				"dweb:/ipfs/QmZ3LatafztTJG2mqQ5wfG1aXZbs9wVd1JnakqAxhPpCej"
+				"bzz-raw://7168a601e0a645b8ac543c3103e08d7a3b8e8548c0896dfa022130e934a25a1e",
+				"dweb:/ipfs/QmW3MQvyXbQxAFQ4jwCX23KeWSZTqCYdkCggtyt9ivL4VE"
 			]
 		},
 		"src/ecom/interfaces/IEcomCart.sol": {
@@ -5064,19 +4940,19 @@
 			]
 		},
 		"src/ecom/interfaces/IEcomProduct.sol": {
-			"keccak256": "0x5d08e48bea24a2f72c432292b8eea861cbf15421d5c60b0eaf46d959528ecf88",
+			"keccak256": "0x92d6c610b5a1fa29834682bd1f52d21120f9e22dd0439a5f3564b906eb60be36",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://1c7a549575af0f0ab1f3ecf7704b198549e2fbf068866283979710d32b20ec24",
-				"dweb:/ipfs/QmYh7s6cfniAnXFqQjomqmcmYbA8A5FwXt4S9TS2gqK5M1"
+				"bzz-raw://8761b73a107ad84c086170eb45d4026da1c09db6d1b80410732df8f14465327c",
+				"dweb:/ipfs/QmZVFMqFb2cGakJ6HTr8g1RDjaaDe1SVEx5KFFvVmb9pZZ"
 			]
 		},
 		"src/ecom/interfaces/IEcomUser.sol": {
-			"keccak256": "0xf640ca74583f1cff5c7b4e23274af6ddf8c939fb450a58f14b8008832f71e7d1",
+			"keccak256": "0x43c07682578353e4eac353acd5fb31c505cdd452671bd5e80208783df1959edc",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://20efc4c61f71790922b96d1693d6cf827a498f4678fee7708778253060c65a00",
-				"dweb:/ipfs/QmV9RZudyu5vCmSgCcjJcfwZNfs3tm4oTz8ZV8remYJBwq"
+				"bzz-raw://264edf1e0de4b14966358a01e288f1dd508c7d8daac6e72d4b9b57dba60b955c",
+				"dweb:/ipfs/QmWZKFp2Ykhyfx33GRnCNjAfcPWWQ31FVMvcd5zmPDTdza"
 			]
 		},
 		"src/ecom/libs/utils.sol": {

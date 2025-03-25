@@ -16,7 +16,10 @@ contract EcomUserContract {
     address public owner;
 
     mapping(address => bool) public mAdmin;
+    mapping(address => bool) public mController;
+
     address[] public admins;
+    address[] public controllers;
 
     mapping(address => UserInfo) public mUserInfo;
     mapping(address => AddressInfo[]) public mUserAddressInfo;
@@ -32,7 +35,8 @@ contract EcomUserContract {
     string public NOTIFIER = "ECOM";
     constructor() payable {
         owner = msg.sender;
-        setUser(msg.sender, ROLE.ADMIN);
+        // setUser(msg.sender, ROLE.ADMIN);
+        setUser(msg.sender, ROLE.CONTROLLER);
     }
 
     function SetNotification(
@@ -74,6 +78,13 @@ contract EcomUserContract {
         setUser(user, ROLE.ADMIN);
         return true;
     }
+    function setController(address user) public onlyAddress(owner) returns (bool) {
+        mController[user] = true;
+        controllers.push(user);
+        setUser(user, ROLE.CONTROLLER);
+        return true;
+    }
+
 
     function setRetailer(
         address _user
@@ -102,6 +113,20 @@ contract EcomUserContract {
         }
         return true;
     }
+    function deleteController(
+        address user
+    ) public onlyAddress(owner) returns (bool) {
+        mController[user] = false;
+        for (uint256 i = 0; i < controllers.length; i++) {
+            if (controllers[i] == user) {
+                controllers[i] = controllers[controllers.length - 1];
+                controllers.pop();
+                break;
+            }
+        }
+        return true;
+    }
+
 
     function setCustomerNotificationSetting(
         bool _email,
@@ -222,6 +247,7 @@ contract EcomUserContract {
         mUserInfo[msg.sender].phoneNumber = params.phoneNumber;
         mUserInfo[msg.sender].role = ROLE.CUSTOMER;
         mUserInfo[msg.sender].createdAt = block.timestamp;
+        mUserInfo[msg.sender].image = params.image;
         userList.push(msg.sender);
 
         return true;
@@ -241,6 +267,8 @@ contract EcomUserContract {
         mUserInfo[msg.sender].gender = params.gender;
         mUserInfo[msg.sender].dateOfBirth = params.dateOfBirth;
         mUserInfo[msg.sender].phoneNumber = params.phoneNumber;
+        mUserInfo[msg.sender].image = params.image;
+
 
         delete mUserAddressInfo[msg.sender];
         for (uint256 i = 0; i < addressesInfo.length; i++) {
@@ -282,8 +310,8 @@ contract EcomUserContract {
     }
 
     function sendNotification(
-        bytes memory data,
-        uint8 dataStruct,
+        // bytes memory data,
+        // uint8 dataStruct,
         string memory title,
         string memory body,
         address _to,
@@ -327,9 +355,9 @@ contract EcomUserContract {
 
         if (send) {
             NotiParams memory params = NotiParams(
-                NOTIFIER,
-                data,
-                dataStruct,
+                // NOTIFIER,
+                // data,
+                // dataStruct,
                 title,
                 body
             );
@@ -338,8 +366,8 @@ contract EcomUserContract {
     }
 
     function sendMultipleNotification(
-        bytes memory data,
-        uint8 dataStruct,
+        // bytes memory data,
+        // uint8 dataStruct,
         string memory title,
         string memory body,
         address[] memory _to,
@@ -398,9 +426,9 @@ contract EcomUserContract {
             }
 
             NotiParams memory params = NotiParams(
-                NOTIFIER,
-                data,
-                dataStruct,
+                // NOTIFIER,
+                // data,
+                // dataStruct,
                 title,
                 body
             );
@@ -413,28 +441,29 @@ contract EcomUserContract {
         bool isFlashSale,
         address retailer
     ) external {
+        string memory productID = Strings.toString(_productID);
         sendMultipleNotification(
-            abi.encodePacked(_productID),
-            0,
-            "Introducing New Product!",
+            // abi.encodePacked(_productID),
+            // 0,
+            string(abi.encodePacked("Introducing New Product!",productID)),
             "We are excited to introduce a new product! Don't miss the chance to experience the latest products. Check it out now for more details.",
             userList,
             "CreateProduct"
         );
         // Send to the retailer
         sendNotification(
-            abi.encodePacked(_productID),
-            0,
-            "New Product Post Successful!",
+            // abi.encodePacked(_productID),
+            // 0,
+            string(abi.encodePacked("New Product Post Successful!",productID)),
             "Your new product has been successfully posted! Check it out now on your store page and get ready to attract more customers.",
             retailer,
             "CreateProduct"
         );
         // Send to the admin
         sendNotification(
-            abi.encodePacked(_productID),
-            0,
-            "New Product Post Successful!",
+            // abi.encodePacked(_productID),
+            // 0,
+            string(abi.encodePacked("New Product Post Successful!",productID)),
             "A new product has been successfully posted by a retailer! Check it out on the website and ensure everything is in order",
             owner,
             "CreateProduct"
@@ -442,9 +471,9 @@ contract EcomUserContract {
 
         if (isFlashSale) {
             sendMultipleNotification(
-                abi.encodePacked(_productID),
-                0,
-                "Flash Sale Starts Now!",
+                // abi.encodePacked(_productID),
+                // 0,
+                string(abi.encodePacked("Flash Sale Starts Now!",productID)),
                 "Epic Savings Await! Our Flash Sale is here with jaw-dropping discounts!",
                 userList,
                 "PromotionalProgram"
@@ -457,27 +486,28 @@ contract EcomUserContract {
         address _buyer,
         address[] memory _retailers
     ) external {
+        string memory orderID = Strings.toString(_orderID);
         sendNotification(
-            abi.encodePacked(_orderID),
-            0,
-            "New Purchase",
+            // abi.encodePacked(_orderID),
+            // 0,
+            string(abi.encodePacked("New Purchase",orderID)),
             "Your order has been successfully placed! We will process and ship your order as soon as possible. Thank you for trusting and shopping.",
             _buyer,
             "OrderUpdate"
         );
         sendMultipleNotification(
-            abi.encodePacked(_orderID),
-            0,
-            "New Purchase",
+            // abi.encodePacked(_orderID),
+            // 0,
+            string(abi.encodePacked("New Purchase",orderID)),
             "Your customer has successfully placed an order for your product! Thank you for partnering with us",
             _retailers,
             "CustomerOrderUpdate"
         );
         // send notification to Admin
         sendNotification(
-            abi.encodePacked(_orderID),
-            0,
-            "New Order Received",
+            // abi.encodePacked(_orderID),
+            // 0,
+            string(abi.encodePacked("New Order Received",orderID)),
             "An order has been successfully placed by a customer for one of your products. Please review the order details to ensure everything is in order",
             owner,
             "CustomerOrderUpdate"
@@ -489,26 +519,27 @@ contract EcomUserContract {
         address _user,
         address _owner
     ) external {
+        string memory orderID = Strings.toString(_orderID);
         sendNotification(
-            abi.encodePacked(_orderID),
-            0,
-            "New Purchase",
+            // abi.encodePacked(_orderID),
+            // 0,
+            string(abi.encodePacked("New Purchase",orderID)),
             "Your customer has successfully placed an order for your product! Thank you for partnering with us.",
             _owner,
             "CustomerOrderUpdate"
         );
         sendNotification(
-            abi.encodePacked(_orderID),
-            0,
-            "Purchase Successful",
+            // abi.encodePacked(_orderID),
+            // 0,
+            string(abi.encodePacked("Purchase Successful",orderID)),
             "Your order has been successfully placed! We will process and ship your order as soon as possible. Thank you for trusting and shopping.",
             _user,
             "OrderUpdate"
         );
         sendNotification(
-            abi.encodePacked(_orderID),
-            0,
-            "A Purchase Successful",
+            // abi.encodePacked(_orderID),
+            // 0,
+            string(abi.encodePacked("A Purchase Successful",orderID)),
             "An order has been successfully placed by a customer for one of your products. Please review the order details to ensure everything is in order",
             owner,
             "CustomerOrderUpdate"
@@ -611,6 +642,12 @@ contract EcomUserContract {
 
     function IsRetailer(address _user) external view returns (bool){
         return mUserInfo[_user].role == ROLE.RETAILER;
+    }
+    function IsAdmin(address _user) external view returns (bool){
+        return mUserInfo[_user].role == ROLE.ADMIN;
+    }
+    function IsController(address _user) external view returns (bool){
+        return mUserInfo[_user].role == ROLE.CONTROLLER;
     }
 
     function getUserRole(address _user) external view returns (ROLE){
