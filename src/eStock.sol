@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "forge-std/console.sol";
+// import "forge-std/console.sol";
 contract TransactionHistory {
     struct Transaction {
         string txType; // "BUY", "SELL", "TRANSFER", "WITHDRAW", "REWARD"
@@ -79,6 +79,49 @@ contract TransactionHistory {
         }
         return results;
     }
+    function getUserTransactionsByTimePagination(
+        address user,
+        uint256 startTime,
+        uint256 endTime,
+        uint256 limit,
+        uint256 offset // Offset để xác định vị trí bắt đầu lấy dữ liệu
+    ) external view returns (Transaction[] memory) {
+        uint256 total = userTransactions[user].length;
+        uint256 count = 0;
+        uint256 index = 0;
+        Transaction[] memory temp = new Transaction[](limit);
+
+        // Lặp ngược để lấy giao dịch mới nhất trước
+        for (uint256 i = total; i > 0; i--) {
+            Transaction memory txData = userTransactions[user][i - 1];
+
+            // Bỏ qua các giao dịch ngoài khoảng thời gian yêu cầu
+            if (txData.timestamp < startTime) break;
+            if (txData.timestamp > endTime) continue;
+
+            // Bỏ qua giao dịch đến khi đạt offset
+            if (index < offset) {
+                index++;
+                continue;
+            }
+
+            // Lưu vào mảng kết quả
+            temp[count] = txData;
+            count++;
+
+            // Nếu đã đủ limit thì dừng
+            if (count >= limit) break;
+        }
+
+        // Tạo mảng kết quả chính xác với số phần tử đã tìm được
+        Transaction[] memory results = new Transaction[](count);
+        for (uint256 j = 0; j < count; j++) {
+            results[j] = temp[j];
+        }
+
+        return results;
+    }
+
 }
 
 contract TransactionHistoryFactory {
@@ -195,10 +238,6 @@ contract eStock is ERC20, Ownable {
 
         uint256 newProfit = totalUSDTReceived - lastTotalUSDTReceived[user];
         uint256 userProfit = (newProfit * userStock) / totalStock;
-        console.log("newProfit:",newProfit);
-        console.log("userStock:",userStock);
-        console.log("totalStock:",totalStock);
-        console.log("userProfit:",userProfit);
         userUSDTBalance[user] += userProfit; // ✅ Chỉ cộng vào tổng lợi nhuận user
         lastTotalUSDTReceived[user] = totalUSDTReceived;
     }
@@ -211,7 +250,7 @@ contract eStock is ERC20, Ownable {
         // 🟢 Rút lợi nhuận trước khi mua
         updateUserCommission(msg.sender);
 
-        uint256 stockAmount = (usdtAmount * exchangeRate) / (1e6 * 100);
+        uint256 stockAmount = (usdtAmount * exchangeRate) / (1e6 * 100) * 1e18;
         require(saleQuota >= stockAmount, "Not enough stock in this sale");
         require(balanceOf(owner()) >= stockAmount, "Not enough stock available");
 

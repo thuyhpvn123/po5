@@ -1,0 +1,212 @@
+{
+	"compiler": {
+		"version": "0.8.26+commit.8a97fa7a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_notiFactory",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					}
+				],
+				"name": "isUserRegistered",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "notiFactory",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "notiStorage",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					}
+				],
+				"name": "registerUser",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_notiStorage",
+						"type": "address"
+					}
+				],
+				"name": "setNotiStorage",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					}
+				],
+				"name": "unregisterUser",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "users",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"isUserRegistered(address)": {
+					"params": {
+						"_user": "Địa chỉ người dùng"
+					},
+					"returns": {
+						"_0": "bool True nếu user đã đăng ký, False nếu chưa"
+					}
+				},
+				"registerUser(address)": {
+					"details": "Chỉ Dapp hoặc chính user có thể đăng ký",
+					"params": {
+						"_user": "Địa chỉ của người dùng cần đăng ký"
+					}
+				},
+				"unregisterUser(address)": {
+					"details": "Chỉ Dapp hoặc chính user có thể hủy"
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"isUserRegistered(address)": {
+					"notice": "Kiểm tra người dùng có đăng ký không"
+				},
+				"registerUser(address)": {
+					"notice": "Đăng ký người dùng vào hệ thống thông báo của Dapp"
+				},
+				"unregisterUser(address)": {
+					"notice": "Hủy đăng ký người dùng khỏi hệ thống"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"src/ecom/noti.sol": "PermissionManager"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts/access/Ownable.sol": {
+			"keccak256": "0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6",
+				"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a"
+			]
+		},
+		"@openzeppelin/contracts/utils/Context.sol": {
+			"keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12",
+				"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
+			]
+		},
+		"src/ecom/interfaces/INoti.sol": {
+			"keccak256": "0xa6505cee677b0424bfe3844bcb2c8bd67020dbe43f17542e2206788c7a64da82",
+			"license": "SEE LICENSE IN LICENSE",
+			"urls": [
+				"bzz-raw://a4850da47cb80406643554926286dae8d788c1cb9bf29b7cc17f1e608c28653b",
+				"dweb:/ipfs/QmZYtoA21mPpd6dMQqA1BCZm7cyFZm6abptjEH3ZHcSBDh"
+			]
+		},
+		"src/ecom/noti.sol": {
+			"keccak256": "0x1244358c3313a9d1886730ad1b91392155c8cf02d1e314f24b3d8d31884e58c2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8c9bb49d1f0dac31182ec293b244a6f0ec7d5adb0362790e05cbedfb2f563d6f",
+				"dweb:/ipfs/QmSKfyeSUw6HHaEgbm9jaxfbdTehnrKmTPsjw2AF529gmr"
+			]
+		}
+	},
+	"version": 1
+}

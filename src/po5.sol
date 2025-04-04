@@ -824,6 +824,7 @@ contract ProposalVote is Ownable{
         uint256 approvals;
         uint256 rejections;
         bool executed;
+        bool isAdd;
     }
 
     address[] public members; 
@@ -877,7 +878,8 @@ contract ProposalVote is Ownable{
             member: _newMember,
             approvals: 0,
             rejections: 0,
-            executed: false
+            executed: false,
+            isAdd: true
         });
 
         emit MemberProposalCreated(membershipProposalCount, _newMember);
@@ -937,7 +939,8 @@ contract ProposalVote is Ownable{
             member: _member,
             approvals: 0,
             rejections: 0,
-            executed: false
+            executed: false,
+            isAdd:false
         });
 
         emit MemberProposalCreated(membershipProposalCount, _member);
@@ -1567,7 +1570,7 @@ contract Showroom is Ownable {
 
     /**
      */
-    function withdrawBPFromShowRoom(uint256 amount) external onlyEOA {
+    function withdrawBPFromShowRoom(uint256 amount,bytes32[] memory utxoArr) external onlyEOA {
         address showroom = msg.sender;
         uint256 preBalance = showroomNodes[showroom].totalBP;
         require(preBalance >= amount, "Insufficient balance");
@@ -1575,7 +1578,7 @@ contract Showroom is Ownable {
         require(showroomNodes[showroom].expiryDate >= block.timestamp, "Showroom expired");
 
         ITreeCommission treeCommission = ITreeCommission(treeCommissionContract);
-        bytes32[] memory utxoArr = new bytes32[](0);
+        // bytes32[] memory utxoArr = new bytes32[](0);
         treeCommission.withdrawBPToAnotherUser(amount, showroom, utxoArr);
 
     }
@@ -2632,7 +2635,12 @@ contract TreeCommission is ITreeCommission {
     function setUsdt(address _usdtAddress) external onlyOwner{
         usdtToken = IERC20(_usdtAddress);
     }
-
+    function setStockNode(address _stockNodeAddress)external onlyOwner{
+         stockNode = _stockNodeAddress;
+    }
+    function setDaoNode(address _daoNodeAddress)external onlyOwner{
+        daoNode = _daoNodeAddress;
+    }
 
     /**
      * @dev Khóa dữ liệu trong hệ thống
@@ -2667,7 +2675,6 @@ contract TreeCommission is ITreeCommission {
             require(userStatus != TreeLib.Status.Locked && userStatus != TreeLib.Status.Banned, "Deny access");
 
             require(amount * 10**6 < usdtToken.balanceOf(address(this)),"Not enough usdt in treeCom");
-            console.log("amount la:",amount);
             require(usdtToken.transfer(user, amount * 10**6 ), "Transfer failed");
             // uint256 lastBalance = balancesManager.getBalance(msg.sender);
 
@@ -2851,11 +2858,12 @@ contract TreeCommission is ITreeCommission {
         if (showroom != address(0)) {
 
             uint256 comm = showroomManager.plusCommision(showroom, newBP);
-
+            // uint256 amountBP = (newBP * SHOWROOM_COMMISSION_PERCENT * comm) / 10000; // Trả hoa hồng cho showroom
             uint256 amountBP = (newBP * SHOWROOM_COMMISSION_PERCENT * comm) / 10000; // Trả hoa hồng cho showroom
             // balances[showroom] += amountBP;
-            balancesManager.updateBalance(showroom, utxoID, amountBP, true,TYPE_OF_COM.RETAIL_COMMISSION);
-
+            if (amountBP>0){
+                balancesManager.updateBalance(showroom, utxoID, amountBP, true,TYPE_OF_COM.RETAIL_COMMISSION);
+            }
         }
         // trả hoa hồng thế hệ 11% = 2 + 3 + 3 + 3 
         TreeLib.distributeGenerationBonus(nodes, generationRank, personalGroups, balancesManager, user, bp, utxoID);
@@ -2973,6 +2981,11 @@ contract TreeCommission is ITreeCommission {
         // require(msg.value == ACTIVATION_FEE + MEMBERSHIP_FEE, "Incorrect fee"); // Kiểm tra phí thanh toán đủ không
 
         TreeLib.checkTransferUSDT(usdtToken, utxoID, ACTIVATION_FEE + MEMBERSHIP_FEE);
+        //init showroom
+         address showroom = showroomManager.findNearestShowroom(lattitude, longtitude); 
+        if (showroom != address(0)) {
+            memberInShowroom[newMember] = showroom;
+        }
 
         // Ghi nhận doanh số cá nhân khi thêm thành viên mới
         recordPersonalSales(newMember, MEMBERSHIP_BP, utxoID);
@@ -3090,9 +3103,9 @@ contract TreeCommission is ITreeCommission {
             balancesManager.initUser(newMember, longtitude, lattitude); 
         }
         
-        if (showroom != address(0)) {
-            memberInShowroom[newMember] = showroom;
-        }
+        // if (showroom != address(0)) {
+        //     memberInShowroom[newMember] = showroom;
+        // }
 
 
         allNodes.push(newMember); // Thêm node vào danh sách tất cả nodes
@@ -3181,6 +3194,7 @@ contract TreeCommission is ITreeCommission {
         if (nodes[user].parent == address(0)) {// nếu user ko phải là Promoter, thì doanh số tính cho parent
           // tính doanh số cho parent
           user = parent;
+          console.log("parent la:",parent);
           require(nodes[parent].parent != address(0), "Parent is not exists"); // Kiểm tra cha có đang active không
         } else {
           require(nodes[user].status == TreeLib.Status.Active, "User is not active"); // Kiểm tra cha có đang active không
@@ -3626,6 +3640,7 @@ contract TreeCommission is ITreeCommission {
     }
 
     function sendProfitForEStock(uint256 amount) external onlyOwner{
+        require(amount <= usdtToken.balanceOf(address(this)),"amount is over balance");
         usdtToken.approve(stockNode,amount);
         eStock(stockNode).receiveProfitFromContract(amount);
     }

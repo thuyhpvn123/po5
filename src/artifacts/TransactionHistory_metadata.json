@@ -134,6 +134,67 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "startTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "endTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "limit",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "offset",
+						"type": "uint256"
+					}
+				],
+				"name": "getUserTransactionsByTimePagination",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "txType",
+								"type": "string"
+							},
+							{
+								"internalType": "address",
+								"name": "to",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "amount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "timestamp",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct TransactionHistory.Transaction[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "string",
 						"name": "txType",
 						"type": "string"
@@ -194,8 +255,8 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
-			"runs": 200
+			"enabled": true,
+			"runs": 0
 		},
 		"remappings": []
 	},
@@ -248,20 +309,12 @@
 				"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
 			]
 		},
-		"forge-std/console.sol": {
-			"keccak256": "0x91d5413c2434ca58fd278b6e1e79fd98d10c83931cc2596a6038eee4daeb34ba",
-			"license": "MIT",
-			"urls": [
-				"bzz-raw://91ccea707361e48b9b7a161fe81f496b9932bc471e9c4e4e1e9c283f2453cc70",
-				"dweb:/ipfs/QmcB66sZhQ6Kz7MUHcLE78YXRUZxoZnnxZjN6yATsbB2ec"
-			]
-		},
 		"src/eStock.sol": {
-			"keccak256": "0xe480891b893437a9fa51f3ca560c3a378512bb3b087f2fa7629a278f40915148",
+			"keccak256": "0xb605970d5f2594907fbde8d327acc74c857ab76795389a31c07b735ab4611c74",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://86d1c34a687f4336def850c5f231250749a39d02036ca03034fa5adecdcb7126",
-				"dweb:/ipfs/QmeLqEqwRgPqinn1tzbMKmyjnhz7FpmozAcD8cKKNjhxzn"
+				"bzz-raw://4068c24353dfe7b41e1c3b8ddba52fc21a6bf4809d20f6134ca9e8990454e9fd",
+				"dweb:/ipfs/QmP9hueKcVD1dxTC3DPEW65ADnM8wDbVKAzfQksGboHq79"
 			]
 		}
 	},
