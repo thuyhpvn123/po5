@@ -324,9 +324,13 @@ contract BalancesManagerTest is Test {
         SHOWROOM.addShowRoom(SHOWROOM1, address(0), Showroom.ShowroomTier.Kiosk, 1000000, 1000000);
         vm.stopPrank();
         vm.startPrank(address(TREE_COM));
-        uint256 commission = SHOWROOM.plusCommision(SHOWROOM1, 100);
-        assertEq(commission, 50); // 50% commission for Kiosk tier
+        SHOWROOM.plusCommision(SHOWROOM1, 100);
         vm.stopPrank();
+        vm.startBroadcast(SHOWROOM1);
+        uint commission = SHOWROOM.getBalance();
+        assertEq(commission, 50); // 50% commission for Kiosk tier
+        vm.startBroadcast();
+
     }
 
     function testPlusMember() public {
@@ -347,9 +351,13 @@ contract BalancesManagerTest is Test {
         SHOWROOM.setShowroomExpiryDate(SHOWROOM1, 0);
         vm.stopPrank();
         vm.startPrank(address(TREE_COM));
-        uint256 commission = SHOWROOM.plusCommision(SHOWROOM1, 100);
-        assertEq(commission, 0); // Should return 0 for expired SHOWROOM
+        SHOWROOM.plusCommision(SHOWROOM1, 100);
         vm.stopPrank();
+        vm.startBroadcast(SHOWROOM1);
+        uint256 commission = SHOWROOM.getBalance();
+        assertEq(commission, 0); // Should return 0 for expired SHOWROOM
+        vm.stopBroadcast();
+
     }
 
     //test TreeCom
@@ -553,6 +561,7 @@ contract BalancesManagerTest is Test {
 
     //TreeCommission
      function testFull() public {
+        vm.warp(1744191604); //9/4/2025
         //1.register on EcomUser
         registerEcomUser(user1,address(ROOT_NODE));
         //
@@ -582,13 +591,12 @@ contract BalancesManagerTest is Test {
         assertEq(bal,(MEMBERSHIP_BP * RETAIL_COMMISSION_PERCENT)/ 100,
             "parent of user1 should receive retail commission when itself buy vip membership"
         );
-        console.log("bal SHOWROOM1:",BALANCE_MAN.getBalance(SHOWROOM1));
         // Upgrade user1 to promoter
         USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
         // bytes32 utxoID2 = keccak256(abi.encodePacked("2"));
         bytes32 utxoID2 = bytes32(0);
         TREE_COM.upgradeToPromoter(user1, 10000, 15000,utxoID2);
-        console.log("bal SHOWROOM111111:",BALANCE_MAN.getBalance(SHOWROOM1)); //kiosk 50% * 20usd =10
+        
         // Check if user1 is now a promoter
         (TreeLib.NodeInfo memory nodeInfo, TreeLib.NodeData memory nodeData) = TREE_COM.getPromoterInfo();
         assertEq(nodeInfo.parent, rootNode);
@@ -601,6 +609,13 @@ contract BalancesManagerTest is Test {
         );
         vm.stopBroadcast();
 
+        //check bal showroom
+        vm.startBroadcast(address(SHOWROOM1));
+        uint balShowRoom = SHOWROOM.getBalance();
+        assertEq(balShowRoom,10_000,"balance of showroom1 should be 10_000"); 
+        //(SHOWROOM_BONUS * comm) / 100 = 20_000 * 50 /100
+        vm.stopBroadcast();
+
         //test addPromoter
         //1.register on EcomUser
         registerEcomUser(buyer,address(ROOT_NODE));
@@ -608,22 +623,34 @@ contract BalancesManagerTest is Test {
         vm.startBroadcast(owner);
         TREE_COM.addPromoterMember(buyer,address(ROOT_NODE),10000,2000,bytes32(0));
         assertEq(BALANCE_MAN.getBalance(rootNode),40_000); //balance rootnode = 40
-        console.log("bal SHOWROOM2222222222:",BALANCE_MAN.getBalance(SHOWROOM1));
         assertEq(USDT_ERC.balanceOf(address(TREE_COM)), (120+40+160) * 1e6, "Incorrect USDT transfer"); // 120 + 40 USDT
         
         (,,,uint256 longtitude,uint256 latitude)= BALANCE_MAN.nodeExtras(buyer);
-        console.log("longtitude:",longtitude);
-        console.log("latitude:",latitude);
+        assertEq(longtitude,10000,"longtitude should be equal" );
+       assertEq(latitude,2000,"latitude should be equal");
 
         vm.stopBroadcast();
+
+        //check bal showroom
+        vm.startBroadcast(address(SHOWROOM1));
+        balShowRoom = SHOWROOM.getBalance();
+        assertEq(balShowRoom,20_500,"balance of showroom1 should be equal");
+        //10_000+10_000+(newBP * SHOWROOM_COMMISSION_PERCENT * comm) / 10_000
+        // = 20_000 + (100_000 * 1 * 50) /10_000
+        vm.stopBroadcast();
+
         //3.addPromoterMember cho user3 vao user2
         registerEcomUser(user3,buyer);
         vm.startBroadcast(buyer);
         USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
         TREE_COM.addPromoterMember(user3,buyer,10000,2000,bytes32(0));
-        uint balShowRoom = USDT_ERC.balanceOf(address(SHOWROOM));
-        console.log("balShowRoom:",balShowRoom);
         vm.stopBroadcast();
+
+        vm.startBroadcast(address(SHOWROOM1));
+        balShowRoom = SHOWROOM.getBalance();
+        assertEq(balShowRoom,31_000,"balance of showroom1 should be equal");
+        vm.stopBroadcast();
+
         vm.prank(owner);
         TREE_COM.processTeamBPAndActive(0,100);
         retailerCreateProduct();
@@ -899,7 +926,7 @@ contract BalancesManagerTest is Test {
         // TREE_COM.updateDeliveryProduct(orderCode);
 
         createCommentProduct();
-        GetByteCode();
+        // GetByteCode();
     }
     function createCommentProduct()public {
         uint256 productID = 1;

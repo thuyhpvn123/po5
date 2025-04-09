@@ -1546,16 +1546,24 @@ contract Showroom is Ownable {
 
         return nearestShowroom; // Trả về showroom gần nhất tìm được
     }
-
-    function plusCommision(address showroom, uint256 bp) public onlyTreeCommission returns (uint256) {
+    function getCommisionRate(address showroom) public onlyTreeCommission returns (uint256) {
             if (showroomNodes[showroom].expiryDate <= block.timestamp) {
               return 0;
             }
-            showroomNodes[showroom].totalBP += bp; // Cập nhật tổng BP showroom
             ShowroomTier tier = showroomNodes[showroom].tier; // Lấy cấp bậc showroom
             uint256 comm = showroomCommissionRates[tier]; // Lấy % hoa hồng showroom
 
             return comm;
+
+    }
+
+    function plusCommision(address showroom, uint256 bp) public onlyTreeCommission {
+            require(showroomNodes[showroom].expiryDate >= block.timestamp,"showroom expires already"); 
+            showroomNodes[showroom].totalBP += bp; // Cập nhật tổng BP showroom
+            // ShowroomTier tier = showroomNodes[showroom].tier; // Lấy cấp bậc showroom
+            // uint256 comm = showroomCommissionRates[tier]; // Lấy % hoa hồng showroom
+
+            // return comm;
 
     }
     function plusMember(address showroom, uint256 totalMember) public onlyTreeCommission returns (uint256) {
@@ -2858,12 +2866,13 @@ contract TreeCommission is ITreeCommission {
         address showroom = memberInShowroom[user]; // Lấy showroom của user
         if (showroom != address(0)) {
 
-            uint256 comm = showroomManager.plusCommision(showroom, newBP);
+            uint256 comm = showroomManager.getCommisionRate(showroom);
             // uint256 amountBP = (newBP * SHOWROOM_COMMISSION_PERCENT * comm) / 10000; // Trả hoa hồng cho showroom
-            uint256 amountBP = (newBP * SHOWROOM_COMMISSION_PERCENT * comm) / 10000; // Trả hoa hồng cho showroom
+            uint256 amountBP = (newBP * SHOWROOM_COMMISSION_PERCENT * comm) / 10_000; // Trả hoa hồng cho showroom
             // balances[showroom] += amountBP;
             if (amountBP>0){
                 balancesManager.updateBalance(showroom, utxoID, amountBP, true,TYPE_OF_COM.RETAIL_COMMISSION);
+                showroomManager.plusCommision(showroom,amountBP);
             }
         }
         // trả hoa hồng thế hệ 11% = 2 + 3 + 3 + 3 
@@ -3132,6 +3141,7 @@ contract TreeCommission is ITreeCommission {
         if (showroom != address(0)) {
             uint256 comm = showroomManager.plusMember(showroom, 1);
             balancesManager.updateBalance(showroom, utxoID, (SHOWROOM_BONUS * comm) / 100, true,TYPE_OF_COM.SHOWROOM_BONUS); // Trả hoa hồng showroom
+            showroomManager.plusCommision(showroom,(SHOWROOM_BONUS * comm) / 100);
         }
         // balances[stockNode] += ACTIVATION_FEE - (SHOWROOM_BONUS + ACTIVATION_BP); // Trả hoa hồng cho stock
         balancesManager.updateBalance(stockNode, utxoID, ACTIVATION_FEE / 1e6 * 10**3 - (SHOWROOM_BONUS + ACTIVATION_BP), true,TYPE_OF_COM.OTHER);
