@@ -1594,8 +1594,8 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": true,
-			"runs": 0
+			"enabled": false,
+			"runs": 200
 		},
 		"remappings": []
 	},
@@ -1705,11 +1705,11 @@
 			]
 		},
 		"src/ecom/interfaces/ITreeCom.sol": {
-			"keccak256": "0xa2275b99a7439c4f0d5b0d5f8495cb7b542f12ab4e80d7956a69f14fa16a5aba",
+			"keccak256": "0x29c177651cc81a1da64b9e41d76e580dab93b4f2e504d582a5aa65c04348ec0b",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://3f77096bcf28f40917ccea4501ca103ab8b738c943252b9bc4d359a770c24820",
-				"dweb:/ipfs/QmYVwuMGUDjZ4k5EsXhLMvEWg53v8RsYD68wLQCHd5cGzn"
+				"bzz-raw://2bcb49629e444db569e3a06c2a72ee43fc0dffa53698b6395d6c2c68886ab455",
+				"dweb:/ipfs/QmU8Hhb6eTbpuMZnp1p4s8GJdCddeqj2yTd1Qdb5hXLkgi"
 			]
 		},
 		"src/ecom/libs/utils.sol": {

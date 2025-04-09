@@ -37,10 +37,10 @@ contract BalancesManagerTest is Test {
     address public SHOWROOM1 = address(0x111);
     address public SHOWROOM2 = address(0x222);
     uint256 count;
-    uint MEMBERSHIP_BP =100;
+    uint MEMBERSHIP_BP =100_000;
     uint RETAIL_COMMISSION_PERCENT=20;
-    uint ACTIVATION_BP = 10;
-    uint SHOWROOM_BONUS = 20;
+    uint ACTIVATION_BP = 10_000;
+    uint SHOWROOM_BONUS = 20_000;
     uint256 public FEE_RATE = 5; //fee withdraw visa
     address retailer = address(0x123);
     address buyer = address(0x234);
@@ -74,6 +74,8 @@ contract BalancesManagerTest is Test {
         rootMembers.push(address(0x11));
         rootMembers.push(address(0x12));
         rootMembers.push(address(0x13));
+        rootMembers.push(address(0x14));
+        rootMembers.push(address(0x15));
         daoMembers.push(address(0x21));
         daoMembers.push(address(0x22));
         daoMembers.push(address(0x23));
@@ -130,7 +132,8 @@ contract BalancesManagerTest is Test {
         ROOT_NODE.voteToAddMember(0, true);
         vm.broadcast(address(0x12));
         ROOT_NODE.voteToAddMember(0, true);
-
+        vm.broadcast(address(0x13));
+        ROOT_NODE.voteToAddMember(0, true);
         assertTrue(ROOT_NODE.isMember(newMember));
         //remove member
         vm.broadcast(address(0x11));
@@ -142,6 +145,10 @@ contract BalancesManagerTest is Test {
         ROOT_NODE.voteToRemoveMember(1, true);
         vm.broadcast(address(0x13));
         ROOT_NODE.voteToRemoveMember(1, true);
+        vm.broadcast(address(0x14));
+        ROOT_NODE.voteToRemoveMember(1, true);
+        vm.broadcast(address(0x15));
+        ROOT_NODE.voteToRemoveMember(1, true); //4/6
 
         assertFalse(ROOT_NODE.isMember(newMember));
     }
@@ -155,13 +162,15 @@ contract BalancesManagerTest is Test {
         assertEq(reason, "Project funding");
         vm.stopBroadcast();
         //Gia dinh chuyen usdt cho Treecom de co the tra commission 
-        vm.prank(owner);
-        USDT_ERC.mintToAddress(address(TREE_COM),1_000_000 * 1e6);
+        // vm.prank(owner);
+        // USDT_ERC.mintToAddress(address(TREE_COM),1_000_000 * 1e6);
 
         //
         vm.broadcast(address(0x12));
         ROOT_NODE.voteProposal(0, true);
-        // vm.startBroadcast(address(0x13)); //chua test duoc tiep vi RootNode chua du tien. test ben Po5
+        vm.broadcast(address(0x13)); //chua test duoc tiep vi RootNode chua du tien. test ben Po5
+        ROOT_NODE.voteProposal(0, true);
+        // vm.broadcast(address(0x14));
         // ROOT_NODE.voteProposal(0, true);
         // (, , , uint256 approvals, , bool executed) = ROOT_NODE.getProposal(0);
         // assertTrue(executed);
@@ -265,7 +274,7 @@ contract BalancesManagerTest is Test {
          uint256 totalMember,
          uint256 expiryDate,
          uint256 longtitude,
-         uint256 lattitude) = SHOWROOM.showroomNodes(SHOWROOM1);
+         uint256 lattitude,) = SHOWROOM.showroomNodes(SHOWROOM1);
 
         assertEq(parent, address(0));
         assertEq(uint(tier), uint(Showroom.ShowroomTier.Kiosk));
@@ -389,42 +398,52 @@ contract BalancesManagerTest is Test {
         (uint rootnodeBal,uint daonodeBal,uint stocknodeBal,,uint user1Bal,,,) = getBalance();
         uint256 endTime = 1742197963; //7h49 ngay 17/3/2025
         ITreeCommission.CommissionData memory commissionData = TREE_COM.getCommissionUSDTInRange(user1,startTime,endTime);
-        assertEq(commissionData.retailBonus,20);//20 retail --personalSale
-        assertEq(user1Bal,20,"balance of user1 should be equal");
-        assertEq(stocknodeBal,62,"balance of estock should be equal"); 
+        assertEq(commissionData.retailBonus,20_000);//20 retail --personalSale
+        assertEq(user1Bal,20_000,"balance of user1 should be equal");
+        assertEq(stocknodeBal,62_000,"balance of estock should be equal"); 
         //62=10+20+32 voi
         // 10 = ACTIVATION_FEE -(SHOWROOM_BONUS + ACTIVATION_BP)  = 40-(20+10) = 10
         // 20 = membership_fee - membership_bp = 120-100 = 20
         // 32 = (bp * 32) / 100 = 32 --personalSale
-        assertEq(daonodeBal,4,"balance of DAO should be equal"); //4- daonode
+        assertEq(daonodeBal,4_000,"balance of DAO should be equal"); //4- daonode
         //11 unilever???
         //1 showroom???
         //user1 withdraw commission
         vm.startBroadcast(user1);
         bytes32[] memory utxoArr = new  bytes32[](0);
         uint256 balUser1Before = USDT_ERC.balanceOf(user1);
-        TREE_COM.withdrawBP(20,utxoArr);
+        TREE_COM.withdrawBP(20_000,utxoArr);
         (rootnodeBal, daonodeBal, stocknodeBal, , user1Bal, , , ) = getBalance();
         assertEq(user1Bal,0,"balance bp of user1 should be deleted");
         uint256 balUser1After = USDT_ERC.balanceOf(user1);
         assertEq(balUser1Before + 20 * 10**6 ,balUser1After,"balance USDT of user1 should be equal");
         vm.stopBroadcast();
-        assertEq(rootnodeBal,10,"balance of RootNode should be equal"); 
+        assertEq(rootnodeBal,10_000,"balance of RootNode should be equal"); 
 
         //daonode withdraw commission
         //RootNode or DaoNode withdraw commission by withdrawUSDTCommission or withdrawUSDTCommission
         // executeProposal
         vm.broadcast(address(0x12));
-        ROOT_NODE.createProposal(payable(user2), 10 , "Project funding"); //neu muon chuyen amount usdt = 100*10**6 thi de la 100
+        ROOT_NODE.createProposal(payable(user2), 10 *10**3 , "Project funding"); //neu muon chuyen amount usdt = 100*10**6 thi de la 100 *10**3
         //
         uint256 balUserBef = USDT_ERC.balanceOf(user2);
         vm.broadcast(address(0x12));
         ROOT_NODE.voteProposal(0, true);
-        vm.startBroadcast(address(0x13)); 
+        vm.broadcast(address(0x13)); 
         ROOT_NODE.voteProposal(0, true);
+        (,,,uint256 approval1,,bool executed1) = ROOT_NODE.proposals(0);
+        console.log("approval1:",approval1);
+        console.log("executed1:",executed1);
+
+        vm.startBroadcast(address(0x14)); 
+        ROOT_NODE.voteProposal(0, true);
+        (,,,uint256 approval,,bool executed2) = ROOT_NODE.proposals(0);
+        console.log("approval:",approval);
+        console.log("executed2:",executed2);
+
         (, , , uint256 approvals, , bool executed) = ROOT_NODE.getProposal(0);
         assertTrue(executed);
-        assertEq(approvals, 2);
+        assertEq(approvals, 3);
         assertEq(balUserBef + 10 * 10**6 ,USDT_ERC.balanceOf(user2),"balance USDT of user2 should be equal");
     }
     function testWithDrawCommissionVisa()public {
@@ -441,14 +460,14 @@ contract BalancesManagerTest is Test {
         console.log("BP la:",BP);
         // uint256 endTime = 1742197963; //7h49 ngay 17/3/2025
         ITreeCommission.CommissionData memory commissionData = TREE_COM.getCommissionUSDTInRange(user1,startTime,startTime + 1 days);
-        assertEq(commissionData.retailBonus,20);//20 retail --personalSale
-        assertEq(user1Bal,20,"balance of user1 should be equal");
-        assertEq(stocknodeBal,62,"balance of estock should be equal"); 
+        assertEq(commissionData.retailBonus,20_000);//20 retail --personalSale
+        assertEq(user1Bal,20_000,"balance of user1 should be equal 20000");
+        assertEq(stocknodeBal,62_000,"balance of estock should be equal"); 
         //62=10+20+32 voi
         // 10 = ACTIVATION_FEE -(SHOWROOM_BONUS + ACTIVATION_BP)  = 40-(20+10) = 10
         // 20 = membership_fee - membership_bp = 120-100 = 20
         // 32 = (bp * 32) / 100 = 32 --personalSale
-        assertEq(daonodeBal,4,"balance of DAO should be equal"); //4- daonode
+        assertEq(daonodeBal,4_000,"balance of DAO should be equal"); //4- daonode
         //11 unilever???
         //1 showroom???
         //user1 withdraw commission
@@ -464,13 +483,13 @@ contract BalancesManagerTest is Test {
         uint256 balUser1Before = USDT_ERC.balanceOf(user1);
         uint256 afterActiveTime = startTime + 60 days;
         vm.warp(afterActiveTime);
-        TREE_COM.withdrawBP(20,utxoArr);
+        TREE_COM.withdrawBP(20_000,utxoArr);
         (rootnodeBal, , , , user1Bal, , , ) = getBalanceUtxo(utxoID);
         assertEq(user1Bal,0,"balance bp of user1 should be deleted");
         // uint256 balUser1After = USDT_ERC.balanceOf(user1);
         assertEq(balUser1Before + (20 * 10**6) * (100 - FEE_RATE)/100,USDT_ERC.balanceOf(user1),"balance USDT of user1 should be equal");
         vm.stopBroadcast();
-        assertEq(rootnodeBal,10,"balance of RootNode should be equal"); 
+        assertEq(rootnodeBal,10_000,"balance of RootNode should be equal"); 
 
         //daonode withdraw commission
         //RootNode or DaoNode withdraw commission by withdrawUSDTCommission or withdrawUSDTCommission
@@ -549,6 +568,7 @@ contract BalancesManagerTest is Test {
         USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
         (address  daoNode,address  stockNode,address rootNode) = TREE_COM.getAddress();
         vm.stopPrank();
+        assertEq(BALANCE_MAN.getBalance(rootNode),0); //balance rootnode = 0
         vm.broadcast(owner); 
         bytes32 utxoID1 = bytes32(0); //tt usdt
         // bytes32 utxoID1 = keccak256(abi.encodePacked("1")); //tt visa
@@ -558,20 +578,22 @@ contract BalancesManagerTest is Test {
         (TreeCommission.VIPNode memory vipNodeInfo) = TREE_COM.getVIPInfo();
         assertEq(vipNodeInfo.parent, rootNode);
         uint bal = BALANCE_MAN.getBalance(vipNodeInfo.parent);
-        console.log("bal:",bal);
+        assertEq(BALANCE_MAN.getBalance(rootNode),20_000); //balance rootnode = 20 vi addVip nen rootnode duoc chia HH retail 20%
         assertEq(bal,(MEMBERSHIP_BP * RETAIL_COMMISSION_PERCENT)/ 100,
             "parent of user1 should receive retail commission when itself buy vip membership"
         );
+        console.log("bal SHOWROOM1:",BALANCE_MAN.getBalance(SHOWROOM1));
         // Upgrade user1 to promoter
         USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
         // bytes32 utxoID2 = keccak256(abi.encodePacked("2"));
         bytes32 utxoID2 = bytes32(0);
         TREE_COM.upgradeToPromoter(user1, 10000, 15000,utxoID2);
+        console.log("bal SHOWROOM111111:",BALANCE_MAN.getBalance(SHOWROOM1)); //kiosk 50% * 20usd =10
         // Check if user1 is now a promoter
         (TreeLib.NodeInfo memory nodeInfo, TreeLib.NodeData memory nodeData) = TREE_COM.getPromoterInfo();
         assertEq(nodeInfo.parent, rootNode);
         assertEq(uint(nodeInfo.status), uint(TreeLib.Status.InActive));
-        assertEq(BALANCE_MAN.getBalance(rootNode),bal+ACTIVATION_BP,
+        assertEq(BALANCE_MAN.getBalance(rootNode),bal+ACTIVATION_BP, //balance rootnode = 30
             "rootNode should receive activation bonus-10bp"
         );
         assertEq(BALANCE_MAN.getBalance(SHOWROOM1),SHOWROOM_BONUS * 50/100,
@@ -585,7 +607,14 @@ contract BalancesManagerTest is Test {
         //2.addPromoterMember cho user2 vao rootnode
         vm.startBroadcast(owner);
         TREE_COM.addPromoterMember(buyer,address(ROOT_NODE),10000,2000,bytes32(0));
+        assertEq(BALANCE_MAN.getBalance(rootNode),40_000); //balance rootnode = 40
+        console.log("bal SHOWROOM2222222222:",BALANCE_MAN.getBalance(SHOWROOM1));
         assertEq(USDT_ERC.balanceOf(address(TREE_COM)), (120+40+160) * 1e6, "Incorrect USDT transfer"); // 120 + 40 USDT
+        
+        (,,,uint256 longtitude,uint256 latitude)= BALANCE_MAN.nodeExtras(buyer);
+        console.log("longtitude:",longtitude);
+        console.log("latitude:",latitude);
+
         vm.stopBroadcast();
         //3.addPromoterMember cho user3 vao user2
         registerEcomUser(user3,buyer);
@@ -870,7 +899,7 @@ contract BalancesManagerTest is Test {
         // TREE_COM.updateDeliveryProduct(orderCode);
 
         createCommentProduct();
-        // GetByteCode();
+        GetByteCode();
     }
     function createCommentProduct()public {
         uint256 productID = 1;
@@ -961,7 +990,7 @@ contract BalancesManagerTest is Test {
         params.gender = 0;
         params.dateOfBirth = 23041989;
         params.phoneNumber = "09312345678";
-        params.parent = 0xcD1Dd05bC96778594F2401380cD20E28705A4E87; //co the la rootnode 
+        params.parent = 0xA44f469877C3393c8364ea4436b1202065a4b63B; //co the la rootnode 
          bytesCodeCall = abi.encodeCall(
             ECOM_USER.register,
             (params)
@@ -1066,8 +1095,8 @@ contract BalancesManagerTest is Test {
             SHOWROOM.addShowRoom,
             (
                 showroom,
-                address(0),
-                Showroom.ShowroomTier.Kiosk,
+                address(0x1),
+                Showroom.ShowroomTier.Hub,
                 1300000,
                 2000000
             )

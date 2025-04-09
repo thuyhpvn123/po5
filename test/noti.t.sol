@@ -42,6 +42,7 @@ contract NotificationSystemTest is Test {
         // Test data setup
         publicKey = bytes("userPublicKey");
         encryptedDeviceToken = abi.encodePacked("encryptedDeviceToken");
+        
     }
     
     function testDappRegistration() public {
@@ -181,7 +182,7 @@ contract NotificationSystemTest is Test {
         
         // Unregister the user
         vm.startPrank(user1);
-        permissionManager.unregisterUser(user1);
+        notiFactory.unSubscribeUser(dappOwner,PlatformEnum.ANDROID);
         vm.stopPrank();
         
         // Verify user is no longer registered
@@ -316,7 +317,7 @@ contract NotificationSystemTest is Test {
         NotiStorage(ns1).AddNoti(params,user1);
         vm.stopPrank();
 
-        message = "Message from Dapp 1";
+        message = "Message from Dapp 2";
         params = NotiParams({
             title: "Ecom",
             body: message
@@ -412,5 +413,18 @@ contract NotificationSystemTest is Test {
         vm.expectRevert("Dapp already registered");
         notiFactory.registerDapp(dappOwner,"ecom");
         vm.stopPrank();
+        GetByteCode();
+    }
+    function GetByteCode()public {
+        //getAllDappInfos
+        bytes memory bytesCodeCall = abi.encodeCall(
+            notiFactory.getAllDappInfos,
+            ()
+        );
+        console.log("notiFactory getAllDappInfos: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
     }
 }

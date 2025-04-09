@@ -46,7 +46,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "forge-std/console.sol";
+// import "forge-std/console.sol";
 
 
 /**
@@ -470,7 +470,6 @@ contract BalancesManager is Ownable {
             uint256 createTime = block.timestamp;
             uint256 activeTime = createTime + 60 days;
             uint256 expiredTime = createTime + 180 days;
-
             userUltraBP[user][utxoID] = BPultraUTXO(amount, createTime, activeTime, expiredTime, false);
             utxoToUsers[utxoID].push(user);
             allUltraUTXO.push(utxoID); // ✅ Lưu vào danh sách toàn cục
@@ -531,7 +530,7 @@ contract BalancesManager is Ownable {
             uint256 amount = _withdrawUltraBP(user,utxoIDArr[i]);
             totalAmount += amount;
         }
-        IMasterPool(masterpool).transferCommission(user, totalAmount * 1e6);
+        IMasterPool(masterpool).transferCommission(user, totalAmount * 1e3);
         return true;
     }
     function withdrawBP(address user, uint256 amount) external onlyTreeCommission returns (bool) {
@@ -571,6 +570,7 @@ contract BalancesManager is Ownable {
         if (mUserToDateToCom[_user][_timestamp][_comType] == 0) {
             if (userTimestamps[_user].length == 0 || userTimestamps[_user][userTimestamps[_user].length - 1] != _timestamp) {
                 userTimestamps[_user].push(_timestamp); // Track timestamp
+
             }
         }
 
@@ -763,7 +763,7 @@ contract BalancesManager is Ownable {
 
         bytes32 refCode = keccak256(abi.encodePacked(user));
 
-        require( allUserRefCodes[refCode] != address(0) , "ref code exists in another user" );
+        require( allUserRefCodes[refCode] == address(0) , "ref code exists in another user" );
         
         allUserRefCodes[refCode] = user;
 
@@ -1303,6 +1303,7 @@ contract Showroom is Ownable {
         uint256 expiryDate;     // Thời gian hết hạn showroom
         uint256 longtitude;     // Kinh độ showroom
         uint256 lattitude;      // Vĩ độ showroom
+        address showroom;
     }
 
     // Danh sách showroom và mapping lưu thông tin showroom
@@ -1430,7 +1431,8 @@ contract Showroom is Ownable {
             totalMember: 0,
             expiryDate: block.timestamp + 365 days, // Hết hạn sau 12 tháng
             longtitude: longtitude,
-            lattitude: lattitude
+            lattitude: lattitude,
+            showroom: newShowroom
         });
 
         // Thêm showroom mới vào danh sách tất cả showroom
@@ -2010,7 +2012,6 @@ library TreeLib {
         address current = activeParentMapping[user]; // Bắt đầu từ cha Active của user
         uint8 level = 1; // Cấp hiện tại
 
-
         address[] memory users;
         uint256[] memory amounts;
         uint256 counBatchUpdateBalances = 0; // Biến đếm số phần tử
@@ -2427,17 +2428,17 @@ contract TreeCommission is ITreeCommission {
 
     // Các phí và bonus được tính theo đơn vị USDT 1e6
     uint256 internal constant ACTIVATION_FEE = 40 * 1e6; // Phí kích hoạt $40
-    uint256 internal constant ACTIVATION_BP = 10; // 10 BP khi kích hoạt
+    uint256 internal constant ACTIVATION_BP = 10_000; // 10 BP khi kích hoạt
 
     uint256 internal constant MEMBERSHIP_FEE = 120 * 1e6; // Phí thành viên $120
-    uint256 internal constant MEMBERSHIP_BP = 100; // 100 BP cho mỗi lần bán thành viên
+    uint256 internal constant MEMBERSHIP_BP = 100_000; // 100 BP cho mỗi lần bán thành viên
 
     // Phần trăm hoa hồng cho các hạng mục khác nhau
     uint256 internal constant STOCK_COMMISSION_PERCENT = 20; // 20% cho hoa hồng bán lẻ
     uint256 internal constant DAO_COMMISSION_PERCENT = 4;    // 4% cho DAO
     uint256 internal constant RETAIL_COMMISSION_PERCENT = 20; // 20% cho hoa hồng bán lẻ
     uint256 internal constant SHOWROOM_COMMISSION_PERCENT = 1; // 1% cho showroom
-    uint256 internal constant SHOWROOM_BONUS = 20; // Bonus $20 cho showroom gần nhất
+    uint256 internal constant SHOWROOM_BONUS = 20_000; // Bonus $20 cho showroom gần nhất
 
     // Phần trăm hoa hồng Unilevel cho các cấp trong hệ thống MLM
     // uint256 internal constant UNILEVEL_PERCENT_1 = 10; // 10% cho cấp 1
@@ -2578,7 +2579,7 @@ contract TreeCommission is ITreeCommission {
 
     constructor(address _ecomOrderAddress, address _ecomUserAddress, address _balanceManagerAddress, address _showroomAddress, address _eventLoggerAddress, address _rootNodeAddress, address _daoNodeAddress, address _stockNodeAddress, address _usdtAddress) {
         // Kiểm tra tính hợp lệ của MEMBERSHIP_BP (tránh lỗi do lập trình sai)
-        require(MEMBERSHIP_BP * 1e6 < MEMBERSHIP_FEE, "wrong code");
+        require(MEMBERSHIP_BP * 1e6 / 10**3 < MEMBERSHIP_FEE, "wrong code");
 
         balancesManager = BalancesManager(_balanceManagerAddress);
         showroomManager = Showroom(_showroomAddress);
@@ -2674,8 +2675,8 @@ contract TreeCommission is ITreeCommission {
             TreeLib.Status userStatus = nodes[msg.sender].status;
             require(userStatus != TreeLib.Status.Locked && userStatus != TreeLib.Status.Banned, "Deny access");
 
-            require(amount * 10**6 < usdtToken.balanceOf(address(this)),"Not enough usdt in treeCom");
-            require(usdtToken.transfer(user, amount * 10**6 ), "Transfer failed");
+            require(amount * 10**3 < usdtToken.balanceOf(address(this)),"Not enough usdt in treeCom");
+            require(usdtToken.transfer(user, amount * 10**3 ), "Transfer failed");
             // uint256 lastBalance = balancesManager.getBalance(msg.sender);
 
             // #debug tạm ẩn để ko bị warning code
@@ -2700,7 +2701,7 @@ contract TreeCommission is ITreeCommission {
     function withdrawBPToAnotherUser(uint256 amount, address user,bytes32[] memory utxoArr) external {
         require(amount > 0, "Amount must be greater than 0");
         
-        require(rootNode == msg.sender || stockNode == msg.sender || daoNode == msg.sender, "Contracts not allowed");
+        require(rootNode == msg.sender || stockNode == msg.sender || daoNode == msg.sender || address(showroomManager) == msg.sender, "Contracts not allowed");
 
         withdrawBPToUser(amount, user, utxoArr);
     }
@@ -2915,7 +2916,7 @@ contract TreeCommission is ITreeCommission {
         recordPersonalSales(newMember, MEMBERSHIP_BP, utxoID); // Ghi lại doanh số cá nhân của thành viên mới
         // emit VIPAdded(newMember, parent); // Phát sự kiện VIP mới được thêm
 
-        balancesManager.updateBalance(stockNode, utxoID, MEMBERSHIP_FEE / 1e6 - MEMBERSHIP_BP, true,TYPE_OF_COM.OTHER);
+        balancesManager.updateBalance(stockNode, utxoID, MEMBERSHIP_FEE / 1e6 * 10**3 - MEMBERSHIP_BP, true,TYPE_OF_COM.OTHER);
 
     }
 
@@ -2990,7 +2991,7 @@ contract TreeCommission is ITreeCommission {
         // Ghi nhận doanh số cá nhân khi thêm thành viên mới
         recordPersonalSales(newMember, MEMBERSHIP_BP, utxoID);
 
-        balancesManager.updateBalance(stockNode, utxoID, MEMBERSHIP_FEE / 1e6 - MEMBERSHIP_BP, true,TYPE_OF_COM.OTHER);
+        balancesManager.updateBalance(stockNode, utxoID, MEMBERSHIP_FEE / 1e6 * 10** 3 - MEMBERSHIP_BP, true,TYPE_OF_COM.OTHER);
 
 
         if (isBatchProcessing) { 
@@ -3066,7 +3067,7 @@ contract TreeCommission is ITreeCommission {
         nodeData[user].membershipExpiry += 365 days; // Gia hạn thêm 12 tháng
         recordPersonalSales(user, MEMBERSHIP_BP, utxoID); // Ghi nhận doanh số cá nhân khi gia hạn
 
-        balancesManager.updateBalance(stockNode, utxoID, MEMBERSHIP_FEE / 1e6 - MEMBERSHIP_BP, true,TYPE_OF_COM.OTHER);
+        balancesManager.updateBalance(stockNode, utxoID, MEMBERSHIP_FEE / 1e6 * 10**3- MEMBERSHIP_BP, true,TYPE_OF_COM.OTHER);
 
     }
 
@@ -3079,7 +3080,6 @@ contract TreeCommission is ITreeCommission {
      */
     function _processNewMember(address newMember, address parent, uint256 longtitude, uint256 lattitude, bytes32 utxoID) internal {
         address showroom = showroomManager.findNearestShowroom(lattitude, longtitude); // Tìm showroom gần nhất
-
 
         // Khởi tạo node mới trong hệ thống
         nodes[newMember] = TreeLib.NodeInfo({
@@ -3099,7 +3099,7 @@ contract TreeCommission is ITreeCommission {
             membershipExpiry: block.timestamp + 365 days // Hạn 12 tháng
         });
         bytes32 refCode = keccak256(abi.encodePacked(newMember));
-        if( balancesManager.allUserRefCodes(refCode) != address(0)){
+        if( balancesManager.allUserRefCodes(refCode) == address(0)){
             balancesManager.initUser(newMember, longtitude, lattitude); 
         }
         
@@ -3129,15 +3129,12 @@ contract TreeCommission is ITreeCommission {
 
         leafNodes.push(newMember); // Thêm vào danh sách nút lá
         balancesManager.updateBalance(parent, utxoID, ACTIVATION_BP, true,TYPE_OF_COM.ACTIVATION_BP); // Trả hoa hồng kích hoạt $10 cho parent
-
         if (showroom != address(0)) {
             uint256 comm = showroomManager.plusMember(showroom, 1);
             balancesManager.updateBalance(showroom, utxoID, (SHOWROOM_BONUS * comm) / 100, true,TYPE_OF_COM.SHOWROOM_BONUS); // Trả hoa hồng showroom
         }
-
         // balances[stockNode] += ACTIVATION_FEE - (SHOWROOM_BONUS + ACTIVATION_BP); // Trả hoa hồng cho stock
-        balancesManager.updateBalance(stockNode, utxoID, ACTIVATION_FEE / 1e6 - (SHOWROOM_BONUS + ACTIVATION_BP), true,TYPE_OF_COM.OTHER);
-
+        balancesManager.updateBalance(stockNode, utxoID, ACTIVATION_FEE / 1e6 * 10**3 - (SHOWROOM_BONUS + ACTIVATION_BP), true,TYPE_OF_COM.OTHER);
     }
 
     function isVIPOrPromoter(address user) external view  returns (bool) {
@@ -3194,7 +3191,6 @@ contract TreeCommission is ITreeCommission {
         if (nodes[user].parent == address(0)) {// nếu user ko phải là Promoter, thì doanh số tính cho parent
           // tính doanh số cho parent
           user = parent;
-          console.log("parent la:",parent);
           require(nodes[parent].parent != address(0), "Parent is not exists"); // Kiểm tra cha có đang active không
         } else {
           require(nodes[user].status == TreeLib.Status.Active, "User is not active"); // Kiểm tra cha có đang active không
