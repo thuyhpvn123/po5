@@ -19,3 +19,5 @@ out
 .github/
 script
 .deps
+src/.deps
+src/artifacts
