@@ -13,8 +13,9 @@ docs/
 # Dotenv file
 .env
 node_modules
-lib
+lib/
 out
 .states
-.github
-.script
+.github/
+script
+.deps
