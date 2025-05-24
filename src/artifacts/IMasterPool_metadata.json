@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.26+commit.8a97fa7a"
+		"version": "0.8.30+commit.73712a01"
 	},
 	"language": "Solidity",
 	"output": {
@@ -45,7 +45,7 @@
 		"compilationTarget": {
 			"src/po5.sol": "IMasterPool"
 		},
-		"evmVersion": "cancun",
+		"evmVersion": "prague",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"
@@ -145,20 +145,28 @@
 				"dweb:/ipfs/QmVUSvooZKEdEdap619tcJjTLcAuH6QBdZqAzWwnAXZAWJ"
 			]
 		},
-		"src/eStock.sol": {
-			"keccak256": "0xb605970d5f2594907fbde8d327acc74c857ab76795389a31c07b735ab4611c74",
+		"forge-std/console.sol": {
+			"keccak256": "0x91d5413c2434ca58fd278b6e1e79fd98d10c83931cc2596a6038eee4daeb34ba",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://4068c24353dfe7b41e1c3b8ddba52fc21a6bf4809d20f6134ca9e8990454e9fd",
-				"dweb:/ipfs/QmP9hueKcVD1dxTC3DPEW65ADnM8wDbVKAzfQksGboHq79"
+				"bzz-raw://91ccea707361e48b9b7a161fe81f496b9932bc471e9c4e4e1e9c283f2453cc70",
+				"dweb:/ipfs/QmcB66sZhQ6Kz7MUHcLE78YXRUZxoZnnxZjN6yATsbB2ec"
+			]
+		},
+		"src/eStock.sol": {
+			"keccak256": "0xcf7331a3404afcdd28ab91531d16584a09ea804e330a4b88812f12631e9b3f9a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://9a1aad227f7b997f0ea1b6f92ed555b4768c2c1a6f2b5f65ac3ff80f1c3504f6",
+				"dweb:/ipfs/QmUdcJ9QqdKANQYjD73y3gDCDVvQp5opmA5D9Kamcvq8Fa"
 			]
 		},
 		"src/po5.sol": {
-			"keccak256": "0x5301daea54ca570d14946f2528b2361d10c630a3ce7a9b30d80b15be09aa6afe",
+			"keccak256": "0x64cedbbfebe6b6eff0338c830d9ee3324995423becab1ee77078fcb5ac5269d2",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://9b03d0d3b04faae8f0806108e7857911c1b275b37df01b65a25d8465ccac257f",
-				"dweb:/ipfs/QmYCpGf7FyaiZXPHoGhfmQjAZaHAk5UPxfKLGjBGagXDfR"
+				"bzz-raw://552972cf97c36c2c27e14c21bade4e09b8bea9b1b1695e397a8ced0d63e98802",
+				"dweb:/ipfs/QmR1XeqUMPaNgjJwM2XWDSG5Y58Ps3Zks7ZPfnk9Ksu8xM"
 			]
 		}
 	},

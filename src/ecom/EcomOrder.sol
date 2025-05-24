@@ -67,6 +67,7 @@ contract EcomOrderContract  {
     address public owner;
     address public POS;
     address public MasterPool;
+    mapping(address => mapping(bytes32 => bool)) public mBuyerToOrderPaid ;//buyer => orderCode => paid/not paid
     constructor() payable {
         owner = msg.sender;
     }
@@ -493,9 +494,10 @@ function ProcessOrder(
             afterDiscountPrice: 0,
             shippingPrice: 0,
             paymentType: uint8(details.paymentType),
-            createdAt: block.timestamp
+            createdAt: block.timestamp,
+            payer: address(0),
+            paid: false
         });
-
         mOrder[orderID] = newOrder;
 
         {
@@ -530,7 +532,8 @@ function ProcessOrder(
     
     // xác nhận thanh toán từ bên smart contract po5
     function ConfirmPaymentForOrderCode(
-        bytes32 orderCode
+        bytes32 orderCode,
+        address payer
     ) external onlyAddress(address(TreeCom)) {
         uint256 _orderID = orderCodes[orderCode];
         require(_orderID > 0, "wrong order ID");
@@ -577,12 +580,15 @@ function ProcessOrder(
             newOrder.totalPrice,
             newOrder.buyer
         );
+        mBuyerToOrderPaid[newOrder.buyer][orderCode] = true;
         EcomUser.addUserPayment(newOrder.user, newPaymentHistory);
         EcomUser.sendExecuteOrderNotification(
             newOrder.orderID,
             mOrder[_orderID].user,
             EcomProduct.getRetailersByProductIds(newOrder.productIds)
         );
+        mOrder[_orderID].paid = true;
+        mOrder[_orderID].payer = payer;
         emit eExecuteOrder(_orderID);
     }
 

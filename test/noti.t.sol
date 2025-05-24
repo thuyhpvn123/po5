@@ -426,5 +426,24 @@ contract NotificationSystemTest is Test {
         console.log(
             "-----------------------------------------------------------------------------"
         );
+        //subscribeUser
+        // address dappOwner1 = 0x51D498a3382Cef358599d60d954d945cF5a6d3E9;
+        // bytes memory publicKey1 = bytes("30f41417f6bddd95232f2d9cd09a3b7e3f2efb7bec7b9267a6d700a3140533b4469f87eca7998452b062bfcc5d6afa2977bde1cc636a36f58e55e59139b14a40");
+        // bytes memory encryptedDeviceToken1 = abi.encodePacked("cvDcIPJQTimmy22dsznjUs:APA91bGAT9ONKBckTc4Uv1E_7SOrfgVJkjn-1AwT1wkBpSkGyQeooJ64RpPbDVSU_y7CIqS-X5vVmQFooXq_ACBnhJ32NRoCyh2GliS2Ogrl3ORZyOiZ4c8");
+        address dappOwner1 = 0xdf182ed5CF7D29F072C429edd8BFCf9C4151394B;
+        bytes memory publicKey1 = bytes("0443ecc93c2949c17cbc9d525e910f91ffc13835786d6da1ddd49347bad123f6fe2fb89c7dcbba6ba85fb976956229fc4daa6ef3676a5df3a89cb5bbb3fe68b327");
+        bytes memory encryptedDeviceToken1 = abi.encodePacked("04743f0898dfe744b48ee36068a3578f93354699f2493f60a8d280963621eaf153b3634d9f64501952782f2854db1399cfd8b93cfa4fc94c6cc011b510a2ce97d2000000000000000000000000000000003789ad2d3ed1333a378944e9c5e9aa6942c82245d26c049fa07689665d8fe137d81f8787f9fca9c27f54b4dce6256c89a2aa428be470b44d35b110395445b6a1c50accd73b76c3c0f3f12043de2960a7d69b61d44747f7636309740908bfd0a026476f112d56d32134127ef79cab30a33d681303c9f1e47ec93446bc43f502ae0509fc93449b36808c9f1a7b947ca8f81a6f3c9360de04a844c16426fc8891d7");
+
+        PlatformEnum platform = PlatformEnum.ANDROID;
+        bytesCodeCall = abi.encodeCall(
+            notiFactory.subscribeUser,
+            (dappOwner1,publicKey1,encryptedDeviceToken1,platform)
+        );
+        console.log("notiFactory subscribeUser: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+
     }
 }

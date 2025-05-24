@@ -163,11 +163,6 @@
 				"outputs": [
 					{
 						"internalType": "string",
-						"name": "IP",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
 						"name": "screenSize",
 						"type": "string"
 					},
@@ -246,11 +241,6 @@
 						"components": [
 							{
 								"internalType": "string",
-								"name": "IP",
-								"type": "string"
-							},
-							{
-								"internalType": "string",
 								"name": "screenSize",
 								"type": "string"
 							},
@@ -289,40 +279,6 @@
 				"type": "function"
 			},
 			{
-				"inputs": [
-					{
-						"internalType": "string",
-						"name": "_IP",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "_screenSize",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "_os",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "_versionOs",
-						"type": "string"
-					}
-				],
-				"name": "getActiveCodesByDeviceInfo",
-				"outputs": [
-					{
-						"internalType": "uint256[]",
-						"name": "",
-						"type": "uint256[]"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [],
 				"name": "getRegisterDevice",
 				"outputs": [
@@ -330,25 +286,6 @@
 						"internalType": "uint256",
 						"name": "",
 						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "isAdmin",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -410,11 +347,6 @@
 				"inputs": [
 					{
 						"internalType": "string",
-						"name": "_IP",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
 						"name": "_screenSize",
 						"type": "string"
 					},
@@ -461,19 +393,6 @@
 					}
 				],
 				"name": "removeMerchant",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_admin",
-						"type": "address"
-					}
-				],
-				"name": "setAdmin",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -533,7 +452,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"src/activeCode_10.3.sol": "MerchantActiveCode"
+			"activeCode.sol": "MerchantActiveCode"
 		},
 		"evmVersion": "cancun",
 		"libraries": {},
@@ -541,18 +460,18 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
-			"runs": 200
+			"enabled": true,
+			"runs": 0
 		},
 		"remappings": []
 	},
 	"sources": {
-		"src/activeCode_10.3.sol": {
-			"keccak256": "0x8b4d9522ddd7ea79d99f5a4589d01e5addde452c7806a3d821b264080ad84355",
+		"activeCode.sol": {
+			"keccak256": "0xf1fb3a1dfb0076be4c34db90956e92b8304b2ff7a4f5029ac02112abd53a764b",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://725e58e5b4f18acf10b9f3c85e3a71e560ad1d50e0980adcf64c13ba430ad474",
-				"dweb:/ipfs/Qmavg5kzFr3A4ihcbjQi2u2c3cXWcv1K45MxUz962wbP9F"
+				"bzz-raw://174b564ec4e9231636bc92b5a6cee96c22ce82122e76b0811afc19e5cad18a3c",
+				"dweb:/ipfs/QmUyZ7rDjWVmsspngzdDV77JtGzkp3J2CL1LZYozPjpF93"
 			]
 		}
 	},

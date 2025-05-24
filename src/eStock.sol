@@ -153,7 +153,7 @@ contract eStock is ERC20, Ownable {
 
     IERC20 public usdtToken; // USDT Token
 
-    uint256 public exchangeRate; // Tỷ giá eStock / USDT (lưu với 6 chữ số thập phân, chia cho 100)
+    uint256 public exchangeRate; // Tỷ giá eStock / USDT (lưu với decimal 18, chia cho 100)
     uint256 public saleQuota; // Hạn mức cổ phần có thể bán trong đợt hiện tại
 
     uint256 public totalUSDTPurchased; // Tổng USDT user đã nạp để mua eStock
@@ -206,7 +206,9 @@ contract eStock is ERC20, Ownable {
     function setAdmin(address _admin, bool isOk) external onlyOwner {
         isAdmin[_admin] = isOk;
     }
-
+    function setUSDT(address _usdtToken)external onlyOwner {
+        usdtToken = IERC20(_usdtToken);
+    }
     // mỗi đầu tháng cần gọi lại hàm này
     function updateTransactionHistory() public {
         uint256 currentMonth = historyFactory.getCurrentMonth();
@@ -250,7 +252,7 @@ contract eStock is ERC20, Ownable {
         // 🟢 Rút lợi nhuận trước khi mua
         updateUserCommission(msg.sender);
 
-        uint256 stockAmount = (usdtAmount * exchangeRate) / (1e6 * 100) * 1e18;
+        uint256 stockAmount = (usdtAmount * exchangeRate) / 100;
         require(saleQuota >= stockAmount, "Not enough stock in this sale");
         require(balanceOf(owner()) >= stockAmount, "Not enough stock available");
 

@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.26+commit.8a97fa7a"
+		"version": "0.8.30+commit.73712a01"
 	},
 	"language": "Solidity",
 	"output": {
@@ -165,6 +165,11 @@
 						"internalType": "bytes32",
 						"name": "orderCode",
 						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "payer",
+						"type": "address"
 					}
 				],
 				"name": "ConfirmPaymentForOrderCode",
@@ -579,6 +584,16 @@
 								"internalType": "uint256",
 								"name": "createdAt",
 								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "payer",
+								"type": "address"
+							},
+							{
+								"internalType": "bool",
+								"name": "paid",
+								"type": "bool"
 							}
 						],
 						"internalType": "struct Order",
@@ -1254,6 +1269,16 @@
 								"internalType": "uint256",
 								"name": "createdAt",
 								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "payer",
+								"type": "address"
+							},
+							{
+								"internalType": "bool",
+								"name": "paid",
+								"type": "bool"
 							}
 						],
 						"internalType": "struct Order",
@@ -1383,6 +1408,16 @@
 								"internalType": "uint256",
 								"name": "createdAt",
 								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "payer",
+								"type": "address"
+							},
+							{
+								"internalType": "bool",
+								"name": "paid",
+								"type": "bool"
 							}
 						],
 						"internalType": "struct Order[]",
@@ -1847,6 +1882,16 @@
 								"internalType": "uint256",
 								"name": "createdAt",
 								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "payer",
+								"type": "address"
+							},
+							{
+								"internalType": "bool",
+								"name": "paid",
+								"type": "bool"
 							}
 						],
 						"internalType": "struct Order[]",
@@ -1952,6 +1997,30 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"name": "mBuyerToOrderPaid",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "uint256",
 						"name": "",
 						"type": "uint256"
@@ -2018,6 +2087,16 @@
 						"internalType": "uint256",
 						"name": "createdAt",
 						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "payer",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "paid",
+						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -2563,14 +2642,14 @@
 		"compilationTarget": {
 			"src/ecom/EcomOrder.sol": "EcomOrderContract"
 		},
-		"evmVersion": "cancun",
+		"evmVersion": "prague",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
-			"runs": 200
+			"enabled": true,
+			"runs": 0
 		},
 		"remappings": []
 	},
@@ -2624,19 +2703,19 @@
 			]
 		},
 		"src/ecom/EcomOrder.sol": {
-			"keccak256": "0x16e13fd1de6ccc86b1f6a912008813066a15a42559c4095d85bbe5c1192b1e2b",
+			"keccak256": "0xd6549aedac045510f02e93e5edae3423c1a4a3d2a2b7d20625bdc521c2bd3b90",
 			"license": "No",
 			"urls": [
-				"bzz-raw://e0dab0f1b9db72b5eabb9d6d9b63ebb5fa95bc461024fbb3fcb9d26f67995337",
-				"dweb:/ipfs/QmbrSLC2PAofV4sGTFC9GQv2SSE1fvjtRDMx29vbopsPow"
+				"bzz-raw://2f0c807154924ff03f8b16e9d93649cd5c83413a1d6533311aff5126eaf7cd77",
+				"dweb:/ipfs/QmdP5uZzNPA6ceBKNDLEsAdY911qummuThiHJUEAXH9rx8"
 			]
 		},
 		"src/ecom/interfaces/IEcomCart.sol": {
-			"keccak256": "0x7dc77e08b634b937f9aa585a395913b84fd0be86900b2dbd47c0367afbfc9568",
+			"keccak256": "0x6d9d24e6cc1fe75a89dadb623f331d69509ab0f922b79cbd40bc97e4e6d187eb",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://d7d5e763dc06ae1fb4108d73178407bbed49310ce461ee1299ed9ce8eef3c512",
-				"dweb:/ipfs/QmeQ9BD7NtoyzVAkygMWaqvctw2EzHt4xaBrZ5KRWDX8g3"
+				"bzz-raw://536fa9df721ff09b727667b0f46fdc5b12992fa3e890e873669b077a0ec06bfd",
+				"dweb:/ipfs/QmNdYxEJonKv5gvPYWfReZkLD37cx8deACizaQVuHCgNBo"
 			]
 		},
 		"src/ecom/interfaces/IEcomInfo.sol": {

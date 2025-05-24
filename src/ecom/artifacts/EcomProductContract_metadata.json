@@ -4845,7 +4845,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"src/ecom/EcomProduct.sol": "EcomProductContract"
+			"ecom/EcomProduct.sol": "EcomProductContract"
 		},
 		"evmVersion": "cancun",
 		"libraries": {},
@@ -4876,19 +4876,19 @@
 			]
 		},
 		"@openzeppelin/contracts/utils/Strings.sol": {
-			"keccak256": "0x44f87e91783e88415bde66f1a63f6c7f0076f2d511548820407d5c95643ac56c",
+			"keccak256": "0x81c274a60a7ae232ae3dc9ff3a4011b4849a853c13b0832cd3351bb1bb2f0dae",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://13a51bc2b23827744dcf5bad10c69e72528cf015a6fe48c93632cdb2c0eb1251",
-				"dweb:/ipfs/QmZwPA47Yqgje1qtkdEFEja8ntTahMStYzKf5q3JRnaR7d"
+				"bzz-raw://9da0c20dc74358a2a76330818f3bac9d1e2ce3371aec847b9cbf5d147fbae4f6",
+				"dweb:/ipfs/QmeczhmnFv1hbXKGLwbYXY6Rrytc9a5A2YaRi5QMMgjPnb"
 			]
 		},
 		"@openzeppelin/contracts/utils/math/Math.sol": {
-			"keccak256": "0xa00be322d7db5786750ce0ac7e2f5b633ac30a5ed5fa1ced1e74acfc19acecea",
+			"keccak256": "0x1225214420c83ebcca88f2ae2b50f053aaa7df7bd684c3e878d334627f2edfc6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://6c84e822f87cbdc4082533b626667b6928715bb2b1e8e7eb96954cebb9e38c8d",
-				"dweb:/ipfs/QmZmy9dgxLTerBAQDuuHqbL6EpgRxddqgv5KmwpXYVbKz1"
+				"bzz-raw://6c5fab4970634f9ab9a620983dc1c8a30153981a0b1a521666e269d0a11399d3",
+				"dweb:/ipfs/QmVRnBC575MESGkEHndjujtR7qub2FzU9RWy9eKLp4hPZB"
 			]
 		},
 		"@openzeppelin/contracts/utils/math/SafeCast.sol": {
@@ -4907,15 +4907,15 @@
 				"dweb:/ipfs/QmVUSvooZKEdEdap619tcJjTLcAuH6QBdZqAzWwnAXZAWJ"
 			]
 		},
-		"src/ecom/EcomProduct.sol": {
-			"keccak256": "0x0936694d2e63285c0bc32544288ed4413dc608d2809b51b0c3c7fd2225b84674",
+		"ecom/EcomProduct.sol": {
+			"keccak256": "0x7c6858876f6f83cac9aab44b71cc371b76621fb876b254f598592d841f8306ee",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://7168a601e0a645b8ac543c3103e08d7a3b8e8548c0896dfa022130e934a25a1e",
-				"dweb:/ipfs/QmW3MQvyXbQxAFQ4jwCX23KeWSZTqCYdkCggtyt9ivL4VE"
+				"bzz-raw://658af6889d4800bc91a16623c3e7ac857d86c30d095e9d6df563bbe82c410082",
+				"dweb:/ipfs/QmfNvJMWgepstZsZpTpBH6nVeo6CHfk1ZzZBqAFtCuizym"
 			]
 		},
-		"src/ecom/interfaces/IEcomCart.sol": {
+		"ecom/interfaces/IEcomCart.sol": {
 			"keccak256": "0x7dc77e08b634b937f9aa585a395913b84fd0be86900b2dbd47c0367afbfc9568",
 			"license": "MIT",
 			"urls": [
@@ -4923,7 +4923,7 @@
 				"dweb:/ipfs/QmeQ9BD7NtoyzVAkygMWaqvctw2EzHt4xaBrZ5KRWDX8g3"
 			]
 		},
-		"src/ecom/interfaces/IEcomInfo.sol": {
+		"ecom/interfaces/IEcomInfo.sol": {
 			"keccak256": "0x2c94d16571881c3e4089e99ead579e233504c1b7532e5d053290c238acde64ac",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
@@ -4931,7 +4931,7 @@
 				"dweb:/ipfs/QmNM9B5yZPgxcVedAdRHPmLugndy94QDfodAZXGomvZgdU"
 			]
 		},
-		"src/ecom/interfaces/IEcomOrder.sol": {
+		"ecom/interfaces/IEcomOrder.sol": {
 			"keccak256": "0x0c589357acc2a75f59fcbc293e099698b35048b8cc14cd4c62e59888fa06df7e",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
@@ -4939,7 +4939,7 @@
 				"dweb:/ipfs/Qmc94d1zvGhw1i73suRYEdgA8ytDdcMeRcizCTqtkzWNSF"
 			]
 		},
-		"src/ecom/interfaces/IEcomProduct.sol": {
+		"ecom/interfaces/IEcomProduct.sol": {
 			"keccak256": "0x92d6c610b5a1fa29834682bd1f52d21120f9e22dd0439a5f3564b906eb60be36",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
@@ -4947,7 +4947,7 @@
 				"dweb:/ipfs/QmZVFMqFb2cGakJ6HTr8g1RDjaaDe1SVEx5KFFvVmb9pZZ"
 			]
 		},
-		"src/ecom/interfaces/IEcomUser.sol": {
+		"ecom/interfaces/IEcomUser.sol": {
 			"keccak256": "0x43c07682578353e4eac353acd5fb31c505cdd452671bd5e80208783df1959edc",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
@@ -4955,7 +4955,7 @@
 				"dweb:/ipfs/QmWZKFp2Ykhyfx33GRnCNjAfcPWWQ31FVMvcd5zmPDTdza"
 			]
 		},
-		"src/ecom/libs/utils.sol": {
+		"ecom/libs/utils.sol": {
 			"keccak256": "0x4adfa2c78cd9fdc5548615c80ec9f17d0c10788f040ba98b651a79a8a306679b",
 			"license": "MIT",
 			"urls": [

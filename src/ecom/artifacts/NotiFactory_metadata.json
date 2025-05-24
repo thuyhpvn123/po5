@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.26+commit.8a97fa7a"
+		"version": "0.8.30+commit.73712a01"
 	},
 	"language": "Solidity",
 	"output": {
@@ -700,7 +700,7 @@
 		"compilationTarget": {
 			"src/ecom/noti.sol": "NotiFactory"
 		},
-		"evmVersion": "cancun",
+		"evmVersion": "prague",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"
@@ -737,11 +737,11 @@
 			]
 		},
 		"src/ecom/noti.sol": {
-			"keccak256": "0x1244358c3313a9d1886730ad1b91392155c8cf02d1e314f24b3d8d31884e58c2",
+			"keccak256": "0xaee01841b96b0dbceac9e484523956f9c2137354ffc8bfe03ae28711bba2162a",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://8c9bb49d1f0dac31182ec293b244a6f0ec7d5adb0362790e05cbedfb2f563d6f",
-				"dweb:/ipfs/QmSKfyeSUw6HHaEgbm9jaxfbdTehnrKmTPsjw2AF529gmr"
+				"bzz-raw://44bbc2c686325e09192fca568f983722ae8fb20e946627ad648fd0e43023ecc3",
+				"dweb:/ipfs/QmVWL1gUHCbytwrjtChCsqQ1Z4fTzzwgeYqUtwwHMPBjtS"
 			]
 		}
 	},

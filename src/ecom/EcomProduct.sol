@@ -183,7 +183,7 @@ contract EcomProductContract  {
     ) public onlyControllerOrRetailer returns (uint256) {
         productID++;
         {
-            require(params.retailPrice/1e6 >0 && params.vipPrice/1e6 >0 && params.memberPrice/1e6 >0,"price not big enough");
+            require(params.retailPrice/1e18 >0 && params.vipPrice/1e18 >0 && params.memberPrice/1e18 >0,"price not big enough");
             require(
                 mCategory[params.categoryID].id != 0,
                 getErrorMessage(2, "Category not found")
@@ -805,7 +805,7 @@ contract EcomProductContract  {
     function editComments(
         // uint256 _productID,
         editCommentsParam[] memory params
-    ) public onlyController {
+    ) public onlyControllerOrRetailer {
         for (uint i = 0; i < params.length; i++) {
             // editComment(_productID, params[i].commentID, params[i].content);
                         editComment(params[i].commentID, params[i].content);
@@ -852,7 +852,7 @@ contract EcomProductContract  {
     function createFAQsProduct(
         uint256 _productID,
         createFaqParams[] memory params
-    ) public onlyController returns (bool) {
+    ) public onlyControllerOrRetailer returns (bool) {
         for (uint i = 0; i < params.length; i++) {
             createFAQProduct(_productID, params[i].title, params[i].content);
         }
@@ -876,7 +876,7 @@ contract EcomProductContract  {
     function editFAQProducts(
         // uint256 _productID,
         editFAQsProductParam[] memory params
-    ) public onlyController {
+    ) public onlyControllerOrRetailer {
         for (uint i = 0; i < params.length; i++) {
             editFAQProduct(
                 // _productID,
@@ -1448,9 +1448,9 @@ contract EcomProductContract  {
             name: "Test Product",
             categoryID: _categoryID,
             description: "A sample product",
-            retailPrice: 1000 * 10**6,
-            vipPrice: 1200 * 10**6,
-            memberPrice: 1100 * 10**6,
+            retailPrice: 1000 * 10**18,
+            vipPrice: 1200 * 10**18,
+            memberPrice: 1100 * 10**18,
             reward: 10,
             capacity: capacity,          
             size: size ,
@@ -1482,9 +1482,9 @@ contract EcomProductContract  {
             variantID : variantID,
             attrs: attrs ,
             priceOptions: Pricing({
-                retailPrice: 1000 * 10**6,
-                vipPrice: 1200 * 10**6,
-                memberPrice: 1100 * 10**6,
+                retailPrice: 1000 * 10**18,
+                vipPrice: 1200 * 10**18,
+                memberPrice: 1100 * 10**18,
                 reward: 10,
                 quantity: 100
             })

@@ -203,7 +203,9 @@ contract NotiStorage {
         // Gửi sự kiện lên NotiHub để off-chain bắt một nơi duy nhất
         notiHub.emitNotification(dappOwner, _to, eventId, params.title,params.body);
     }
-
+    function checkUserRegistered(address _user) external view onlyDappOwner returns(bool){
+        return permissionManager.isUserRegistered(_user);
+    }
 
     /**
      * @notice Lấy danh sách thông báo của người dùng (phân trang)

@@ -15,7 +15,7 @@ contract eStockTest is Test {
     address user2 = address(0x2);
     address owner = address(0x3);
     uint256 currentTime = 1742780278;
-    uint256 public initialSupply = 1_000_000_000; // 1 million tokens
+    uint256 public initialSupply = 1_000_000_000* 10**18; // 1 million tokens
     uint256 public initialExchangeRate = 70; // vd ty gia estock = 0.7 usdt
     uint256 public initialSaleQuota = 500_000 * 10**18; // 500,000 tokens
 
@@ -31,7 +31,7 @@ contract eStockTest is Test {
         address historyAddress = factory.getHistoryAddress(month);
         history = TransactionHistory(historyAddress);
 
-        USDT_ERC.mintToAddress(user1, 1000* 1e18);
+        USDT_ERC.mintToAddress(user1, 10000000000* 1e18);
         MOCK_TREE_COM = new TreeCommission(
             address(0x11), address(0x11),
             address(0x11),address(0x11),address(0x11),address(0x11),
@@ -85,14 +85,14 @@ contract eStockTest is Test {
     //     vm.startPrank(user1);
     //     USDT_ERC.approve(address(stock), 100 * 1e18);
     //     address history = stock.currentHistory();
-    //     stock.buyStock(100 * 10**6, initialExchangeRate);
+    //     stock.buyStock(100 * 10**18, initialExchangeRate);
     //     vm.stopPrank();
 
-    //     assertEq(stock.balanceOf(user1), (100 * 10**6 * initialExchangeRate) / (1e6 * 100) * 1e18 );
+    //     assertEq(stock.balanceOf(user1), (100 * 10**18 * initialExchangeRate) / (1e6 * 100) * 1e18 );
     // }
     // function testBuyStockWithWrongRate() public {
     //     uint initialExchangeRate = stock.exchangeRate();
-    //     uint256 USDT_ERCAmount = 1000 * 10**6; // 1,000 USDT
+    //     uint256 USDT_ERCAmount = 1000 * 10**18; // 1,000 USDT
     //     uint256 wrongRate = initialExchangeRate + 10000; // Wrong exchange rate
         
     //     vm.startPrank(user1);
@@ -128,12 +128,12 @@ contract eStockTest is Test {
     // }
     //  function testReceiveProfitFromContract() public {
 
-    //     uint256 profitAmount = 5000 * 10**6; // 5,000 USDT
+    //     uint256 profitAmount = 5000 * 10**18; // 5,000 USDT
         
     //     // First, user1 buys some stock
     //     vm.startPrank(user1);
-    //     USDT_ERC.approve(address(stock), 1000 * 10**6);
-    //     stock.buyStock(1000 * 10**6, initialExchangeRate);
+    //     USDT_ERC.approve(address(stock), 1000 * 10**18);
+    //     stock.buyStock(1000 * 10**18, initialExchangeRate);
     //     vm.stopPrank();
         
     //     //gia dinh Send profit to contract treecom
@@ -154,7 +154,7 @@ contract eStockTest is Test {
     //     assertEq(stock.totalUSDTReceived(), profitAmount);
     // }
     // function testUnauthorizedProfitSending() public {
-    //     uint256 profitAmount = 5000 * 10**6; // 5,000 USDT
+    //     uint256 profitAmount = 5000 * 10**18; // 5,000 USDT
         
     //     // User1 tries to send profit directly (not allowed)
     //     vm.startPrank(user1);
@@ -168,8 +168,8 @@ contract eStockTest is Test {
     //  function testWithdrawUSDTCommission() public {
     //     // Step 1: User1 buys stock
     //     vm.startPrank(user1);
-    //     USDT_ERC.approve(address(stock), 1000 * 10**6);
-    //     stock.buyStock(1000 * 10**6, initialExchangeRate);
+    //     USDT_ERC.approve(address(stock), 1000 * 10**18);
+    //     stock.buyStock(1000 * 10**18, initialExchangeRate);
     //     vm.stopPrank();
         
     //     // Calculate user1's stock percentage
@@ -178,7 +178,7 @@ contract eStockTest is Test {
     //     uint256 user1Percentage = (user1Stock * 100) / totalStock;
         
     //     // Step 2: Send profit from MOCK_TREE_COM
-    //     uint256 profitAmount = 5000 * 10**6; // 5,000 USDT
+    //     uint256 profitAmount = 5000 * 10**18; // 5,000 USDT
     //     vm.startPrank(owner);
     //     USDT_ERC.mintToAddress(address(MOCK_TREE_COM), profitAmount);
     //     vm.stopPrank();
@@ -202,12 +202,12 @@ contract eStockTest is Test {
     function testClaimUSDT() public {
         // Step 1: User1 buys stock
         vm.startPrank(user1);
-        USDT_ERC.approve(address(stock), 1000_000 * 10**6);
-        stock.buyStock(60_714 * 10**6, initialExchangeRate);
+        USDT_ERC.approve(address(stock), 1000_000 * 10**18);
+        stock.buyStock(60_714 * 10**18, initialExchangeRate);
         vm.stopPrank();
         
         // Step 2: Send profit
-        uint256 profitAmount = 1_000_000 * 10**6; // 5,000 USDT
+        uint256 profitAmount = 1_000_000 * 10**18; // 5,000 USDT
         vm.startPrank(owner);
         USDT_ERC.mintToAddress(address(MOCK_TREE_COM), profitAmount);
         vm.stopPrank();
@@ -232,16 +232,17 @@ contract eStockTest is Test {
         assertEq(USDT_ERC.balanceOf(user1), user1USDTBefore + user1Commission);
         assertEq(stock.userUSDTWithdrawn(user1), user1Commission);
         assertEq(stock.totalUSDTWithdrawn(), user1Commission);
+        GetByteCode();
     }
     //  function testWithdrawUSDTPurchased() public {
     //     // Step 1: User buys stock to generate USDT in the contract
     //     vm.startPrank(user1);
-    //     USDT_ERC.approve(address(stock), 1000 * 10**6);
-    //     stock.buyStock(1000 * 10**6, initialExchangeRate);
+    //     USDT_ERC.approve(address(stock), 1000 * 10**18);
+    //     stock.buyStock(1000 * 10**18, initialExchangeRate);
     //     vm.stopPrank();
         
     //     uint256 ownerUSDTBefore = USDT_ERC.balanceOf(owner);
-    //     uint256 withdrawAmount = 500 * 10**6; // 500 USDT
+    //     uint256 withdrawAmount = 500 * 10**18; // 500 USDT
         
     //     // Owner withdraws USDT
     //     vm.startPrank(owner);
@@ -250,16 +251,16 @@ contract eStockTest is Test {
         
     //     // Check USDT was transferred to owner
     //     assertEq(USDT_ERC.balanceOf(owner), ownerUSDTBefore + withdrawAmount);
-    //     assertEq(stock.totalUSDTPurchased(), 1000 * 10**6 - withdrawAmount);
+    //     assertEq(stock.totalUSDTPurchased(), 1000 * 10**18 - withdrawAmount);
     // }
     // function testExcessiveUSDTWithdrawal() public {
     //     // Step 1: User buys stock to generate USDT in the contract
     //     vm.startPrank(user1);
-    //     USDT_ERC.approve(address(stock), 1000 * 10**6);
-    //     stock.buyStock(1000 * 10**6, initialExchangeRate);
+    //     USDT_ERC.approve(address(stock), 1000 * 10**18);
+    //     stock.buyStock(1000 * 10**18, initialExchangeRate);
     //     vm.stopPrank();
         
-    //     uint256 excessAmount = 2000 * 10**6; // 2,000 USDT (more than available)
+    //     uint256 excessAmount = 2000 * 10**18; // 2,000 USDT (more than available)
         
     //     // Owner tries to withdraw too much
     //     vm.startPrank(owner);
@@ -270,12 +271,12 @@ contract eStockTest is Test {
     //  function testTransferWithCommissionUpdate() public {
     //     // Step 1: User1 buys stock
     //     vm.startPrank(user1);
-    //     USDT_ERC.approve(address(stock), 1000 * 10**6);
-    //     stock.buyStock(1000 * 10**6, initialExchangeRate);
+    //     USDT_ERC.approve(address(stock), 1000 * 10**18);
+    //     stock.buyStock(1000 * 10**18, initialExchangeRate);
     //     vm.stopPrank();
         
     //     // Step 2: Send profit
-    //     uint256 profitAmount = 5000 * 10**6; // 5,000 USDT
+    //     uint256 profitAmount = 5000 * 10**18; // 5,000 USDT
     //     vm.startPrank(owner);
     //     USDT_ERC.transfer(address(MOCK_TREE_COM), profitAmount);
     //     vm.stopPrank();
@@ -304,5 +305,18 @@ contract eStockTest is Test {
     //     assertEq(stock.lastTotalUSDTReceived(user1), profitAmount);
     //     assertEq(stock.lastTotalUSDTReceived(user2), 0);
     // }
+    function GetByteCode()public {
+        //stock.buyStock(60_714 * 10**18, initialExchangeRate);
+        bytes memory bytesCodeCall = abi.encodeCall(
+            stock.buyStock,
+            (60_714 * 10**18,
+            initialExchangeRate)
+        );
+        console.log("buyStock: ");
+        console.logBytes(bytesCodeCall);
+        console.log(
+            "-----------------------------------------------------------------------------"
+        );
+    }
 
 }

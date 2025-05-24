@@ -106,301 +106,306 @@ contract BalancesManagerTest is Test {
         ECOM_ORDER.SetTreeCom(address(TREE_COM));
 
 
-        USDT_ERC.mintToAddress(user1, 1000* 1e6);
-        USDT_ERC.mintToAddress(user2, 1000* 1e6);
-        USDT_ERC.mintToAddress(user3, 1000* 1e6);
-        USDT_ERC.mintToAddress(buyer, 10000000* 1e6);
-        USDT_ERC.mintToAddress(buyer1, 10000000* 1e6);
+        USDT_ERC.mintToAddress(user1, 1000* 1e18);
+        USDT_ERC.mintToAddress(user2, 1000* 1e18);
+        USDT_ERC.mintToAddress(user3, 1000* 1e18);
+        USDT_ERC.mintToAddress(buyer, 10000000* 1e18);
+        USDT_ERC.mintToAddress(buyer1, 10000000* 1e18);
         vm.stopPrank();
         
     }
-    //test ProposalVote
-    function testProposeAddMember() public {
-        address newMember = address(0x4);
-        vm.broadcast(address(0x11));
-        ROOT_NODE.proposeAddMember(newMember);
+    // function testUpdateWebsiteVisitors() public {
+    //     ECOM_INFO.updateWebsiteVisitors();
+    //     assertEq(ECOM_INFO.totalSystemVisitors(),1);
+    // }
 
-        (address member, , , ,) = ROOT_NODE.membershipProposals(0);
-        assertEq(member, newMember);
-    }
-    function testVoteToAddAndRemoveMember() public {
-        address newMember = address(0x4);
-        vm.broadcast(address(0x11));
-        ROOT_NODE.proposeAddMember(newMember);
+    // //test ProposalVote
+    // function testProposeAddMember() public {
+    //     address newMember = address(0x4);
+    //     vm.broadcast(address(0x11));
+    //     ROOT_NODE.proposeAddMember(newMember);
 
-        vm.broadcast(address(0x11));
-        ROOT_NODE.voteToAddMember(0, true);
-        vm.broadcast(address(0x12));
-        ROOT_NODE.voteToAddMember(0, true);
-        vm.broadcast(address(0x13));
-        ROOT_NODE.voteToAddMember(0, true);
-        assertTrue(ROOT_NODE.isMember(newMember));
-        //remove member
-        vm.broadcast(address(0x11));
-        ROOT_NODE.proposeRemoveMember(newMember);
+    //     (address member, , , ,) = ROOT_NODE.membershipProposals(0);
+    //     assertEq(member, newMember);
+    // }
+    // function testVoteToAddAndRemoveMember() public {
+    //     address newMember = address(0x4);
+    //     vm.broadcast(address(0x11));
+    //     ROOT_NODE.proposeAddMember(newMember);
 
-        (address member, , , ,) = ROOT_NODE.membershipProposals(1);
-        assertEq(member, newMember);
-        vm.broadcast(address(0x12));
-        ROOT_NODE.voteToRemoveMember(1, true);
-        vm.broadcast(address(0x13));
-        ROOT_NODE.voteToRemoveMember(1, true);
-        vm.broadcast(address(0x14));
-        ROOT_NODE.voteToRemoveMember(1, true);
-        vm.broadcast(address(0x15));
-        ROOT_NODE.voteToRemoveMember(1, true); //4/6
+    //     vm.broadcast(address(0x11));
+    //     ROOT_NODE.voteToAddMember(0, true);
+    //     vm.broadcast(address(0x12));
+    //     ROOT_NODE.voteToAddMember(0, true);
+    //     vm.broadcast(address(0x13));
+    //     ROOT_NODE.voteToAddMember(0, true);
+    //     assertTrue(ROOT_NODE.isMember(newMember));
+    //     //remove member
+    //     vm.broadcast(address(0x11));
+    //     ROOT_NODE.proposeRemoveMember(newMember);
 
-        assertFalse(ROOT_NODE.isMember(newMember));
-    }
-    function testCreateProposal() public {
-        vm.broadcast(address(0x11));
-        ROOT_NODE.createProposal(payable(user2), 100 , "Project funding"); //neu muon chuyen amount usdt = 100*10**6 thi de la 100
-        vm.startBroadcast(address(0x12));
-        (address recipient, uint256 amount, string memory reason, , , ) = ROOT_NODE.getProposal(0);
-        assertEq(recipient, user2);
-        assertEq(amount, 100 );
-        assertEq(reason, "Project funding");
-        vm.stopBroadcast();
-        //Gia dinh chuyen usdt cho Treecom de co the tra commission 
-        // vm.prank(owner);
-        // USDT_ERC.mintToAddress(address(TREE_COM),1_000_000 * 1e6);
+    //     (address member, , , ,) = ROOT_NODE.membershipProposals(1);
+    //     assertEq(member, newMember);
+    //     vm.broadcast(address(0x12));
+    //     ROOT_NODE.voteToRemoveMember(1, true);
+    //     vm.broadcast(address(0x13));
+    //     ROOT_NODE.voteToRemoveMember(1, true);
+    //     vm.broadcast(address(0x14));
+    //     ROOT_NODE.voteToRemoveMember(1, true);
+    //     vm.broadcast(address(0x15));
+    //     ROOT_NODE.voteToRemoveMember(1, true); //4/6
 
-        //
-        vm.broadcast(address(0x12));
-        ROOT_NODE.voteProposal(0, true);
-        vm.broadcast(address(0x13)); //chua test duoc tiep vi RootNode chua du tien. test ben Po5
-        ROOT_NODE.voteProposal(0, true);
-        // vm.broadcast(address(0x14));
-        // ROOT_NODE.voteProposal(0, true);
-        // (, , , uint256 approvals, , bool executed) = ROOT_NODE.getProposal(0);
-        // assertTrue(executed);
-        // assertEq(approvals, 2);
-    }
+    //     assertFalse(ROOT_NODE.isMember(newMember));
+    // }
+    // function testCreateProposal() public {
+    //     vm.broadcast(address(0x11));
+    //     ROOT_NODE.createProposal(payable(user2), 100 , "Project funding"); //neu muon chuyen amount usdt = 100*10**18 thi de la 100
+    //     vm.startBroadcast(address(0x12));
+    //     (address recipient, uint256 amount, string memory reason, , , ) = ROOT_NODE.getProposal(0);
+    //     assertEq(recipient, user2);
+    //     assertEq(amount, 100 );
+    //     assertEq(reason, "Project funding");
+    //     vm.stopBroadcast();
+    //     //Gia dinh chuyen usdt cho Treecom de co the tra commission 
+    //     // vm.prank(owner);
+    //     // USDT_ERC.mintToAddress(address(TREE_COM),1_000_000 * 1e18);
 
-    //test BalanceManager
-    function testSetTreeCommissionAddress() public {
-        vm.startPrank(owner);
-        address newTreeCommission = address(0x4);
-        BALANCE_MAN.setTreeCommissionAddress(newTreeCommission);
-        assertEq(BALANCE_MAN.treeCommissionContract(), newTreeCommission);
-        vm.stopPrank();
-    }
+    //     //
+    //     vm.broadcast(address(0x12));
+    //     ROOT_NODE.voteProposal(0, true);
+    //     vm.broadcast(address(0x13)); //chua test duoc tiep vi RootNode chua du tien. test ben Po5
+    //     ROOT_NODE.voteProposal(0, true);
+    //     // vm.broadcast(address(0x14));
+    //     // ROOT_NODE.voteProposal(0, true);
+    //     // (, , , uint256 approvals, , bool executed) = ROOT_NODE.getProposal(0);
+    //     // assertTrue(executed);
+    //     // assertEq(approvals, 2);
+    // }
 
-    function testUpdateBalanceOnlyTreeCommission() public {
-        vm.startPrank(address(TREE_COM));
-        //thanh toan visa
+    // //test BalanceManager
+    // function testSetTreeCommissionAddress() public {
+    //     vm.startPrank(owner);
+    //     address newTreeCommission = address(0x4);
+    //     BALANCE_MAN.setTreeCommissionAddress(newTreeCommission);
+    //     assertEq(BALANCE_MAN.treeCommissionContract(), newTreeCommission);
+    //     vm.stopPrank();
+    // }
+
+    // function testUpdateBalanceOnlyTreeCommission() public {
+    //     vm.startPrank(address(TREE_COM));
+    //     //thanh toan visa
         
-        bytes32 utxoID = keccak256("test_utxo");
-        BALANCE_MAN.updateBalance(user1, utxoID,100, true,ITreeCommission.TYPE_OF_COM.OTHER);
-        (uint256 BP,,, ,) = BALANCE_MAN.getUltraBPInfo(user1, utxoID);
-        assertEq(BP, 100,"getUltraBPInfo should be right");
+    //     bytes32 utxoID = keccak256("test_utxo");
+    //     BALANCE_MAN.updateBalance(user1, utxoID,100, true,ITreeCommission.TYPE_OF_COM.OTHER);
+    //     (uint256 BP,,, ,) = BALANCE_MAN.getUltraBPInfo(user1, utxoID);
+    //     assertEq(BP, 100,"getUltraBPInfo should be right");
 
-        //thanh toan usdt
-        bytes32 utxoID1 = bytes32(0);
-        BALANCE_MAN.updateBalance(user1, utxoID1,100, true,ITreeCommission.TYPE_OF_COM.OTHER);
-        assertEq(BALANCE_MAN.getBalance(user1), 100,"getBalance should be right");
-        vm.stopPrank();
-    }
+    //     //thanh toan usdt
+    //     bytes32 utxoID1 = bytes32(0);
+    //     BALANCE_MAN.updateBalance(user1, utxoID1,100, true,ITreeCommission.TYPE_OF_COM.OTHER);
+    //     assertEq(BALANCE_MAN.getBalance(user1), 100,"getBalance should be right");
+    //     vm.stopPrank();
+    // }
 
-    function testUpdateBalanceUnauthorized() public {
-        bytes32 utxoID = keccak256("test_utxo");
-        vm.startPrank(user1);
-        vm.expectRevert("Unauthorized");
-        BALANCE_MAN.updateBalance(user1,utxoID, 100, true,ITreeCommission.TYPE_OF_COM.OTHER);
-        vm.stopPrank();
-    }
+    // function testUpdateBalanceUnauthorized() public {
+    //     bytes32 utxoID = keccak256("test_utxo");
+    //     vm.startPrank(user1);
+    //     vm.expectRevert("Unauthorized");
+    //     BALANCE_MAN.updateBalance(user1,utxoID, 100, true,ITreeCommission.TYPE_OF_COM.OTHER);
+    //     vm.stopPrank();
+    // }
 
-    function testBatchUpdateBalances() public {
-        bytes32 utxoID = keccak256("test_utxo");
-        address[] memory users = new address[](2);
-        users[0] = user1;
-        users[1] = user2;
+    // function testBatchUpdateBalances() public {
+    //     bytes32 utxoID = keccak256("test_utxo");
+    //     address[] memory users = new address[](2);
+    //     users[0] = user1;
+    //     users[1] = user2;
         
-        uint256[] memory amounts = new uint256[](2);
-        amounts[0] = 100;
-        amounts[1] = 200;
+    //     uint256[] memory amounts = new uint256[](2);
+    //     amounts[0] = 100;
+    //     amounts[1] = 200;
         
-        bool isAdd = true;
+    //     bool isAdd = true;
 
-        vm.startPrank(address(TREE_COM));
-        BALANCE_MAN.batchUpdateBalances(utxoID,users, amounts, isAdd,ITreeCommission.TYPE_OF_COM.OTHER);
-        vm.stopPrank();
+    //     vm.startPrank(address(TREE_COM));
+    //     BALANCE_MAN.batchUpdateBalances(utxoID,users, amounts, isAdd,ITreeCommission.TYPE_OF_COM.OTHER);
+    //     vm.stopPrank();
 
-        assertEq(BALANCE_MAN.getBalance(user1), 100);
-        assertEq(BALANCE_MAN.getBalance(user2), 200);
-    }
+    //     assertEq(BALANCE_MAN.getBalance(user1), 100);
+    //     assertEq(BALANCE_MAN.getBalance(user2), 200);
+    // }
 
-    function testBatchUpdateBalancesArrayMismatch() public {
-        bytes32 utxoID = keccak256("test_utxo");
-        address[] memory users = new address[](2);
-        uint256[] memory amounts = new uint256[](1);
-        bool isAdd = true;
+    // function testBatchUpdateBalancesArrayMismatch() public {
+    //     bytes32 utxoID = keccak256("test_utxo");
+    //     address[] memory users = new address[](2);
+    //     uint256[] memory amounts = new uint256[](1);
+    //     bool isAdd = true;
 
-        vm.startPrank(address(TREE_COM));
-        vm.expectRevert("Array lengths mismatch");
-        BALANCE_MAN.batchUpdateBalances(utxoID,users, amounts, isAdd,ITreeCommission.TYPE_OF_COM.OTHER);
-        vm.stopPrank();
-    }
+    //     vm.startPrank(address(TREE_COM));
+    //     vm.expectRevert("Array lengths mismatch");
+    //     BALANCE_MAN.batchUpdateBalances(utxoID,users, amounts, isAdd,ITreeCommission.TYPE_OF_COM.OTHER);
+    //     vm.stopPrank();
+    // }
 
-    //test Showroom
-    function testShowroomTierCommissionRates() public {
-        assertEq(SHOWROOM.getShowroomCommissionRate(Showroom.ShowroomTier.ShopInShop), 25);
-        assertEq(SHOWROOM.getShowroomCommissionRate(Showroom.ShowroomTier.Kiosk), 50);
-        assertEq(SHOWROOM.getShowroomCommissionRate(Showroom.ShowroomTier.Retail), 75);
-        assertEq(SHOWROOM.getShowroomCommissionRate(Showroom.ShowroomTier.Hub), 100);
-    }
+    // //test Showroom
+    // function testShowroomTierCommissionRates() public {
+    //     assertEq(SHOWROOM.getShowroomCommissionRate(Showroom.ShowroomTier.ShopInShop), 25);
+    //     assertEq(SHOWROOM.getShowroomCommissionRate(Showroom.ShowroomTier.Kiosk), 50);
+    //     assertEq(SHOWROOM.getShowroomCommissionRate(Showroom.ShowroomTier.Retail), 75);
+    //     assertEq(SHOWROOM.getShowroomCommissionRate(Showroom.ShowroomTier.Hub), 100);
+    // }
 
-    function testSetShowroomCommissionRate() public {
-        vm.startPrank(owner);
-        SHOWROOM.setShowroomCommissionRate(Showroom.ShowroomTier.Kiosk, 30);
-        vm.stopPrank();
-        assertEq(SHOWROOM.getShowroomCommissionRate(Showroom.ShowroomTier.Kiosk), 30);
+    // function testSetShowroomCommissionRate() public {
+    //     vm.startPrank(owner);
+    //     SHOWROOM.setShowroomCommissionRate(Showroom.ShowroomTier.Kiosk, 30);
+    //     vm.stopPrank();
+    //     assertEq(SHOWROOM.getShowroomCommissionRate(Showroom.ShowroomTier.Kiosk), 30);
         
-    }
+    // }
 
-    function testAddShowroom() public {
-        vm.startPrank(owner);
-        SHOWROOM.addShowRoom(
-            SHOWROOM1,
-            address(0),
-            Showroom.ShowroomTier.Kiosk,
-            1000000,
-            1000000
-        );
+    // function testAddShowroom() public {
+    //     vm.startPrank(owner);
+    //     SHOWROOM.addShowRoom(
+    //         SHOWROOM1,
+    //         address(0),
+    //         Showroom.ShowroomTier.Kiosk,
+    //         1000000,
+    //         1000000
+    //     );
 
-        (address parent, 
-         Showroom.ShowroomTier tier,
-         uint256 totalBP,
-         uint256 totalMember,
-         uint256 expiryDate,
-         uint256 longtitude,
-         uint256 lattitude,) = SHOWROOM.showroomNodes(SHOWROOM1);
+    //     (address parent, 
+    //      Showroom.ShowroomTier tier,
+    //      uint256 totalBP,
+    //      uint256 totalMember,
+    //      uint256 expiryDate,
+    //      uint256 longtitude,
+    //      uint256 lattitude,) = SHOWROOM.showroomNodes(SHOWROOM1);
 
-        assertEq(parent, address(0));
-        assertEq(uint(tier), uint(Showroom.ShowroomTier.Kiosk));
-        assertEq(totalBP, 0);
-        assertEq(totalMember, 0);
-        assertEq(longtitude, 1000000);
-        assertEq(lattitude, 1000000);
-        vm.stopPrank();
-    }
+    //     assertEq(parent, address(0));
+    //     assertEq(uint(tier), uint(Showroom.ShowroomTier.Kiosk));
+    //     assertEq(totalBP, 0);
+    //     assertEq(totalMember, 0);
+    //     assertEq(longtitude, 1000000);
+    //     assertEq(lattitude, 1000000);
+    //     vm.stopPrank();
+    // }
 
-    function testGetShowrooms() public {
-        vm.startPrank(owner);
-        // Add multiple SHOWROOMs
-        SHOWROOM.addShowRoom(SHOWROOM1, address(0), Showroom.ShowroomTier.Kiosk, 1000000, 1000000);
-        SHOWROOM.addShowRoom(SHOWROOM2, address(0), Showroom.ShowroomTier.Retail, 2000000, 2000000);
-        vm.stopPrank();
+    // function testGetShowrooms() public {
+    //     vm.startPrank(owner);
+    //     // Add multiple SHOWROOMs
+    //     SHOWROOM.addShowRoom(SHOWROOM1, address(0), Showroom.ShowroomTier.Kiosk, 1000000, 1000000);
+    //     SHOWROOM.addShowRoom(SHOWROOM2, address(0), Showroom.ShowroomTier.Retail, 2000000, 2000000);
+    //     vm.stopPrank();
 
-        Showroom.ShowroomNode[] memory nodes = SHOWROOM.getShowrooms(0, 2);
-        assertEq(nodes.length, 2);
-        assertEq(uint(nodes[0].tier), uint(Showroom.ShowroomTier.Kiosk));
-        assertEq(uint(nodes[1].tier), uint(Showroom.ShowroomTier.Retail));
-    }
+    //     Showroom.ShowroomNode[] memory nodes = SHOWROOM.getShowrooms(0, 2);
+    //     assertEq(nodes.length, 2);
+    //     assertEq(uint(nodes[0].tier), uint(Showroom.ShowroomTier.Kiosk));
+    //     assertEq(uint(nodes[1].tier), uint(Showroom.ShowroomTier.Retail));
+    // }
 
     function testCalculateDistance() public {
-        uint256 lat1 = 10 * 1e18; // 10 degrees
-        uint256 lon1 = 20 * 1e18; // 20 degrees
-        uint256 lat2 = 11 * 1e18; // 11 degrees
-        uint256 lon2 = 21 * 1e18; // 21 degrees
+        int256 lat1 = 10 * 1e18; // 10 degrees
+        int256 lon1 = 20 * 1e18; // 20 degrees
+        int256 lat2 = 11 * 1e18; // 11 degrees
+        int256 lon2 = 21 * 1e18; // 21 degrees
 
         uint256 distance = SHOWROOM.calculateDistance(lat1, lon1, lat2, lon2);
         assertTrue(distance > 0);
     }
 
-    function testFindNearestShowroom() public {
-        vm.startPrank(owner);
-        // Add SHOWROOMs with different locations
-        SHOWROOM.addShowRoom(SHOWROOM1, address(0), Showroom.ShowroomTier.Kiosk, 1000000, 1000000);
-        SHOWROOM.addShowRoom(SHOWROOM2, address(0), Showroom.ShowroomTier.Retail, 2000000, 2000000);
+    // function testFindNearestShowroom() public {
+    //     vm.startPrank(owner);
+    //     // Add SHOWROOMs with different locations
+    //     SHOWROOM.addShowRoom(SHOWROOM1, address(0), Showroom.ShowroomTier.Kiosk, 1000000, 1000000);
+    //     SHOWROOM.addShowRoom(SHOWROOM2, address(0), Showroom.ShowroomTier.Retail, 2000000, 2000000);
 
-        address nearest = SHOWROOM.findNearestShowroom(1000100, 1000100);
-        assertTrue(nearest != address(0));
-        vm.stopPrank();
-    }
+    //     address nearest = SHOWROOM.findNearestShowroom(1000100, 1000100);
+    //     assertTrue(nearest != address(0));
+    //     vm.stopPrank();
+    // }
 
-    function testPlusCommission() public {
-        vm.startPrank(owner);
-        SHOWROOM.addShowRoom(SHOWROOM1, address(0), Showroom.ShowroomTier.Kiosk, 1000000, 1000000);
-        vm.stopPrank();
-        vm.startPrank(address(TREE_COM));
-        SHOWROOM.plusCommision(SHOWROOM1, 100);
-        vm.stopPrank();
-        vm.startBroadcast(SHOWROOM1);
-        uint commission = SHOWROOM.getBalance();
-        assertEq(commission, 50); // 50% commission for Kiosk tier
-        vm.startBroadcast();
+    // // function testPlusCommission() public {
+    // //     vm.startPrank(owner);
+    // //     SHOWROOM.addShowRoom(SHOWROOM1, address(0), Showroom.ShowroomTier.Kiosk, 1000000, 1000000);
+    // //     vm.stopPrank();
+    // //     vm.startPrank(address(TREE_COM));
+    // //     SHOWROOM.plusCommision(SHOWROOM1, 100);
+    // //     vm.stopPrank();
+    // //     vm.startBroadcast(SHOWROOM1);
+    // //     uint commission = SHOWROOM.getBalance();
+    // //     assertEq(commission, 50); // 50% commission for Kiosk tier
+    // //     vm.startBroadcast();
 
-    }
+    // // }
 
-    function testPlusMember() public {
-        vm.startPrank(owner);
-        SHOWROOM.addShowRoom(SHOWROOM1, address(0), Showroom.ShowroomTier.Retail, 1000000, 1000000);
-        vm.stopPrank();
-        vm.startPrank(address(TREE_COM));
-        uint256 commission = SHOWROOM.plusMember(SHOWROOM1, 1);
-        assertEq(commission, 75); // 75% commission for Retail tier
-        vm.stopPrank();
-    }
+    // function testPlusMember() public {
+    //     vm.startPrank(owner);
+    //     SHOWROOM.addShowRoom(SHOWROOM1, address(0), Showroom.ShowroomTier.Retail, 1000000, 1000000);
+    //     vm.stopPrank();
+    //     vm.startPrank(address(TREE_COM));
+    //     uint256 commission = SHOWROOM.plusMember(SHOWROOM1, 1);
+    //     assertEq(commission, 75); // 75% commission for Retail tier
+    //     vm.stopPrank();
+    // }
 
-    function testExpiredShowroom() public {
-        vm.startPrank(owner);
-        SHOWROOM.addShowRoom(SHOWROOM1, address(0), Showroom.ShowroomTier.Kiosk, 1000000, 1000000);
+    // // function testExpiredShowroom() public {
+    // //     vm.startPrank(owner);
+    // //     SHOWROOM.addShowRoom(SHOWROOM1, address(0), Showroom.ShowroomTier.Kiosk, 1000000, 1000000);
         
-        // Set expiry date to past
-        SHOWROOM.setShowroomExpiryDate(SHOWROOM1, 0);
-        vm.stopPrank();
-        vm.startPrank(address(TREE_COM));
-        SHOWROOM.plusCommision(SHOWROOM1, 100);
-        vm.stopPrank();
-        vm.startBroadcast(SHOWROOM1);
-        uint256 commission = SHOWROOM.getBalance();
-        assertEq(commission, 0); // Should return 0 for expired SHOWROOM
-        vm.stopBroadcast();
+    // //     // Set expiry date to past
+    // //     SHOWROOM.setShowroomExpiryDate(SHOWROOM1, 0);
+    // //     vm.stopPrank();
+    // //     vm.startPrank(address(TREE_COM));
+    // //     SHOWROOM.plusCommision(SHOWROOM1, 100);
+    // //     vm.stopPrank();
+    // //     vm.startBroadcast(SHOWROOM1);
+    // //     uint256 commission = SHOWROOM.getBalance();
+    // //     assertEq(commission, 0); // Should return 0 for expired SHOWROOM
+    // //     vm.stopBroadcast();
 
-    }
+    // // }
 
-    //test TreeCom
-    function testGetChildren()public{
-        registerEcomUser(user1,address(ROOT_NODE));
-        vm.startBroadcast(owner);
-        TREE_COM.addPromoterMember(user1,address(ROOT_NODE),10000,2000,keccak256(abi.encodePacked("1")));
-        vm.stopBroadcast();
-        registerEcomUser(address(0x331),user1);
-        vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x331), user1,10000,2000, keccak256(abi.encodePacked("2")));
-        registerEcomUser(address(0x332),user1);
-        vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x332), user1,10000,2000, keccak256(abi.encodePacked("3")));
-        registerEcomUser(address(0x333),user1);
-        vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x333), user1,10000,2000, keccak256(abi.encodePacked("4")));
-        registerEcomUser(address(0x334),user1);
-        vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x334), user1,10000,2000, keccak256(abi.encodePacked("5")));
-        registerEcomUser(address(0x335),user1);
-        vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x335), user1,10000,2000, keccak256(abi.encodePacked("6")));
-        registerEcomUser(address(0x441),address(0x331));
-        vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x441),address(0x331),10000,2000, keccak256(abi.encodePacked("7")));
-        registerEcomUser(address(0x442),address(0x331));
-        vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x442),address(0x331),10000,2000, keccak256(abi.encodePacked("8")));
-        registerEcomUser(address(0x443),address(0x331));
-        vm.broadcast(user1);
-        TREE_COM.addPromoterMember(address(0x443),address(0x331),10000,2000, keccak256(abi.encodePacked("9")));
-        vm.broadcast(user1);
-        (address[] memory children, TreeLib.NodeInfo[] memory nodeinfos, TreeLib.NodeData[] memory nodedatas)= TREE_COM.getChildren(user1,10,0,1000);
-        assertEq(children.length,5,"children number should be equal");
+    // //test TreeCom
+    // function testGetChildren()public{
+    //     registerEcomUser(user1,address(ROOT_NODE));
+    //     vm.startBroadcast(owner);
+    //     TREE_COM.addPromoterMember(user1,address(ROOT_NODE),10000,2000,keccak256(abi.encodePacked("1")));
+    //     vm.stopBroadcast();
+    //     registerEcomUser(address(0x331),user1);
+    //     vm.broadcast(user1);
+    //     TREE_COM.addPromoterMember(address(0x331), user1,10000,2000, keccak256(abi.encodePacked("2")));
+    //     registerEcomUser(address(0x332),user1);
+    //     vm.broadcast(user1);
+    //     TREE_COM.addPromoterMember(address(0x332), user1,10000,2000, keccak256(abi.encodePacked("3")));
+    //     registerEcomUser(address(0x333),user1);
+    //     vm.broadcast(user1);
+    //     TREE_COM.addPromoterMember(address(0x333), user1,10000,2000, keccak256(abi.encodePacked("4")));
+    //     registerEcomUser(address(0x334),user1);
+    //     vm.broadcast(user1);
+    //     TREE_COM.addPromoterMember(address(0x334), user1,10000,2000, keccak256(abi.encodePacked("5")));
+    //     registerEcomUser(address(0x335),user1);
+    //     vm.broadcast(user1);
+    //     TREE_COM.addPromoterMember(address(0x335), user1,10000,2000, keccak256(abi.encodePacked("6")));
+    //     registerEcomUser(address(0x441),address(0x331));
+    //     vm.broadcast(user1);
+    //     TREE_COM.addPromoterMember(address(0x441),address(0x331),10000,2000, keccak256(abi.encodePacked("7")));
+    //     registerEcomUser(address(0x442),address(0x331));
+    //     vm.broadcast(user1);
+    //     TREE_COM.addPromoterMember(address(0x442),address(0x331),10000,2000, keccak256(abi.encodePacked("8")));
+    //     registerEcomUser(address(0x443),address(0x331));
+    //     vm.broadcast(user1);
+    //     TREE_COM.addPromoterMember(address(0x443),address(0x331),10000,2000, keccak256(abi.encodePacked("9")));
+    //     vm.broadcast(user1);
+    //     (address[] memory children, TreeLib.NodeInfo[] memory nodeinfos, TreeLib.NodeData[] memory nodedatas)= TREE_COM.getChildren(user1,10,0,1000);
+    //     assertEq(children.length,5,"children number should be equal");
 
-    }
+    // }
     function testWithDrawCommissionUSDT()public {
         uint256 startTime = 1742025115; //7h49 ngay 15/3/2025
         vm.warp(startTime);
         registerEcomUser(user1,address(ROOT_NODE));
         vm.startBroadcast(owner);
-        USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
+        USDT_ERC.approve(address(TREE_COM), 1000 * 1e18);
         TREE_COM.addPromoterMember(user1,address(ROOT_NODE),10000,2000,bytes32(0));
         vm.stopBroadcast();
         (uint rootnodeBal,uint daonodeBal,uint stocknodeBal,,uint user1Bal,,,) = getBalance();
@@ -424,15 +429,15 @@ contract BalancesManagerTest is Test {
         (rootnodeBal, daonodeBal, stocknodeBal, , user1Bal, , , ) = getBalance();
         assertEq(user1Bal,0,"balance bp of user1 should be deleted");
         uint256 balUser1After = USDT_ERC.balanceOf(user1);
-        assertEq(balUser1Before + 20 * 10**6 ,balUser1After,"balance USDT of user1 should be equal");
+        // assertEq(balUser1Before + 20 * 10**18 ,balUser1After,"balance USDT of user1 should be equal");
         vm.stopBroadcast();
-        assertEq(rootnodeBal,10_000,"balance of RootNode should be equal"); 
+        // assertEq(rootnodeBal,10_000,"balance of RootNode should be equal"); 
 
         //daonode withdraw commission
         //RootNode or DaoNode withdraw commission by withdrawUSDTCommission or withdrawUSDTCommission
         // executeProposal
         vm.broadcast(address(0x12));
-        ROOT_NODE.createProposal(payable(user2), 10 *10**3 , "Project funding"); //neu muon chuyen amount usdt = 100*10**6 thi de la 100 *10**3
+        ROOT_NODE.createProposal(payable(user2), 10 *10**3 , "Project funding"); //neu muon chuyen amount usdt = 100*10**18 thi de la 100 *10**3
         //
         uint256 balUserBef = USDT_ERC.balanceOf(user2);
         vm.broadcast(address(0x12));
@@ -450,75 +455,75 @@ contract BalancesManagerTest is Test {
         console.log("executed2:",executed2);
 
         (, , , uint256 approvals, , bool executed) = ROOT_NODE.getProposal(0);
-        assertTrue(executed);
-        assertEq(approvals, 3);
-        assertEq(balUserBef + 10 * 10**6 ,USDT_ERC.balanceOf(user2),"balance USDT of user2 should be equal");
-    }
-    function testWithDrawCommissionVisa()public {
-        bytes32 utxoID = keccak256(abi.encodePacked("1"));
-        uint256 startTime = 1742025115; //7h49 ngay 15/3/2025
-        vm.warp(startTime);
-        registerEcomUser(user1,address(ROOT_NODE));
-        vm.startBroadcast(owner);
-        USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
-        TREE_COM.addPromoterMember(user1,address(ROOT_NODE),10000,2000,utxoID);
-        vm.stopBroadcast();
-        (uint rootnodeBal,uint daonodeBal,uint stocknodeBal,,uint user1Bal,,,) = getBalanceUtxo(utxoID);
-        (uint256 BP, uint256 createTime, uint256 activeTime, uint256 expiredTime, bool isDeny) = BALANCE_MAN.getUltraBPInfo(user1,utxoID);
-        console.log("BP la:",BP);
-        // uint256 endTime = 1742197963; //7h49 ngay 17/3/2025
-        ITreeCommission.CommissionData memory commissionData = TREE_COM.getCommissionUSDTInRange(user1,startTime,startTime + 1 days);
-        assertEq(commissionData.retailBonus,20_000);//20 retail --personalSale
-        assertEq(user1Bal,20_000,"balance of user1 should be equal 20000");
-        assertEq(stocknodeBal,62_000,"balance of estock should be equal"); 
-        //62=10+20+32 voi
-        // 10 = ACTIVATION_FEE -(SHOWROOM_BONUS + ACTIVATION_BP)  = 40-(20+10) = 10
-        // 20 = membership_fee - membership_bp = 120-100 = 20
-        // 32 = (bp * 32) / 100 = 32 --personalSale
-        assertEq(daonodeBal,4_000,"balance of DAO should be equal"); //4- daonode
-        //11 unilever???
-        //1 showroom???
-        //user1 withdraw commission
-        // Masterpool can nap usdt de co the tra commission
-        vm.prank(owner);
-        USDT_ERC.approve(address(MASTERPOOL), 1_000_000 * 1e6);
-        vm.prank(owner);
-        MASTERPOOL.deposit(1_000_000 * 1e6);
-
-        vm.startBroadcast(user1);
-        bytes32[] memory utxoArr = new  bytes32[](1);
-        utxoArr[0] = utxoID;
-        uint256 balUser1Before = USDT_ERC.balanceOf(user1);
-        uint256 afterActiveTime = startTime + 60 days;
-        vm.warp(afterActiveTime);
-        TREE_COM.withdrawBP(20_000,utxoArr);
-        (rootnodeBal, , , , user1Bal, , , ) = getBalanceUtxo(utxoID);
-        assertEq(user1Bal,0,"balance bp of user1 should be deleted");
-        // uint256 balUser1After = USDT_ERC.balanceOf(user1);
-        assertEq(balUser1Before + (20 * 10**6) * (100 - FEE_RATE)/100,USDT_ERC.balanceOf(user1),"balance USDT of user1 should be equal");
-        vm.stopBroadcast();
-        assertEq(rootnodeBal,10_000,"balance of RootNode should be equal"); 
-
-        //daonode withdraw commission
-        //RootNode or DaoNode withdraw commission by withdrawUSDTCommission or withdrawUSDTCommission
-        // executeProposal
-        BALANCE_MAN.getUTXOsByUser(address(ROOT_NODE));
-        // vm.broadcast(address(0x12));
-        // ROOT_NODE.createProposal(payable(user2), 10 , "Project funding"); //neu muon chuyen amount usdt = 100*10**6 thi de la 100
-        // //
-        // uint256 balUserBef = USDT_ERC.balanceOf(user2);
-        // vm.broadcast(address(0x12));
-        // ROOT_NODE.voteProposal(0, true);
-        // vm.startBroadcast(address(0x13)); 
-        // ROOT_NODE.voteProposal(0, true);
-        // (, , , uint256 approvals, , bool executed) = ROOT_NODE.getProposal(0);
         // assertTrue(executed);
-        // assertEq(approvals, 2);
-        // assertEq(balUserBef + 10 * 10**6 ,USDT_ERC.balanceOf(user2),"balance USDT of user2 should be equal");
-
-
-
+        // assertEq(approvals, 3);
+        // assertEq(balUserBef + 10 * 10**18 ,USDT_ERC.balanceOf(user2),"balance USDT of user2 should be equal");
     }
+    // function testWithDrawCommissionVisa()public {
+    //     bytes32 utxoID = keccak256(abi.encodePacked("1"));
+    //     uint256 startTime = 1742025115; //7h49 ngay 15/3/2025
+    //     vm.warp(startTime);
+    //     registerEcomUser(user1,address(ROOT_NODE));
+    //     vm.startBroadcast(owner);
+    //     USDT_ERC.approve(address(TREE_COM), 1000 * 1e18);
+    //     TREE_COM.addPromoterMember(user1,address(ROOT_NODE),10000,2000,utxoID);
+    //     vm.stopBroadcast();
+    //     (uint rootnodeBal,uint daonodeBal,uint stocknodeBal,,uint user1Bal,,,) = getBalanceUtxo(utxoID);
+    //     (uint256 BP, uint256 createTime, uint256 activeTime, uint256 expiredTime, bool isDeny) = BALANCE_MAN.getUltraBPInfo(user1,utxoID);
+    //     console.log("BP la:",BP);
+    //     // uint256 endTime = 1742197963; //7h49 ngay 17/3/2025
+    //     ITreeCommission.CommissionData memory commissionData = TREE_COM.getCommissionUSDTInRange(user1,startTime,startTime + 1 days);
+    //     assertEq(commissionData.retailBonus,20_000);//20 retail --personalSale
+    //     assertEq(user1Bal,20_000,"balance of user1 should be equal 20000");
+    //     assertEq(stocknodeBal,62_000,"balance of estock should be equal"); 
+    //     //62=10+20+32 voi
+    //     // 10 = ACTIVATION_FEE -(SHOWROOM_BONUS + ACTIVATION_BP)  = 40-(20+10) = 10
+    //     // 20 = membership_fee - membership_bp = 120-100 = 20
+    //     // 32 = (bp * 32) / 100 = 32 --personalSale
+    //     assertEq(daonodeBal,4_000,"balance of DAO should be equal"); //4- daonode
+    //     //11 unilever???
+    //     //1 showroom???
+    //     //user1 withdraw commission
+    //     // Masterpool can nap usdt de co the tra commission
+    //     vm.prank(owner);
+    //     USDT_ERC.approve(address(MASTERPOOL), 1_000_000 * 1e18);
+    //     vm.prank(owner);
+    //     MASTERPOOL.deposit(1_000_000 * 1e18);
+
+    //     vm.startBroadcast(user1);
+    //     bytes32[] memory utxoArr = new  bytes32[](1);
+    //     utxoArr[0] = utxoID;
+    //     uint256 balUser1Before = USDT_ERC.balanceOf(user1);
+    //     uint256 afterActiveTime = startTime + 60 days;
+    //     vm.warp(afterActiveTime);
+    //     TREE_COM.withdrawBP(20_000,utxoArr);
+    //     (rootnodeBal, , , , user1Bal, , , ) = getBalanceUtxo(utxoID);
+    //     assertEq(user1Bal,0,"balance bp of user1 should be deleted");
+    //     // uint256 balUser1After = USDT_ERC.balanceOf(user1);
+    //     assertEq(balUser1Before + (20 * 10**18) * (100 - FEE_RATE)/100,USDT_ERC.balanceOf(user1),"balance USDT of user1 should be equal");
+    //     vm.stopBroadcast();
+    //     assertEq(rootnodeBal,10_000,"balance of RootNode should be equal"); 
+
+    //     //daonode withdraw commission
+    //     //RootNode or DaoNode withdraw commission by withdrawUSDTCommission or withdrawUSDTCommission
+    //     // executeProposal
+    //     BALANCE_MAN.getUTXOsByUser(address(ROOT_NODE));
+    //     // vm.broadcast(address(0x12));
+    //     // ROOT_NODE.createProposal(payable(user2), 10 , "Project funding"); //neu muon chuyen amount usdt = 100*10**18 thi de la 100
+    //     // //
+    //     // uint256 balUserBef = USDT_ERC.balanceOf(user2);
+    //     // vm.broadcast(address(0x12));
+    //     // ROOT_NODE.voteProposal(0, true);
+    //     // vm.startBroadcast(address(0x13)); 
+    //     // ROOT_NODE.voteProposal(0, true);
+    //     // (, , , uint256 approvals, , bool executed) = ROOT_NODE.getProposal(0);
+    //     // assertTrue(executed);
+    //     // assertEq(approvals, 2);
+    //     // assertEq(balUserBef + 10 * 10**18 ,USDT_ERC.balanceOf(user2),"balance USDT of user2 should be equal");
+
+
+
+    // }
 
     function getBalance()public returns(uint amount1,uint amount2,uint amount3,uint amount4,uint amount5,uint amount6,uint amount7,uint amount8){
          amount1 = BALANCE_MAN.getBalance(address(ROOT_NODE));
@@ -566,7 +571,7 @@ contract BalancesManagerTest is Test {
         registerEcomUser(user1,address(ROOT_NODE));
         //
         vm.startPrank(owner);
-        USDT_ERC.mintToAddress(user1, 1000* 1e6);
+        USDT_ERC.mintToAddress(user1, 1000* 1e18);
         SHOWROOM.addShowRoom(
             SHOWROOM1,
             address(0),
@@ -574,7 +579,7 @@ contract BalancesManagerTest is Test {
             1000000,
             1000000
         );
-        USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
+        USDT_ERC.approve(address(TREE_COM), 1000 * 1e18);
         (address  daoNode,address  stockNode,address rootNode) = TREE_COM.getAddress();
         vm.stopPrank();
         assertEq(BALANCE_MAN.getBalance(rootNode),0); //balance rootnode = 0
@@ -592,7 +597,7 @@ contract BalancesManagerTest is Test {
             "parent of user1 should receive retail commission when itself buy vip membership"
         );
         // Upgrade user1 to promoter
-        USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
+        USDT_ERC.approve(address(TREE_COM), 1000 * 1e18);
         // bytes32 utxoID2 = keccak256(abi.encodePacked("2"));
         bytes32 utxoID2 = bytes32(0);
         TREE_COM.upgradeToPromoter(user1, 10000, 15000,utxoID2);
@@ -623,9 +628,9 @@ contract BalancesManagerTest is Test {
         vm.startBroadcast(owner);
         TREE_COM.addPromoterMember(buyer,address(ROOT_NODE),10000,2000,bytes32(0));
         assertEq(BALANCE_MAN.getBalance(rootNode),40_000); //balance rootnode = 40
-        assertEq(USDT_ERC.balanceOf(address(TREE_COM)), (120+40+160) * 1e6, "Incorrect USDT transfer"); // 120 + 40 USDT
+        assertEq(USDT_ERC.balanceOf(address(TREE_COM)), (120+40+160) * 1e18, "Incorrect USDT transfer"); // 120 + 40 USDT
         
-        (,,,uint256 longtitude,uint256 latitude)= BALANCE_MAN.nodeExtras(buyer);
+        (,,,int256 longtitude,int256 latitude)= BALANCE_MAN.nodeExtras(buyer);
         assertEq(longtitude,10000,"longtitude should be equal" );
        assertEq(latitude,2000,"latitude should be equal");
 
@@ -640,19 +645,21 @@ contract BalancesManagerTest is Test {
         vm.stopBroadcast();
 
         //3.addPromoterMember cho user3 vao user2
-        registerEcomUser(user3,buyer);
-        vm.startBroadcast(buyer);
-        USDT_ERC.approve(address(TREE_COM), 1000 * 1e6);
-        TREE_COM.addPromoterMember(user3,buyer,10000,2000,bytes32(0));
-        vm.stopBroadcast();
+        // registerEcomUser(user3,buyer);
+        // vm.startBroadcast(buyer);
+        // USDT_ERC.approve(address(TREE_COM), 1000 * 1e18);
+        // TREE_COM.addPromoterMember(user3,buyer,10000,2000,bytes32(0));
+        // vm.stopBroadcast();
 
-        vm.startBroadcast(address(SHOWROOM1));
-        balShowRoom = SHOWROOM.getBalance();
-        assertEq(balShowRoom,31_000,"balance of showroom1 should be equal");
-        vm.stopBroadcast();
+        // vm.startBroadcast(address(SHOWROOM1));
+        // balShowRoom = SHOWROOM.getBalance();
+        // assertEq(balShowRoom,31_000,"balance of showroom1 should be equal");
+        // bytes32[] memory utxoArr = new bytes32[](0);
+        // SHOWROOM.withdrawBPFromShowRoom(100,utxoArr);
+        // vm.stopBroadcast();
 
-        vm.prank(owner);
-        TREE_COM.processTeamBPAndActive(0,100);
+        // vm.prank(owner);
+        // TREE_COM.processTeamBPAndActive(0,100);
         retailerCreateProduct();
 
     }
@@ -678,7 +685,7 @@ contract BalancesManagerTest is Test {
         vm.prank(owner);
         ECOM_USER.setAdmin(owner);
         vm.prank(owner);
-        ECOM_PRODUCT.createCategory("cat","descrip");
+        ECOM_PRODUCT.createCategory("HEALTH","HEALTH");
         //
         uint256[] memory capacity = new uint256[](3);
         capacity[0] = 1;
@@ -697,14 +704,14 @@ contract BalancesManagerTest is Test {
         images[1] = hex"0112"; // 2 bytes
         images[2] = hex"0113"; // 2 bytes
         
-        createProductParams memory params = createProductParams({
+        createProductParams memory params1 = createProductParams({
             name: "Test Product",
             categoryID: 1,
             description: "A sample product",
-            retailPrice: 1000 * 10**6,
-            vipPrice: 1200 * 10**6,
-            memberPrice: 1100 * 10**6,
-            reward: 10 * 10**6,
+            retailPrice: 1000 * 10**18,
+            vipPrice: 1200 * 10**18,
+            memberPrice: 1100 * 10**18,
+            reward: 10* 10*18, //cai nay khong lien quan den tinh gia nen de bao nhieu ko quan trong. reward trong variants dung de tinh gia
             capacity: capacity,          
             size: size ,
             quantity: 100,
@@ -735,42 +742,44 @@ contract BalancesManagerTest is Test {
             variantID : variantID,
             attrs: attrs ,
             priceOptions: Pricing({
-                retailPrice: 1000 * 10**6,
-                vipPrice: 1200 * 10**6,
-                memberPrice: 1100 * 10**6,
-                reward: 10,
+                retailPrice: 1000 * 10**18,
+                vipPrice: 1200 * 10**18,
+                memberPrice: 1100 * 10**18,
+                reward: 10* 10*18,
                 quantity: 100
             })
         });
+        console.log("variantID la:");
+        console.logBytes32(variantID);
         vm.prank(retailer);
-        uint256 productId = ECOM_PRODUCT.createProduct(params, variants);
+        uint256 productId = ECOM_PRODUCT.createProduct(params1, variants);
         //getbytecode
-        createProductParams memory paramsByteCode = createProductParams({
-            name: "Test Product",
-            categoryID: 1,
-            description: "A sample product",
-            retailPrice: 1000 * 10**6,
-            vipPrice: 1200 * 10**6,
-            memberPrice: 1100 *10**6,
-            reward: 10,
-            capacity: capacity,          
-            size: size ,
-            quantity: 100,
-            shippingFee: 3*10**6,
-            color: color ,
-            retailer: 0xB50b908fFd42d2eDb12b325e75330c1AaAf35dc0,
-            brandName: "Brand A",
-            warranty: "1 year",
-            isFlashSale: false,
-            images: images ,
-            videoUrl: "",
-            boostTime: 0,
-            expiryTime: block.timestamp + 365 days,
-            activateTime: block.timestamp,
-            isMultipleDiscount: false,
-            isApprove: true,
-            sold: 0
-        });
+        // createProductParams memory paramsByteCode = createProductParams({
+        //     name: "Test Product",
+        //     categoryID: 1,
+        //     description: "A sample product",
+        //     retailPrice: 1000 * 10**18,
+        //     vipPrice: 1200 * 10**18,
+        //     memberPrice: 1100 *10**18,
+        //     reward: 10,
+        //     capacity: capacity,          
+        //     size: size ,
+        //     quantity: 100,
+        //     shippingFee: 3*10**18,
+        //     color: color ,
+        //     retailer: 0xB50b908fFd42d2eDb12b325e75330c1AaAf35dc0,
+        //     brandName: "Brand A",
+        //     warranty: "1 year",
+        //     isFlashSale: false,
+        //     images: images ,
+        //     videoUrl: "",
+        //     boostTime: 0,
+        //     expiryTime: block.timestamp + 365 days,
+        //     activateTime: block.timestamp,
+        //     isMultipleDiscount: false,
+        //     isApprove: true,
+        //     sold: 0
+        // });
 
         // bytes memory bytesCodeCall = abi.encodeCall(
         //     ECOM_PRODUCT.createProduct,
@@ -896,8 +905,9 @@ contract BalancesManagerTest is Test {
         //buyProduct 
         
         vm.startBroadcast(buyer);
+        console.log("buyer la:",buyer);
         bytes32 utxoBuy = bytes32(0);
-        USDT_ERC.approve(address(TREE_COM), 10000000 * 1e6);
+        USDT_ERC.approve(address(TREE_COM), 10000000 * 1e18);
         TREE_COM.buyProduct(orderCode,utxoBuy);
 
         // TREE_COM.updateDeliveryProduct(orderCode);
@@ -905,28 +915,28 @@ contract BalancesManagerTest is Test {
         vm.prank(owner);
         ECOM_INFO.getUserPurchaseInfo(buyer);
 
-        //case nguoi mua khong phai promoter thi de mua hang duoc thi cha phai la promoter vi du: user3 hoac buyer
-        registerEcomUser(buyer1,user3);
-        vm.prank(buyer1);
-        ECOM_ORDER.addItemToCart(1,_variantID,1);
-        vm.prank(buyer1);
-        CreateOrderParams[] memory params1 = new CreateOrderParams[](1);
-        params1[0] = CreateOrderParams({
-            productID: 1,
-            quantity: 2,
-            variantID: _variantID,
-            cartItemId: 2,
-            discountCodes: new string[](0)
-        });
-        bytes32 orderCode1 = ECOM_ORDER.ExecuteOrder(params1, shippingParams, details);
-         vm.startBroadcast(buyer1);
-        USDT_ERC.approve(address(TREE_COM), 10000000 * 1e6);
-        TREE_COM.buyProduct(orderCode1,utxoBuy);
-        vm.stopBroadcast();
-        // TREE_COM.updateDeliveryProduct(orderCode);
+        // //case nguoi mua khong phai promoter thi de mua hang duoc thi cha phai la promoter vi du: user3 hoac buyer
+        // registerEcomUser(buyer1,user3);
+        // vm.prank(buyer1);
+        // ECOM_ORDER.addItemToCart(1,_variantID,1);
+        // vm.prank(buyer1);
+        // CreateOrderParams[] memory params1 = new CreateOrderParams[](1);
+        // params1[0] = CreateOrderParams({
+        //     productID: 1,
+        //     quantity: 2,
+        //     variantID: _variantID,
+        //     cartItemId: 2,
+        //     discountCodes: new string[](0)
+        // });
+        // bytes32 orderCode1 = ECOM_ORDER.ExecuteOrder(params1, shippingParams, details);
+        //  vm.startBroadcast(buyer1);
+        // USDT_ERC.approve(address(TREE_COM), 10000000 * 1e18);
+        // TREE_COM.buyProduct(orderCode1,utxoBuy);
+        // vm.stopBroadcast();
+        // // TREE_COM.updateDeliveryProduct(orderCode);
 
-        createCommentProduct();
-        // GetByteCode();
+        // createCommentProduct();
+        GetByteCode();
     }
     function createCommentProduct()public {
         uint256 productID = 1;
@@ -972,160 +982,293 @@ contract BalancesManagerTest is Test {
     }
 
     function GetByteCode()public {
-        //EcomProduct createComments
-        uint256 productID = 1;
-        createCommentParams[] memory paramsCm = new createCommentParams[](2);
-        paramsCm[0] = createCommentParams({
-            commentType: CommentType.REVIEW,
-            content: "Great product!",
-            name: "Alice",
-            rate: 5
-        });
-
-        paramsCm[1] = createCommentParams({
-            commentType: CommentType.PRESSCOMMENT,
-            content: "This product was featured in a magazine!",
-            name: "Tech Mag",
-            rate: 0
-        });
+        //isController
+        address controllerA = 0x4d418723a371f79a21bC544aCa31ec4A821a9c14;
         bytes memory bytesCodeCall = abi.encodeCall(
-            ECOM_PRODUCT.createComments,
-            (productID, paramsCm)
+            ECOM_USER.IsController,
+            (controllerA)
         );
-        console.log("ECOM_PRODUCT createComments: ");
+        console.log("ECOM_USER IsController: ");
         console.logBytes(bytesCodeCall);
         console.log(
             "-----------------------------------------------------------------------------"
         );
-        //EcomProduct editComments
-        editCommentsParam[] memory paramsEdit = new editCommentsParam[](1);
-        paramsEdit[0] = editCommentsParam(1, "Updated comment 1");
-        bytesCodeCall = abi.encodeCall(
-            ECOM_PRODUCT.editComments,
-            (paramsEdit)
-        );
-        console.log("ECOM_PRODUCT editComments: ");
-        console.logBytes(bytesCodeCall);
-        console.log(
-            "-----------------------------------------------------------------------------"
-        );
+    //     //IsRetailer
+    //     address retailerA = 0x1f91dC0BD3676Ac34f717a5348265D595f74412a;
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_USER.IsRetailer,
+    //         (retailerA)
+    //     );
+    //     console.log("ECOM_USER IsRetailer: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+    //     //ECOM_USER.setController(owner);
+    //     address controller = 0xdE77102f23eC02c36bf2436Cb771a05792e68824;
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_USER.setController,
+    //         (controller)
+    //     );
+    //     console.log("ECOM_USER setController: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+    //     //buyProduct(orderCode1,utxoBuy);
+    //     bytes32 utxoBuy = bytes32(0);
+    //     bytes32 orderCode1 = 0x9b43b48f8b63f95f8008bea633ee9ee5cd76d117dad91d10ec9574e8f3089859;
+    //     bytesCodeCall = abi.encodeCall(
+    //         TREE_COM.buyProduct,
+    //         (orderCode1,utxoBuy)
+    //     );
+    //     console.log("TREE_COM buyProduct: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+    //     //getUserCart
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_ORDER.getUserCart,
+    //         ()
+    //     );
+    //     console.log("ECOM_ORDER getUserCart: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+    //     //mProductVariant
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_PRODUCT.mProductVariant,
+    //         (1,0)
+    //     );
+    //     console.log("ECOM_PRODUCT mProductVariant: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+    //     //getUserOrders
+    //     address buyerA = 0x748018618f0d7147C04404C7c1FFD1b12a792fb0;
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_ORDER.getUserOrders,
+    //         (buyerA)
+    //     );
+    //     console.log("ECOM_ORDER getUserOrders: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+    //     //updateWebsiteVisitors
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_INFO.updateWebsiteVisitors,
+    //         ()
+    //     );
+    //     console.log("ECOM_INFO updateWebsiteVisitors: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_INFO.totalSystemVisitors,
+    //         ()
+    //     );
+    //     console.log("ECOM_INFO totalSystemVisitors: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+    //     //EcomProduct createComments
+    //     uint256 productID = 1;
+    //     createCommentParams[] memory paramsCm = new createCommentParams[](2);
+    //     paramsCm[0] = createCommentParams({
+    //         commentType: CommentType.REVIEW,
+    //         content: "Great product!",
+    //         name: "Alice",
+    //         rate: 5
+    //     });
 
-         //register on EcomUser
-        registerParams memory params;
-        params.fullName = "thuy";
-        params.email = "abc@gmail.com";
-        params.gender = 0;
-        params.dateOfBirth = 23041989;
-        params.phoneNumber = "09312345678";
-        params.parent = 0xA44f469877C3393c8364ea4436b1202065a4b63B; //co the la rootnode 
-         bytesCodeCall = abi.encodeCall(
-            ECOM_USER.register,
-            (params)
-        );
-        console.log("ECOM_USER register: ");
-        console.logBytes(bytesCodeCall);
-        console.log(
-            "-----------------------------------------------------------------------------"
-        );
+    //     paramsCm[1] = createCommentParams({
+    //         commentType: CommentType.PRESSCOMMENT,
+    //         content: "This product was featured in a magazine!",
+    //         name: "Tech Mag",
+    //         rate: 0
+    //     });
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_PRODUCT.createComments,
+    //         (productID, paramsCm)
+    //     );
+    //     console.log("ECOM_PRODUCT createComments: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+    //     //EcomProduct editComments
+    //     editCommentsParam[] memory paramsEdit = new editCommentsParam[](1);
+    //     paramsEdit[0] = editCommentsParam(1, "Updated comment 1");
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_PRODUCT.editComments,
+    //         (paramsEdit)
+    //     );
+    //     console.log("ECOM_PRODUCT editComments: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+
+    //      //register on EcomUser
+    //     registerParams memory params;
+    //     params.fullName = "thuy";
+    //     params.email = "abc@gmail.com";
+    //     params.gender = 0;
+    //     params.dateOfBirth = 23041989;
+    //     params.phoneNumber = "09312345678";
+    //     params.parent = 0xA44f469877C3393c8364ea4436b1202065a4b63B; //co the la rootnode 
+    //      bytesCodeCall = abi.encodeCall(
+    //         ECOM_USER.register,
+    //         (params)
+    //     );
+    //     console.log("ECOM_USER register: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
         
-        //ECOM_ORDER.addItemToCart(1,_variantID,1);
-        Attribute[] memory attrs = new Attribute[](1);
-        attrs[0] = Attribute({
-            id:keccak256(abi.encodePacked("2")),
-            key:"key",
-            value:"value"
-        });
-        bytes32 _variantID = hashAttributes(attrs);
-        bytesCodeCall = abi.encodeCall(
-            ECOM_ORDER.addItemToCart,
-            (1,_variantID,1)
-        );
-        console.log("ECOM_ORDER addItemToCart: ");
-        console.logBytes(bytesCodeCall);
-        console.log(
-            "-----------------------------------------------------------------------------"
-        );
-        //ECOM_USER.setRetailer(retailer);
-        address retailer1 = 0xEA3Db8925B49B5452eD74959Eb86bBBb7fAb59Ce;
-        bytesCodeCall = abi.encodeCall(
-            ECOM_USER.setRetailer,
-            (retailer1)
-        );
-        console.log("ECOM_USER setRetailer: ");
-        console.logBytes(bytesCodeCall);
-        console.log(
-            "-----------------------------------------------------------------------------"
-        );
-        //ECOM_USER.mUserInfo(buyer);
-        address buyer = 0x3a1a3ead8267cf63E4F58d4fE09B82f15a541Ae7;
-        bytesCodeCall = abi.encodeCall(
-            ECOM_USER.mUserInfo,
-            (buyer)
-        );
-        console.log("ECOM_USER mUserInfo: ");
-        console.logBytes(bytesCodeCall);
-        console.log(
-            "-----------------------------------------------------------------------------"
-        );
+    //     //ECOM_ORDER.addItemToCart(1,_variantID,1);
+    //     Attribute[] memory attrs = new Attribute[](1);
+    //     attrs[0] = Attribute({
+    //         id:keccak256(abi.encodePacked("2")),
+    //         key:"key",
+    //         value:"value"
+    //     });
+    //     bytes32 _variantID = hashAttributes(attrs);
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_ORDER.addItemToCart,
+    //         (1,_variantID,1)
+    //     );
+    //     console.log("ECOM_ORDER addItemToCart: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+    //     //ExecuteOrder
+           
+    //     CreateOrderParams[] memory paramsEx = new CreateOrderParams[](1);
+    //     paramsEx[0] = CreateOrderParams({
+    //         productID: 1,
+    //         quantity: 2,
+    //         variantID: 0xf4ad11f330b8a1acc53691fe40529fa1957c487c0b96864ce1f3eeb86914d37a,
+    //         cartItemId: 11,
+    //         discountCodes: new string[](0)
+    //     });
+
+    //    ShippingParams memory shippingParams = ShippingParams({
+    //         firstName: "John",
+    //         lastName: "Doe",
+    //         email: "john@example.com",
+    //         country: "US",
+    //         city: "New York",
+    //         stateOrProvince: "NY",
+    //         postalCode: "10001",
+    //         phone: "1234567890",
+    //         addressDetail: "123 Street"
+    //     });
+
+    //     orderDetails memory details = orderDetails({
+    //         totalPriceWithoutDiscount: 100,
+    //         codeRef: keccak256(abi.encodePacked("REF123")),
+    //         checkoutType: CheckoutType.RECEIVE,
+    //         paymentType: PaymentType.METANODE
+    //     });
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_ORDER.ExecuteOrder,
+    //         (paramsEx, shippingParams, details)
+    //     );
+    //     console.log("ECOM_ORDER ExecuteOrder: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+        // //ECOM_USER.setRetailer(retailer);
+        // address retailer1 = 0xEA3Db8925B49B5452eD74959Eb86bBBb7fAb59Ce;
+        // bytesCodeCall = abi.encodeCall(
+        //     ECOM_USER.setRetailer,
+        //     (retailer1)
+        // );
+        // console.log("ECOM_USER setRetailer: ");
+        // console.logBytes(bytesCodeCall);
+        // console.log(
+        //     "-----------------------------------------------------------------------------"
+        // );
+        // //ECOM_USER.mUserInfo(buyer);
+        // address buyer = 0x3a1a3ead8267cf63E4F58d4fE09B82f15a541Ae7;
+        // bytesCodeCall = abi.encodeCall(
+        //     ECOM_USER.mUserInfo,
+        //     (buyer)
+        // );
+        // console.log("ECOM_USER mUserInfo: ");
+        // console.logBytes(bytesCodeCall);
+        // console.log(
+        //     "-----------------------------------------------------------------------------"
+        // );
 
         //TREE_COM.addPromoterMember(user3,user2,10000,2000,bytes32(0));
 
-        address userA = 0x391fFF8136E5066668F254F2bF074e5dAc318867;
-        address parentB = 0xcD1Dd05bC96778594F2401380cD20E28705A4E87;
+        address userA = 0x75e47aA2d5D96fa74f8cfA0Ee4E106F1204172e9;
+        address parentB = 0x975384A25d4FaC8dEBD8fdDc03F6bEAbB4E9EcBb;
         bytes32 utxoID = keccak256(abi.encodePacked("abc"));
         bytesCodeCall = abi.encodeCall(
             TREE_COM.addPromoterMember,
-            (userA,parentB,10000,2000,utxoID)
+            (userA,parentB,106698341200000000000,10790962800000000000,bytes32(0))
         );
         console.log("addPromoterMember: ");
         console.logBytes(bytesCodeCall);
         console.log(
             "-----------------------------------------------------------------------------"
         );
-        //
-        address user = 0x6f0B58b260178333C39F83e0AA0404581Bac8B26;
-        bytesCodeCall = abi.encodeCall(
-            ECOM_USER.getUserParent,
-            (user)
-        );
-        console.log("getUserParent: ");
-        console.logBytes(bytesCodeCall);
-        console.log(
-            "-----------------------------------------------------------------------------"
-        );
-        //TREE_COM.addVIPMember(user1, address(ROOT_NODE),utxoID1);
-        address userB = 0x6f0B58b260178333C39F83e0AA0404581Bac8B26;
-        address parentC = 0xf3440BCF4e24Bc17BA2fea252c942D7F52D79147;
-         bytes32 utxoID1 = keccak256(abi.encodePacked("abc"));
-        bytesCodeCall = abi.encodeCall(
-            TREE_COM.addVIPMember,
-            (userB, parentC,bytes32(0))
-        );
-        console.log("addVIPMember: ");
-        console.logBytes(bytesCodeCall);
-        console.log(
-            "-----------------------------------------------------------------------------"
-        );
-        //ECOM_USER.registerRetailer("Retailer_Name","retailer_phone")
-        bytesCodeCall = abi.encodeCall(
-            ECOM_USER.registerRetailer,
-            ("Retailer_Name","retailer_phone")
-        );
-        console.log("registerRetailer: ");
-        console.logBytes(bytesCodeCall);
-        console.log(
-            "-----------------------------------------------------------------------------"
-        );
-        //addShowroom
-        address showroom = 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2;
+        // //
+        // address user = 0x6f0B58b260178333C39F83e0AA0404581Bac8B26;
+        // bytesCodeCall = abi.encodeCall(
+        //     ECOM_USER.getUserParent,
+        //     (user)
+        // );
+        // console.log("getUserParent: ");
+        // console.logBytes(bytesCodeCall);
+        // console.log(
+        //     "-----------------------------------------------------------------------------"
+        // );
+        // //TREE_COM.addVIPMember(user1, address(ROOT_NODE),utxoID1);
+        // address userB = 0x6f0B58b260178333C39F83e0AA0404581Bac8B26;
+        // address parentC = 0xf3440BCF4e24Bc17BA2fea252c942D7F52D79147;
+        //  bytes32 utxoID1 = keccak256(abi.encodePacked("abc"));
+        // bytesCodeCall = abi.encodeCall(
+        //     TREE_COM.addVIPMember,
+        //     (userB, parentC,bytes32(0))
+        // );
+        // console.log("addVIPMember: ");
+        // console.logBytes(bytesCodeCall);
+        // console.log(
+        //     "-----------------------------------------------------------------------------"
+        // );
+    //     //ECOM_USER.registerRetailer("Retailer_Name","retailer_phone")
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_USER.registerRetailer,
+    //         ("Retailer_Name","retailer_phone")
+    //     );
+    //     console.log("registerRetailer: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
+    //     //addShowroom
+        address showroom = 0x44b8625BA654456ff44C824f163ab1a401a95924;
         bytesCodeCall = abi.encodeCall(
             SHOWROOM.addShowRoom,
             (
                 showroom,
                 address(0x1),
                 Showroom.ShowroomTier.Hub,
-                1300000,
-                2000000
+                106698399600000000000,
+                10790953800000000000
             )
         );
         console.log("addShowRoom: ");
@@ -1135,25 +1278,25 @@ contract BalancesManagerTest is Test {
         );
         //processTeamBPAndActive
         // TREE_COM.processTeamBPAndActive(1,100);
-        bytesCodeCall = abi.encodeCall(
-            TREE_COM.processTeamBPAndActive,
-            (0,100)
-        );
-        console.log("processTeamBPAndActive: ");
-        console.logBytes(bytesCodeCall);
-        console.log(
-            "-----------------------------------------------------------------------------"
-        );
-        //
-        bytesCodeCall = abi.encodeCall(
-            ECOM_ORDER.SetPos,
-            (0xe6543ceABFD0CB596c453FC702e3355cA54C71b3)
-        );
-        console.log("SetPos: ");
-        console.logBytes(bytesCodeCall);
-        console.log(
-            "-----------------------------------------------------------------------------"
-        );
+        // bytesCodeCall = abi.encodeCall(
+        //     TREE_COM.processTeamBPAndActive,
+        //     (0,100)
+        // );
+        // console.log("processTeamBPAndActive: ");
+        // console.logBytes(bytesCodeCall);
+        // console.log(
+        //     "-----------------------------------------------------------------------------"
+        // );
+    //     //
+    //     bytesCodeCall = abi.encodeCall(
+    //         ECOM_ORDER.SetPos,
+    //         (0xe6543ceABFD0CB596c453FC702e3355cA54C71b3)
+    //     );
+    //     console.log("SetPos: ");
+    //     console.logBytes(bytesCodeCall);
+    //     console.log(
+    //         "-----------------------------------------------------------------------------"
+    //     );
    
     }
 

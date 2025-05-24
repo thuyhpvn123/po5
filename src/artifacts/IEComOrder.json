@@ -49,7 +49,7 @@
 		},
 		"gasEstimates": null,
 		"methodIdentifiers": {
-			"ConfirmPaymentForOrderCode(bytes32)": "f894196e",
+			"ConfirmPaymentForOrderCode(bytes32,address)": "c3e81b86",
 			"getOrder(uint256)": "d09ef241",
 			"getOrderCode(bytes32)": "fb08e12e"
 		}
@@ -61,6 +61,11 @@
 					"internalType": "bytes32",
 					"name": "orderCode",
 					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "payer",
+					"type": "address"
 				}
 			],
 			"name": "ConfirmPaymentForOrderCode",
